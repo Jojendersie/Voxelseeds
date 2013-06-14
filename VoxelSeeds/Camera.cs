@@ -29,8 +29,8 @@ namespace VoxelSeeds
         private float _rotationSpeed = 0.01f;
 
         // some intern controlling variables
-        private double _phi = 0.0f;
-        private double _theta = 0.0f;
+        private double _phi = MathUtil.Pi * 0.25f;
+        private double _theta = MathUtil.Pi * 1.3f;
 
         private const double MIN_THETA = MathUtil.Pi * 1.1f;
         private const double MAX_THETA = MathUtil.Pi * 0.4f + MathUtil.Pi;
@@ -71,20 +71,22 @@ namespace VoxelSeeds
             RebuildProjectionMatrix();
 
 
-            inputControlElement.MouseWheel += MouseWheelHandler;
+            // input handling...
+            inputControlElement.MouseWheel += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+                {
+                    _zoom += ZOOM_PER_WHEEL_STEP * e.Delta;
+                    _zoom = System.Math.Min(MAX_ZOOM, _zoom);
+                    _zoom = System.Math.Max(MIN_ZOOM, _zoom);
+                };
             inputControlElement.MouseDown += (object sender, System.Windows.Forms.MouseEventArgs e) => 
                 _cameraMouseMoveOn = e.Button == System.Windows.Forms.MouseButtons.Right;
             inputControlElement.MouseUp += (object sender, System.Windows.Forms.MouseEventArgs e) =>
-                _cameraMouseMoveOn = !(_cameraMouseMoveOn && e.Button == System.Windows.Forms.MouseButtons.Right);
+                {
+                    if (_cameraMouseMoveOn && e.Button == System.Windows.Forms.MouseButtons.Right)
+                        _cameraMouseMoveOn = false;
+                };
             inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
                 _currentMousePosition = e.Location;
-        }
-
-        private void MouseWheelHandler(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            _zoom += ZOOM_PER_WHEEL_STEP * e.Delta;
-            _zoom = System.Math.Min(MAX_ZOOM, _zoom);
-            _zoom = System.Math.Max(MIN_ZOOM, _zoom);
         }
 
         /// <summary>
