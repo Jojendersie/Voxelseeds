@@ -102,11 +102,11 @@ namespace VoxelSeeds
             _projectionMatrix = Matrix.PerspectiveFovLH(_fov, _aspectRatio, _nearPlane, _farPlane);
         }
 
-        private void MouseWheelHandler(object sender, MouseWheelEventArgs e)
+    /*    private void MouseWheelHandler(object sender, MouseWheelEventArgs e)
         {
             _zoom += ZOOM_PER_WHEEL_STEP * e.Delta;
         }
-
+        */
         /// <summary>
         /// Updates the Camera 
         /// </summary>
