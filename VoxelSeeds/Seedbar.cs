@@ -9,10 +9,8 @@ using SharpDX.Toolkit.Content;
 
 namespace VoxelSeeds
 {
-    class Seedbar : Game
+    class Seedbar
     {
-        private ContentManager barContentManager;
-        private GraphicsDeviceManager barGraphicsDeviceManager;
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private Texture2D[] textures = new Texture2D[10];
@@ -26,24 +24,25 @@ namespace VoxelSeeds
             }
         }
 
-        public void LoadContent(GraphicsDeviceManager graphicsDeviceManager, ContentManager contentManager)
+        public void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            barGraphicsDeviceManager = graphicsDeviceManager;
-            barContentManager = contentManager;
-            spriteBatch = new SpriteBatch(barGraphicsDeviceManager.GraphicsDevice);
-            font = barContentManager.Load<SpriteFont>("Arial16.tkfnt");
+            spriteBatch = new SpriteBatch(graphicsDevice);
+            font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
             for (int i = 0; i < textures.Length; i++)
             {
-                textures[i] = barContentManager.Load<Texture2D>("balls.dds");
+                textures[i] = contentManager.Load<Texture2D>("balls.dds");
             }
         }
 
         public void Update(GameTime gameTime)
         {
+            // hi pat - nice try, but now I know better - this will not work most likely :(
+            // (don't know exactly why...)
+            // if it happens as feared, look at the handler registrations in the ctor of Camera
+            // hf ;)
+
             double mouseX = Mouse.GetPosition(null).X;
             double mouseY = Mouse.GetPosition(null).Y;
-
-
         }
 
         public void Draw(GameTime gameTime)
