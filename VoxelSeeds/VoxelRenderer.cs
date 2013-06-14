@@ -17,7 +17,7 @@ namespace VoxelSeeds
     {
         Buffer<VertexPositionColor> _cubeVertexBuffer;
         VertexInputLayout _vertexInputLayout;
-        Effect _voxelEffect;
+        BasicEffect _voxelEffect;
 
         public VoxelRenderer(GraphicsDevice graphicsDevice)
         {
@@ -83,8 +83,11 @@ namespace VoxelSeeds
         {
         }
 
-        public void Draw(GraphicsDevice graphicsDevice)
+        public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
+            _voxelEffect.View = camera.ViewMatrix;
+            _voxelEffect.Projection = camera.ProjectionMatrix;
+
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer);
             graphicsDevice.SetVertexInputLayout(_vertexInputLayout);

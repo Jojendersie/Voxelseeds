@@ -18,6 +18,8 @@ namespace VoxelSeeds
         private GraphicsDeviceManager _graphicsDeviceManager;
 
         VoxelRenderer _voxelRenderer;
+        Camera _camera;
+        Seedbar _seedbar;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
@@ -32,25 +34,38 @@ namespace VoxelSeeds
             Content.RootDirectory = "Content";
         }
 
-        protected override void LoadContent()
-        {
-            _voxelRenderer = new VoxelRenderer(GraphicsDevice);
-
-            base.LoadContent();
-        }
-
         protected override void Initialize()
         {
             Window.Title = "MiniCube demo";
 
             base.Initialize();
+
+            IsMouseVisible = true;
+
+            var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
+            System.Diagnostics.Debug.Assert(windowControl != null);
+            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.7f, 1.0f, 1000.0f, windowControl);
         }
+
+        protected override void LoadContent()
+        {
+            
+            _voxelRenderer = new VoxelRenderer(GraphicsDevice);
+            _seedbar = new Seedbar();
+            base.LoadContent();
+            _seedbar.LoadContent(_graphicsDeviceManager, Content);
+        }
+
+
 
         protected override void Update(GameTime gameTime)
         {
             // Rotate the cube.
           //  var time = (float)gameTime.TotalGameTime.TotalSeconds;
           //  basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
+
+            // move camera
+            _camera.Update(gameTime);
 
             // add/remove voxels from voxelrenderer
             _voxelRenderer.Update();
@@ -65,10 +80,12 @@ namespace VoxelSeeds
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // rendererererererererer
-            _voxelRenderer.Draw(GraphicsDevice);
+            _voxelRenderer.Draw(_camera, GraphicsDevice);
 
             // Handle base.Draw
             base.Draw(gameTime);
+
+            _seedbar.Draw(gameTime);
         }
     }
 }
