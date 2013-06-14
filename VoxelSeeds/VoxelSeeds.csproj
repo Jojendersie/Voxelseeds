@@ -38,7 +38,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automaton.cs" />
     <Compile Include="IVoxelRule.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="VoxelRenderer.cs" />
     <Compile Include="VoxelSeeds.cs" />
