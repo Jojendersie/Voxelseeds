@@ -44,8 +44,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automaton.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="IVoxelRule.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />
     <Compile Include="VoxelRenderer.cs" />

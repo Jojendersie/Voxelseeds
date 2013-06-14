@@ -19,6 +19,7 @@ namespace VoxelSeeds
 
         VoxelRenderer _voxelRenderer;
         Camera _camera;
+        Seedbar _seedbar;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
@@ -50,9 +51,9 @@ namespace VoxelSeeds
         {
             
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
-
+            _seedbar = new Seedbar();
             base.LoadContent();
-            Seedbar.LoadContent(_graphicsDeviceManager, Content);
+            _seedbar.LoadContent(_graphicsDeviceManager, Content);
         }
 
 
@@ -84,7 +85,7 @@ namespace VoxelSeeds
             // Handle base.Draw
             base.Draw(gameTime);
 
-            Seedbar.Draw();
+            _seedbar.Draw(gameTime);
         }
     }
 }
