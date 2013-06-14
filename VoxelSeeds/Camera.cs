@@ -1,5 +1,6 @@
 ﻿using SharpDX;
 using SharpDX.Toolkit;
+using System.Windows;
 using System.Windows.Input;
 
 namespace VoxelSeeds
@@ -29,16 +30,28 @@ namespace VoxelSeeds
 
         // some intern controlling variables
         private double _phi = 0.0f;
-        private double _theta = -MathUtil.Pi / 2;
-        private double _lastMouseX = 0; // last x position of the mouse
-        private double _lastMouseY = 0; // last y position of the mouse
+        private double _theta = 0.0f;
+
+        private const double MIN_THETA = MathUtil.Pi * 1.1f;
+        private const double MAX_THETA = MathUtil.Pi * 0.4f + MathUtil.Pi;
 
 
-        private const float MIN_ZOOM = 10.0f;
-        private const float MAX_ZOOM = 100.0f;
-        private const float ZOOM_PER_WHEEL_STEP = 1.0f;
+        /// <summary>
+        /// last processed mouse position
+        /// </summary>
+        private System.Drawing.Point _lastMousePosition;
 
-        private float _zoom;
+        private System.Drawing.Point _currentMousePosition;
+
+
+        private const float MIN_ZOOM = 5.0f;
+        private const float MAX_ZOOM = 50.0f;
+        private const float ZOOM_PER_WHEEL_STEP = 0.01f;
+
+        private float _zoom = 20.0f;
+
+        private bool _cameraMouseMoveOn = false;
+
 
         /// <summary>
         /// creates a new camera and sets a projection matrix up
@@ -57,12 +70,21 @@ namespace VoxelSeeds
             this._farPlane = farPlane;
             RebuildProjectionMatrix();
 
+
             inputControlElement.MouseWheel += MouseWheelHandler;
+            inputControlElement.MouseDown += (object sender, System.Windows.Forms.MouseEventArgs e) => 
+                _cameraMouseMoveOn = e.Button == System.Windows.Forms.MouseButtons.Right;
+            inputControlElement.MouseUp += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+                _cameraMouseMoveOn = !(_cameraMouseMoveOn && e.Button == System.Windows.Forms.MouseButtons.Right);
+            inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+                _currentMousePosition = e.Location;
         }
 
         private void MouseWheelHandler(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             _zoom += ZOOM_PER_WHEEL_STEP * e.Delta;
+            _zoom = System.Math.Min(MAX_ZOOM, _zoom);
+            _zoom = System.Math.Max(MIN_ZOOM, _zoom);
         }
 
         /// <summary>
@@ -113,7 +135,7 @@ namespace VoxelSeeds
         public void Update(GameTime gameTime)
         {
             // mouse movement
-            UpdateThetaPhiFromMouse((float)gameTime.TotalGameTime.TotalSeconds);
+            UpdateThetaPhiFromMouse((float)gameTime.ElapsedGameTime.TotalSeconds);
 
             // resulting view direction
             _viewDirection = new Vector3((float)(System.Math.Cos(_phi) * System.Math.Sin(_theta)),
@@ -140,24 +162,26 @@ namespace VoxelSeeds
         /// </summary>
         protected void UpdateThetaPhiFromMouse(float passedTimeSinceLastFrame)
         {
-            if (Mouse.RightButton == MouseButtonState.Pressed)
+            if (_cameraMouseMoveOn)
             {
                 // mouse movement
-                double deltaX = Mouse.GetPosition(null).X - _lastMouseX;
-                double deltaY = Mouse.GetPosition(null).Y - _lastMouseY;
+                double deltaX = _currentMousePosition.X - _lastMousePosition.X;
+                double deltaY = _currentMousePosition.Y - _lastMousePosition.Y;
                 _phi -= deltaX * _rotationSpeed;
                 _theta -= deltaY * _rotationSpeed;
             }
             else
             {
-                _theta += (Keyboard.IsKeyDown(Key.Up) ? _rotationSpeed * passedTimeSinceLastFrame * 0.3f : 0.0f);
-                _theta -= (Keyboard.IsKeyDown(Key.Down) ? _rotationSpeed * passedTimeSinceLastFrame * 0.3f : 0.0f);
-                _phi -= (Keyboard.IsKeyDown(Key.Right) ? _rotationSpeed * passedTimeSinceLastFrame * 0.3f : 0.0f);
-                _phi += (Keyboard.IsKeyDown(Key.Left) ? _rotationSpeed * passedTimeSinceLastFrame * 0.3f : 0.0f);
+                _theta += (Keyboard.IsKeyDown(Key.Up) ? _rotationSpeed * passedTimeSinceLastFrame : 0.0f) * 100;
+                _theta -= (Keyboard.IsKeyDown(Key.Down) ? _rotationSpeed * passedTimeSinceLastFrame : 0.0f) * 100;
+                _phi -= (Keyboard.IsKeyDown(Key.Right) ? _rotationSpeed * passedTimeSinceLastFrame : 0.0f) * 100;
+                _phi += (Keyboard.IsKeyDown(Key.Left) ? _rotationSpeed * passedTimeSinceLastFrame : 0.0f) * 100;
             }
 
-            _lastMouseX = Mouse.GetPosition(null).X;
-            _lastMouseY = Mouse.GetPosition(null).Y;
+            _theta = System.Math.Min(_theta, MAX_THETA);
+            _theta = System.Math.Max(_theta, MIN_THETA);
+
+            _lastMousePosition = _currentMousePosition;
         }
     }
 }
