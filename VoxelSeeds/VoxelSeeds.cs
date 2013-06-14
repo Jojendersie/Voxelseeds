@@ -33,20 +33,28 @@ namespace VoxelSeeds
             Content.RootDirectory = "Content";
         }
 
-        protected override void LoadContent()
-        {
-            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.7f, 1.0f, 1000.0f);
-            _voxelRenderer = new VoxelRenderer(GraphicsDevice);
-
-            base.LoadContent();
-        }
-
         protected override void Initialize()
         {
             Window.Title = "MiniCube demo";
 
             base.Initialize();
+
+            IsMouseVisible = true;
+
+            var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
+            System.Diagnostics.Debug.Assert(windowControl != null);
+            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.7f, 1.0f, 1000.0f, windowControl);
         }
+
+        protected override void LoadContent()
+        {
+            
+            _voxelRenderer = new VoxelRenderer(GraphicsDevice);
+
+            base.LoadContent();
+        }
+
+
 
         protected override void Update(GameTime gameTime)
         {

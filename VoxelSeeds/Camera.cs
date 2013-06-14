@@ -48,7 +48,8 @@ namespace VoxelSeeds
         /// <param name="fov">Field of view in the y direction, in radians.</param>
         /// <param name="nearPlane">Distance to the near view plane.</param>
         /// <param name="farPlane">Distance to the far view plane.</param>
-        public Camera(float aspectRatio, float fov, float nearPlane, float farPlane)
+        /// <param name="inputControlElement">control element that will be hooked for input</param>
+        public Camera(float aspectRatio, float fov, float nearPlane, float farPlane, System.Windows.Forms.Control inputControlElement)
         {
             this._aspectRatio = aspectRatio;
             this._fov = fov;
@@ -56,8 +57,12 @@ namespace VoxelSeeds
             this._farPlane = farPlane;
             RebuildProjectionMatrix();
 
- //           System.Windows.Forms.Application.
-  //          ((System.Windows.Controls.Control)nativeWindow).MouseWheel += new MouseWheelEventHandler(MouseWheelHandler);
+            inputControlElement.MouseWheel += MouseWheelHandler;
+        }
+
+        private void MouseWheelHandler(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            _zoom += ZOOM_PER_WHEEL_STEP * e.Delta;
         }
 
         /// <summary>
@@ -101,12 +106,7 @@ namespace VoxelSeeds
         {
             _projectionMatrix = Matrix.PerspectiveFovLH(_fov, _aspectRatio, _nearPlane, _farPlane);
         }
-
-    /*    private void MouseWheelHandler(object sender, MouseWheelEventArgs e)
-        {
-            _zoom += ZOOM_PER_WHEEL_STEP * e.Delta;
-        }
-        */
+        
         /// <summary>
         /// Updates the Camera 
         /// </summary>
