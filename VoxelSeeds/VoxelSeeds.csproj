@@ -48,6 +48,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="IVoxelRule.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />
     <Compile Include="VoxelRenderer.cs" />
@@ -97,6 +98,8 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup />

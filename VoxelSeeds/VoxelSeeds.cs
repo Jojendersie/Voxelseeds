@@ -32,6 +32,16 @@ namespace VoxelSeeds
             // Setup the relative directory to the executable directory
             // for loading contents with the ContentManager
             Content.RootDirectory = "Content";
+
+            // load settings
+            Settings settings = new Settings();
+            settings.ReadSettings();
+            _graphicsDeviceManager.PreferredBackBufferWidth = settings.ResolutionX;
+            _graphicsDeviceManager.PreferredBackBufferHeight = settings.ResolutionY;
+            if (!System.Diagnostics.Debugger.IsAttached)    // fullscreen not allowed if debugger attached
+                _graphicsDeviceManager.IsFullScreen = settings.Fullscreen;
+            else
+                _graphicsDeviceManager.IsFullScreen = false;
         }
 
         protected override void Initialize()
