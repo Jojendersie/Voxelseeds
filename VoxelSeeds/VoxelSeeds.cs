@@ -18,6 +18,7 @@ namespace VoxelSeeds
         private GraphicsDeviceManager _graphicsDeviceManager;
 
         VoxelRenderer _voxelRenderer;
+        Camera _camera;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
@@ -34,6 +35,7 @@ namespace VoxelSeeds
 
         protected override void LoadContent()
         {
+            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.7f, 1.0f, 1000.0f);
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
 
             base.LoadContent();
@@ -52,6 +54,9 @@ namespace VoxelSeeds
           //  var time = (float)gameTime.TotalGameTime.TotalSeconds;
           //  basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
 
+            // move camera
+            _camera.Update(gameTime);
+
             // add/remove voxels from voxelrenderer
             _voxelRenderer.Update();
 
@@ -65,7 +70,7 @@ namespace VoxelSeeds
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // rendererererererererer
-            _voxelRenderer.Draw(GraphicsDevice);
+            _voxelRenderer.Draw(_camera, GraphicsDevice);
 
             // Handle base.Draw
             base.Draw(gameTime);
