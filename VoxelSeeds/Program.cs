@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace VoxelSeeds
 {
     /// <summary>
@@ -17,7 +18,7 @@ namespace VoxelSeeds
 #endif
         static void Main()
         {
-            using (var program = new VoxelSeeds())
+            using (var program = new VoxelSeeds()) 
                 program.Run();
         }
     }

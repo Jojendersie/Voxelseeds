@@ -38,6 +38,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VoxelRenderer.cs" />
     <Compile Include="VoxelSeeds.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
@@ -79,6 +80,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dependencies\Standard-net40\SharpDX.Toolkit.Graphics.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

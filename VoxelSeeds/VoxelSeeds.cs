@@ -13,12 +13,11 @@ namespace VoxelSeeds
     /// Simple MiniCube application using SharpDX.Toolkit.
     /// The purpose of this application is to show a rotating cube using <see cref="BasicEffect"/>.
     /// </summary>
-    public class VoxelSeeds : Game
+    class VoxelSeeds : Game
     {
-        private GraphicsDeviceManager graphicsDeviceManager;
-        private BasicEffect basicEffect;
-        private Buffer<VertexPositionColor> vertices;
-        private VertexInputLayout inputLayout;
+        private GraphicsDeviceManager _graphicsDeviceManager;
+
+        VoxelRenderer _voxelRenderer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
@@ -26,7 +25,7 @@ namespace VoxelSeeds
         public VoxelSeeds()
         {
             // Creates a graphics manager. This is mandatory.
-            graphicsDeviceManager = new GraphicsDeviceManager(this);
+            _graphicsDeviceManager = new GraphicsDeviceManager(this);
 
             // Setup the relative directory to the executable directory
             // for loading contents with the ContentManager
@@ -35,60 +34,7 @@ namespace VoxelSeeds
 
         protected override void LoadContent()
         {
-            // Creates a basic effect
-            basicEffect = new BasicEffect(GraphicsDevice)
-                {
-                    VertexColorEnabled = true,
-                    View = Matrix.LookAtLH(new Vector3(0, 0, -5), new Vector3(0, 0, 0), Vector3.UnitY),
-                    Projection = Matrix.PerspectiveFovLH((float)Math.PI / 4.0f, (float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, 0.1f, 100.0f),
-                    World = Matrix.Identity
-                };
-
-            // Creates vertices for the cube
-            vertices = Buffer.Vertex.New(
-                GraphicsDevice,
-                new[]
-                    {
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange), // Front
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange), // BACK
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.Orange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed), // Top
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed), // Bottom
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.OrangeRed),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange), // Left
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, -1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(-1.0f, 1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange), // Right
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, 1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, -1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, -1.0f), Color.DarkOrange),
-                        new VertexPositionColor(new Vector3(1.0f, 1.0f, 1.0f), Color.DarkOrange),
-                    });
-
-            // Create an input layout from the vertices
-            inputLayout = VertexInputLayout.FromBuffer(0, vertices);
+            _voxelRenderer = new VoxelRenderer(GraphicsDevice);
 
             base.LoadContent();
         }
@@ -103,8 +49,11 @@ namespace VoxelSeeds
         protected override void Update(GameTime gameTime)
         {
             // Rotate the cube.
-            var time = (float)gameTime.TotalGameTime.TotalSeconds;
-            basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
+          //  var time = (float)gameTime.TotalGameTime.TotalSeconds;
+          //  basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
+
+            // add/remove voxels from voxelrenderer
+            _voxelRenderer.Update();
 
             // Handle base.Update
             base.Update(gameTime);
@@ -115,13 +64,8 @@ namespace VoxelSeeds
             // Clears the screen with the Color.CornflowerBlue
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // Setup the vertices
-            GraphicsDevice.SetVertexBuffer(vertices);
-            GraphicsDevice.SetVertexInputLayout(inputLayout);
-
-            // Apply the basic effect technique and draw the rotating cube
-            basicEffect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.Draw(PrimitiveType.TriangleList, vertices.ElementCount);
+            // rendererererererererer
+            _voxelRenderer.Draw(GraphicsDevice);
 
             // Handle base.Draw
             base.Draw(gameTime);
