@@ -52,6 +52,7 @@ namespace VoxelSeeds
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
 
             base.LoadContent();
+            Seedbar.LoadContent(_graphicsDeviceManager, Content);
         }
 
 
@@ -82,6 +83,8 @@ namespace VoxelSeeds
 
             // Handle base.Draw
             base.Draw(gameTime);
+
+            Seedbar.Draw();
         }
     }
 }
