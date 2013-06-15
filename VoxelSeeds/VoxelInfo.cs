@@ -85,11 +85,11 @@ namespace VoxelSeeds
     {
         public Voxel(Int32 pCode, VoxelType t)
         {
-            positionCode = pCode;
-            type = t;
+            PositionCode = pCode;
+            Type = t;
         }
 
-        Int32 positionCode;
-        VoxelType type;
+        public Int32 PositionCode;
+        public VoxelType Type;
     }
 }

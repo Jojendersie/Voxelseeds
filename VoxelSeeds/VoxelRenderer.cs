@@ -235,8 +235,19 @@ using SharpDX.Toolkit.Content;
         /// <summary>
         /// updates instancebuffer for the current "voxelsituation" (what ever)
         /// </summary>
-        public void Update()
+        public void Update(IEnumerable<Voxel> removeList, IEnumerable<Voxel> addList)
         {
+            // remove voxels
+            foreach (Voxel voxel in removeList)
+                _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Remove(voxel.PositionCode);
+
+            // add voxels
+            foreach (Voxel voxel in addList)
+                _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Remove(voxel.PositionCode);
+
+            // update gpu
+            foreach (var data in _voxelTypeRenderingData)
+                data.UpdateGPUInstanceBuffer();
         }
 
         /// <summary>

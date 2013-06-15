@@ -93,9 +93,6 @@ namespace VoxelSeeds
             // move camera
             _camera.Update(gameTime);
 
-            // add/remove voxels from voxelrenderer
-            _voxelRenderer.Update();
-
             _seedbar.Update();
 
             // Handle base.Update
