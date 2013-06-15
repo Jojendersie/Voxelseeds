@@ -142,9 +142,8 @@ using SharpDX.Toolkit.Content;
             _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length];
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
                 _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice);
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.WHITEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("teak.png");
+            LoadTextures(contentManager);
+
 
             // load shader
             EffectCompilerFlags compilerFlags = EffectCompilerFlags.None;
@@ -188,6 +187,20 @@ using SharpDX.Toolkit.Content;
 
             // vertexbuffer for a single instance
             _singleInstanceBuffer = Buffer.Vertex.New<Int32>(graphicsDevice, 1, SharpDX.Direct3D11.ResourceUsage.Dynamic);
+        }
+
+        private void LoadTextures(ContentManager contentManager)
+        {
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.WHITEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.BEECH_WOOD)].Texture = contentManager.Load<Texture2D>("Beech.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.NOBLEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.WHITEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.OAK_WOOD)].Texture = contentManager.Load<Texture2D>("oak.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.PINE_WOOD)].Texture = contentManager.Load<Texture2D>("Pine.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.REDWOOD)].Texture = contentManager.Load<Texture2D>("redwood.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.SPRUCE_WOOD)].Texture = contentManager.Load<Texture2D>("spruce.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("teak.png");
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
