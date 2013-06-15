@@ -50,6 +50,7 @@ namespace VoxelSeeds
 
         private float _zoom = 80.0f;
 
+        private bool _cameraMouseRotateOn = false;
         private bool _cameraMouseMoveOn = false;
 
 
@@ -79,12 +80,19 @@ namespace VoxelSeeds
                     _zoom = System.Math.Max(MIN_ZOOM, _zoom);
                 };
             inputControlElement.MouseDown += (object sender, System.Windows.Forms.MouseEventArgs e) => 
-                _cameraMouseMoveOn = e.Button == System.Windows.Forms.MouseButtons.Right;
+                _cameraMouseRotateOn = e.Button == System.Windows.Forms.MouseButtons.Middle;
             inputControlElement.MouseUp += (object sender, System.Windows.Forms.MouseEventArgs e) =>
                 {
-                    if (_cameraMouseMoveOn && e.Button == System.Windows.Forms.MouseButtons.Right)
-                        _cameraMouseMoveOn = false;
+                    if (_cameraMouseRotateOn && e.Button == System.Windows.Forms.MouseButtons.Middle)
+                        _cameraMouseRotateOn = false;
                 };
+            inputControlElement.MouseDown += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+                _cameraMouseMoveOn = e.Button == System.Windows.Forms.MouseButtons.Right;
+            inputControlElement.MouseUp += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+            {
+                if (_cameraMouseMoveOn && e.Button == System.Windows.Forms.MouseButtons.Right)
+                    _cameraMouseMoveOn = false;
+            };
             inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
                 _currentMousePosition = e.Location;
         }
@@ -178,7 +186,7 @@ namespace VoxelSeeds
         /// </summary>
         protected void UpdateThetaPhiFromMouse(float passedTimeSinceLastFrame)
         {
-            if (_cameraMouseMoveOn)
+            if (_cameraMouseRotateOn)
             {
                 // mouse movement
                 double deltaX = _currentMousePosition.X - _lastMousePosition.X;

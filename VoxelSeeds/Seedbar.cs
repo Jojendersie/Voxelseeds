@@ -167,12 +167,10 @@ namespace VoxelSeeds
                         int corrector = 0;
                         if (mousePosition.X + 310 > windowWidth) corrector = mousePosition.X + 310 - windowWidth;
 
-                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 300, 183), new Color(0.6f, 0.6f, 0.6f, 0.5f));
+                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 300, 130), new Color(0.5f, 0.5f, 0.5f, 0.5f));
                         spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 15), Color.Black);
-                        spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.DarkBlue);
-                        spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 65), Color.DarkBlue);
-                        spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 115), Color.Crimson);
-                        spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 140), Color.Crimson);
+                        spriteBatch.DrawString(font, "+"+TypeInformation.GetStrength(seeds[i]._type)[0] + "\n+" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.Green);
+                        spriteBatch.DrawString(font, "-"+TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n-" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 90), Color.Crimson);
                     }
                 }
                 else tooltipCounter[i] = 0;
