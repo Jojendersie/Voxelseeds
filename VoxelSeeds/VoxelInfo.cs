@@ -45,6 +45,19 @@ namespace VoxelSeeds
                                              { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
         readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper" };
         readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true };
+        readonly static IVoxelRule[] rules = { null, null,
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule(),
+                                                 new TeakWoodRule() };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -71,6 +84,11 @@ namespace VoxelSeeds
         public static bool IsParasite(VoxelType voxeltype)
         {
             return parasite[(int)voxeltype];
+        }
+
+        public static IVoxelRule GetRule(VoxelType voxeltype)
+        {
+            return rules[(int)voxeltype];
         }
     }
 
