@@ -101,6 +101,7 @@
     <Compile Include="Rules\PineWoodRule.cs" />
     <Compile Include="Rules\TeakWoodRule.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ValueNoise.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />
     <Compile Include="VoxelRenderer.cs" />

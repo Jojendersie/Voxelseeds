@@ -116,6 +116,9 @@ namespace VoxelSeeds
         /// <returns>True if voxel is not visible.</returns>
         public bool IsOccluded(Int32 positionCode)
         {
+            // Pixels on the boundary are never occluded.
+            var pos = DecodePosition(positionCode);
+            if (!IsInside(pos.X, pos.Y, pos.Z)) return false;
             return (_voxels[positionCode - 1] != 0) && (_voxels[positionCode + 1] != 0)
                 && (_voxels[positionCode - SizeX] != 0) && (_voxels[positionCode + SizeX] != 0)
                 && (_voxels[positionCode - SizeX * SizeY] != 0) && (_voxels[positionCode + SizeX * SizeY] != 0);
