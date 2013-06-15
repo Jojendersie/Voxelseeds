@@ -14,7 +14,7 @@ namespace VoxelSeeds
         private Matrix _viewMatrix = Matrix.Identity;
         // vectors
         private Vector3 _viewDirection = new Vector3(0, 0, 1);
-        private Vector3 _position = new Vector3(0, 100, 0);
+        private Vector3 _position = new Vector3(0, 0, 0);
 
         // projection stuff
         public float AspectRatio
@@ -177,11 +177,15 @@ namespace VoxelSeeds
 
             // compute side
             Vector3 sideVec = Vector3.Cross(upVec, _viewDirection);
+            Vector3 coVec = Vector3.Cross(upVec, sideVec);
 
-            Position = -_viewDirection * _zoom + Vector3.UnitY * 5 - sideVec *_deltaX - Vector3.Cross(upVec, sideVec) * _deltaY;
+            Position -= sideVec * _deltaX + coVec * _deltaY;
+            Vector3 cameraPos = Position - _viewDirection * _zoom;
 
             // compute view matrix
-            _viewMatrix = Matrix.LookAtLH(Position, Position + _viewDirection, upVec);
+            _viewMatrix = Matrix.LookAtLH(cameraPos, cameraPos + _viewDirection, upVec);
+            _deltaX = 0;
+            _deltaY = 0;
         }
 
         /// <summary>
