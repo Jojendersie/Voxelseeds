@@ -57,8 +57,8 @@ namespace VoxelSeeds
         public Int32 EncodePosition(int x, int y, int z)
         {
             Debug.Assert((0 <= x) && (x < _sizeX));
-            Debug.Assert((0 <= y) && (x < _sizeY));
-            Debug.Assert((0 <= z) && (x < _sizeZ));
+            Debug.Assert((0 <= y) && (y < _sizeY));
+            Debug.Assert((0 <= z) && (z < _sizeZ));
             return (Int32)(x+SizeX*(y+SizeY*z));
         }
 
@@ -134,7 +134,8 @@ namespace VoxelSeeds
             for( int z=0; z<SizeZ; ++z )
                 for (int x = 0; x < SizeX; ++x)
                 {
-                    for (int y = 0; y < maxHeight + rand.Next(4)-2; ++y)
+                    int height =  maxHeight + rand.Next(SizeY / 2 - 1) - SizeY / 4;
+                    for (int y = 0; y < height; ++y)
                         _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
                 }
         }
