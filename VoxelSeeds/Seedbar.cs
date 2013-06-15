@@ -29,10 +29,13 @@ namespace VoxelSeeds
         private SeedInfo[] seeds = new SeedInfo[10];
         private Texture2D[] textures = new Texture2D[10];
         private Texture2D helix;
+        private int selected;
+        private bool picking;
+        private System.Drawing.Point MousePosition;
 
         private const int barLength = 10;
 
-        public Seedbar()
+        public Seedbar(System.Windows.Forms.Control inputControlElement)
         {
             for(int i = 0; i < barLength; i++)
             {
@@ -41,14 +44,20 @@ namespace VoxelSeeds
                 seeds[i]._type = VoxelType.WOOD;
             }
 
+            // input handling...
+            inputControlElement.MouseDown += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+                picking = e.Button == System.Windows.Forms.MouseButtons.Left;
+            inputControlElement.MouseUp += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+            {
+                if (picking && e.Button == System.Windows.Forms.MouseButtons.Right)
+                    picking = false;
+            };
+            inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+                MousePosition = e.Location;
         }
 
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-
-            spriteBatch = new SpriteBatch(graphicsDevice);
-            font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
-
             spriteBatch = new SpriteBatch(graphicsDevice);
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
             helix = contentManager.Load<Texture2D>("balls.dds");
@@ -84,6 +93,9 @@ namespace VoxelSeeds
 
         public void Draw(GameTime gameTime)
         {
+            int soll = 200;
+            int width = spriteBatch.GraphicsDevice.BackBuffer.Width;
+            int progress = 200 * Map.getGoodVoxels()/soll;
             spriteBatch.Begin();
             for (int i = 0; i < barLength; i++)
             {
@@ -92,8 +104,13 @@ namespace VoxelSeeds
                 //draw Icons
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.getPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X+7,seeds[i]._position.Y + 36), Color.White);
+                
+                if (MouseOver(seeds[i]._position, 32, 32))
+                {
+                    spriteBatch.DrawString(font,"test"+i.ToString(), new Vector2(100,100), Color.White);
+                }
             }
-            spriteBatch.Draw(helix , new DrawingRectangle(1000, 500, 30, Map.getGoodVoxels()),null,Color.White,(float)Math.PI,new Vector2(0,0),SpriteEffects.None,0);
+            spriteBatch.Draw(helix , new DrawingRectangle(width-20, 400, 30, progress),null,Color.White,(float)Math.PI,new Vector2(0,0),SpriteEffects.None,0);
             spriteBatch.End();
         }
 
