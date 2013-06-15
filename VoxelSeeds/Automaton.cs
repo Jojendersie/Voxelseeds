@@ -63,7 +63,7 @@ namespace VoxelSeeds
                         func(x, y, z);
         }
 
-        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, ref Action<Voxel[], Voxel[]> updateInstanceData, out int newBiomass, out int newParasites)
+        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData, out int newBiomass, out int newParasites)
         {
             newBiomass = 0;
             newParasites = 0;
@@ -106,6 +106,7 @@ namespace VoxelSeeds
                 checkAndRemoveNeighbour(vox.Key - _map.SizeX * _map.SizeY);
                 checkAndRemoveNeighbour(vox.Key + _map.SizeX * _map.SizeY);
             }
+            updateInstanceData(deleteList, insertionList);
         }
 
 
@@ -114,7 +115,7 @@ namespace VoxelSeeds
         /// </summary>
         /// <param name="updateInstanceData">A function which takes an incremental
         /// update for all changed voxels. The first param </param>
-        public void Tick(ref Action<Voxel[],Voxel[]> updateInstanceData, out int newBiomass, out int newParasites)
+        public void Tick(ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData, out int newBiomass, out int newParasites)
         {
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.

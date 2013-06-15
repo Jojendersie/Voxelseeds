@@ -19,7 +19,7 @@ namespace VoxelSeeds
             _currentBiomass = 1;
             _currentParasiteMass = 0;
 
-            _automaton.InsertSeed(50, 45, 50, VoxelType.TEAK_WOOD);
+            _automaton.InsertSeed(50, 35, 50, VoxelType.TEAK_WOOD);
         }
     }
 }
