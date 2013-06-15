@@ -11,7 +11,7 @@ namespace VoxelSeeds
 {
     class Seedbar
     {
- class SeedInfo
+        class SeedInfo
         {
             public VoxelType _type;
             public Vector2 _position;
@@ -29,10 +29,9 @@ namespace VoxelSeeds
         private SeedInfo[] seeds = new SeedInfo[10];
         private Texture2D[] textures = new Texture2D[10];
         private Texture2D helix;
-        private Texture2D topbar;
         private Texture2D pixel;
         private Texture2D frame;
-        private int selected = 0;
+        private int _selected = -1;
         private bool picking;
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
@@ -40,6 +39,21 @@ namespace VoxelSeeds
         private float[] tooltipCounter = new float[10];
 
         private const int barLength = 10;
+
+        public SeedInfo GetSeedInfo()
+        {
+            return seeds[_selected];
+        }
+
+        public SeedInfo GetSeedInfo(int selected)
+        {
+            return seeds[selected];
+        }
+
+        public int GetSelected()
+        {
+            return _selected;
+        }
 
         public Seedbar(System.Windows.Forms.Control inputControlElement)
         {       
@@ -86,7 +100,7 @@ namespace VoxelSeeds
             {
                 if (MouseOver(seeds[i]._position, 83, 32) && picking)
                 {
-                    selected = i+1;
+                    _selected = i;
                 }
             }  
         }
@@ -114,9 +128,9 @@ namespace VoxelSeeds
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);   
             }
 
-            if (selected > 0)
+            if (_selected > -1)
             {
-                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[selected - 1]._position.X - 5, (int)seeds[selected - 1]._position.Y - 5, 92, 42), Color.Gold);
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[_selected]._position.X - 5, (int)seeds[_selected]._position.Y - 5, 92, 42), Color.Yellow);
             }
 
             //draw Tooltip
