@@ -107,10 +107,11 @@
     <Compile Include="Level.cs" />
     <Compile Include="Level1.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Rules\BeechWoodRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
+    <Compile Include="Rules\SpruceWoodRule.cs" />
     <Compile Include="Rules\TeakWoodRule.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="ValueNoise.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />
     <Compile Include="VoxelRenderer.cs" />
