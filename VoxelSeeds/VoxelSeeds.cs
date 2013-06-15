@@ -90,7 +90,7 @@ namespace VoxelSeeds
             if (_cumulatedFrameTime > 0.25)
             {
                 _cumulatedFrameTime -= 0.25;
-               // _currentLevel.Tick(_voxelRenderer.Update);
+                _currentLevel.Tick(_voxelRenderer.Update);
             }
 
             // Rotate the cube.
