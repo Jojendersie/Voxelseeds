@@ -71,10 +71,13 @@ using SharpDX.Toolkit.Content;
         Effect _voxelEffect;
 
         RasterizerState _backfaceCullingState;
-        //RasterizerState _frontCullingState;
+        RasterizerState _noneCullingState;
         DepthStencilState _depthStencilStateState;
         SamplerState _pointSamplerState;
-        BlendState _blendState;
+        BlendState _blendStateOpaque;
+        BlendState _blendStateTransparent;
+
+        Buffer<Int32> _singleInstanceBuffer;
 
         struct CubeVertex
         {
@@ -160,6 +163,8 @@ using SharpDX.Toolkit.Content;
             var rasterizerStateDesc = SharpDX.Direct3D11.RasterizerStateDescription.Default();
             rasterizerStateDesc.CullMode = SharpDX.Direct3D11.CullMode.Back;
             _backfaceCullingState = RasterizerState.New(graphicsDevice, "CullModeBack", rasterizerStateDesc);
+            rasterizerStateDesc.CullMode = SharpDX.Direct3D11.CullMode.None;
+            _noneCullingState = RasterizerState.New(graphicsDevice, "CullModeNone", rasterizerStateDesc);
 
             var depthStencilStateDesc = SharpDX.Direct3D11.DepthStencilStateDescription.Default();
             depthStencilStateDesc.IsDepthEnabled = true;
@@ -174,7 +179,15 @@ using SharpDX.Toolkit.Content;
             _voxelEffect.Parameters["PointSampler"].SetResource(_pointSamplerState);
 
             var blendStateDesc = SharpDX.Direct3D11.BlendStateDescription.Default();
-            _blendState = BlendState.New(graphicsDevice, "Opaque", blendStateDesc);
+            _blendStateOpaque = BlendState.New(graphicsDevice, "Opaque", blendStateDesc);
+            blendStateDesc.RenderTarget[0].IsBlendEnabled = true;
+            blendStateDesc.RenderTarget[0].SourceBlend = SharpDX.Direct3D11.BlendOption.SourceAlpha;
+            blendStateDesc.RenderTarget[0].DestinationBlend = SharpDX.Direct3D11.BlendOption.InverseSourceAlpha;
+            blendStateDesc.RenderTarget[0].BlendOperation = SharpDX.Direct3D11.BlendOperation.Add;
+            _blendStateTransparent = BlendState.New(graphicsDevice, "AlphaBlend", blendStateDesc);
+
+            // vertexbuffer for a single instance
+            _singleInstanceBuffer = Buffer.Vertex.New<Int32>(graphicsDevice, 1, SharpDX.Direct3D11.ResourceUsage.Dynamic);
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
@@ -257,10 +270,11 @@ using SharpDX.Toolkit.Content;
         public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            _voxelEffect.Parameters["Ambient"].SetValue(0.3f);
 
             graphicsDevice.SetRasterizerState(_backfaceCullingState);
             graphicsDevice.SetDepthStencilState(_depthStencilStateState);
-            graphicsDevice.SetBlendState(_blendState);
+            graphicsDevice.SetBlendState(_blendStateOpaque);
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
@@ -276,9 +290,27 @@ using SharpDX.Toolkit.Content;
             }
         }
 
-        public void DrawGhost(GraphicsDevice graphicsDevice, VoxelInfo voxel, Int3 levelPosition)
+        public void DrawGhost(Camera camera, GraphicsDevice graphicsDevice, VoxelType voxel, Int32 levelPositionCode)
         {
+            _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].Texture);
+            _voxelEffect.Parameters["Transparency"].SetValue(0.7f);
+            _voxelEffect.Parameters["Ambient"].SetValue(2.0f);
 
+            _singleInstanceBuffer.SetDynamicData(graphicsDevice, (ptr) => System.Runtime.InteropServices.Marshal.Copy(
+                                                                 new Int32[] { levelPositionCode }, 0, ptr, 1));
+
+            graphicsDevice.SetRasterizerState(_noneCullingState);
+            graphicsDevice.SetDepthStencilState(_depthStencilStateState);
+            graphicsDevice.SetBlendState(_blendStateTransparent);
+
+            // Setup the vertices
+            graphicsDevice.SetVertexBuffer(0, _cubeVertexBuffer);
+            graphicsDevice.SetVertexBuffer(1, _singleInstanceBuffer);
+            graphicsDevice.SetVertexInputLayout(_vertexInputLayout);
+
+            _voxelEffect.CurrentTechnique.Passes[0].Apply();
+            graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, 1, 0, 0);
         }
     }
 }
