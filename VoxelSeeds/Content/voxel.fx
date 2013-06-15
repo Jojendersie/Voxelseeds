@@ -1,13 +1,17 @@
 cbuffer GlobalMapInfo : register(b0)
 {
-	int3 WorldSize;
+	uint3 WorldSize;
 	float3 LightDirection;
+	float3 Translation;
 }
 
 float Transparency;
-matrix WorldViewProjection;
+matrix ViewProjection;
 float Ambient;
 float ScalingFactor;
+float3 CameraPosition;
+
+static const float3 LightColor = float3(1.0, 0.98, 0.8);
 
 SamplerState PointSampler;
 Texture2D VoxelTexture;
@@ -17,13 +21,14 @@ struct VS_INPUT
     float3 Position_Cube : POSITION_CUBE;
 	float3 Normal : NORMAL;
 	float2 Texcoord : TEXCOORD;
-    int Position_Instance : POSITION_INSTANCE;
+    uint Position_Instance : POSITION_INSTANCE;
 };
 
 struct PS_INPUT
 {
     float4 Position : SV_POSITION;
-	float Light : LIGHT;
+	float Light : DIFFUSE;
+	float Specular : SPECULAR;
 	float2 Texcoord : TEXCOORD;
 };
 
@@ -41,10 +46,26 @@ PS_INPUT VS(VS_INPUT input)
     PS_INPUT output;
     
 	float3 worldPos = input.Position_Cube * ScalingFactor;
-	worldPos += DecodePosition(input.Position_Instance);
-    output.Position = mul(float4(worldPos, 1), WorldViewProjection);
+	worldPos += DecodePosition(input.Position_Instance) + Translation;
+    output.Position = mul(float4(worldPos, 1), ViewProjection);
     
-	output.Light = saturate(dot(LightDirection, input.Normal)) + Ambient;
+	// lighting
+	float NDotL = dot(LightDirection, input.Normal);
+	output.Light = saturate(NDotL) + Ambient;
+
+	// specular
+	float3 viewDir = normalize(CameraPosition - worldPos);
+	float3 refl = normalize((2 * NDotL) * input.Normal - LightDirection);
+	const float SpecularPower = 4.0f;
+  	output.Specular = pow(max(dot(refl, viewDir), 0.0), SpecularPower);
+
+	// schlick-fresnel
+	float3 halfVector = normalize(viewDir + LightDirection);
+	float base = 1.0f - dot(viewDir, halfVector);
+	float exponential = pow( base, 10.0);
+	float fresnel = exponential + 0.3f * (1.0 - exponential);
+	output.Specular *= fresnel;
+
 	output.Texcoord = input.Texcoord;
 
     return output;
@@ -52,7 +73,9 @@ PS_INPUT VS(VS_INPUT input)
 
 float4 PS(PS_INPUT input) : SV_TARGET
 {
-    return float4(VoxelTexture.Sample(PointSampler, input.Texcoord).rgb * input.Light, Transparency);
+	float3 textureColor = VoxelTexture.Sample(PointSampler, input.Texcoord).rgb;
+    return float4(textureColor * input.Light * LightColor + 
+					input.Specular * LightColor, Transparency);
 }
 
 technique basic

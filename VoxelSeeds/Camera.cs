@@ -14,7 +14,8 @@ namespace VoxelSeeds
         private Matrix _viewMatrix = Matrix.Identity;
         // vectors
         private Vector3 _viewDirection = new Vector3(0, 0, 1);
-        private Vector3 _position = new Vector3(0, 0, 0);
+        private Vector3 _rotationCenter  = new Vector3(0, 0, 0);
+        private Vector3 _position;
 
         // projection stuff
         public float AspectRatio
@@ -36,7 +37,7 @@ namespace VoxelSeeds
         private double _theta = MathUtil.Pi * 1.3f;
 
         private const double MIN_THETA = MathUtil.Pi * 1.1f;
-        private const double MAX_THETA = MathUtil.Pi * 0.4f + MathUtil.Pi;
+        private const double MAX_THETA = MathUtil.Pi * 0.48f + MathUtil.Pi;
 
 
         /// <summary>
@@ -179,11 +180,11 @@ namespace VoxelSeeds
             Vector3 sideVec = Vector3.Cross(upVec, _viewDirection);
             Vector3 coVec = Vector3.Cross(upVec, sideVec);
 
-            Position -= sideVec * _deltaX + coVec * _deltaY;
-            Vector3 cameraPos = Position - _viewDirection * _zoom;
+            _rotationCenter -= sideVec * _deltaX + coVec * _deltaY;
+            Position = _rotationCenter - _viewDirection * _zoom;
 
             // compute view matrix
-            _viewMatrix = Matrix.LookAtLH(cameraPos, cameraPos + _viewDirection, upVec);
+            _viewMatrix = Matrix.LookAtLH(Position, Position + _viewDirection, upVec);
             _deltaX = 0;
             _deltaY = 0;
         }

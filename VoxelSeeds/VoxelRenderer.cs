@@ -64,8 +64,6 @@ using SharpDX.Toolkit.Content;
         }
         VoxelTypeInstanceData[] _voxelTypeRenderingData;
 
-        Matrix _translationMatrix = Matrix.Translation(Vector3.Zero);
-
         /// <summary>
         /// Effect for all Voxel-Renderings
         /// </summary>
@@ -255,9 +253,8 @@ using SharpDX.Toolkit.Content;
             globalMapInfoCB.Parameters["WorldSize"].SetValue(new Int3(map.SizeX, map.SizeY, map.SizeZ));
             lightDirection.Normalize();
             globalMapInfoCB.Parameters["LightDirection"].SetValue(-lightDirection);
+            globalMapInfoCB.Parameters["Translation"].SetValue(- new Vector3(map.SizeX, 0.0f, map.SizeZ) * 0.5f);
             globalMapInfoCB.IsDirty = true;
-
-            _translationMatrix = Matrix.Translation(- new Vector3(map.SizeX, 0.0f, map.SizeZ) * 0.5f);
         }
 
         /// <summary>
@@ -285,8 +282,9 @@ using SharpDX.Toolkit.Content;
         /// </summary>
         public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
-            _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            _voxelEffect.Parameters["ViewProjection"].SetValue(camera.ViewMatrix * camera.ProjectionMatrix);
             _voxelEffect.Parameters["Ambient"].SetValue(0.3f);
+            _voxelEffect.Parameters["CameraPosition"].SetValue(camera.Position);
 
             graphicsDevice.SetRasterizerState(_backfaceCullingState);
             graphicsDevice.SetDepthStencilState(_depthStencilStateState);
@@ -311,7 +309,7 @@ using SharpDX.Toolkit.Content;
 
         public void DrawGhost(Camera camera, GraphicsDevice graphicsDevice, VoxelType voxel, Int32 levelPositionCode)
         {
-            _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            _voxelEffect.Parameters["ViewProjection"].SetValue(camera.ViewMatrix * camera.ProjectionMatrix);
             _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].Texture);
             _voxelEffect.Parameters["Transparency"].SetValue(0.7f);
             _voxelEffect.Parameters["Ambient"].SetValue(2.0f);

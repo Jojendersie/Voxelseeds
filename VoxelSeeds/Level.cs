@@ -23,11 +23,15 @@ namespace VoxelSeeds
         public int FinalParasiteBiomass { get { return _finalParasiteMass; } protected set { _finalParasiteMass = value; } }
         public int Resources { get { return _resources; } set { _resources = value; } }
 
+        public Vector3 LightDirection { get { return lightDirection; } protected set { lightDirection = value; } }
+        Vector3 lightDirection = new Vector3(1.0f, -1.3f, 1.7f);
+
         public Level(VoxelRenderer voxelRenderer)
         {
             Initialize();
+            lightDirection.Normalize();
 
-            voxelRenderer.Reset(GetMap(), new Vector3(1.0f, -2.0f, 1.0f));
+            voxelRenderer.Reset(GetMap(), lightDirection);
             SetInstanceUpdateMethod(voxelRenderer.Update);
         }
 

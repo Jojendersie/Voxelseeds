@@ -38,7 +38,7 @@ static const float LowerHorizonHeight = -0.4;
 static const float UpperHorizonHeight = -0.1;
 static const float SunAttenuation = 2;
 
-static const float3 LightDirection = float3(-0.577, 0.577, -0.577);
+float3 LightDirection;
 
 float4 PS(PS_INPUT input) : SV_Target
 {

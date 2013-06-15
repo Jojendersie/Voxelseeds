@@ -1,4 +1,5 @@
-﻿using SharpDX.Toolkit.Graphics;
+﻿using SharpDX;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace VoxelSeeds
 
         }
         
-        public void Draw(Camera camera)
+        public void Draw(Camera camera, Vector3 lightDirection)
         {
             var graphicsDevice = _effect.GraphicsDevice;
             //graphicsDevice.SetDepthStencilState(_noDepthState);
@@ -41,6 +42,7 @@ namespace VoxelSeeds
             var viewProjection = camera.ViewMatrix * camera.ProjectionMatrix;
             var inverseViewProjection = viewProjection; inverseViewProjection.Invert();
             _effect.Parameters["InverseViewProjection"].SetValue(inverseViewProjection);
+            _effect.Parameters["LightDirection"].SetValue(-lightDirection);
 
             _effect.CurrentTechnique.Passes[0].Apply();
             ScreenTriangleRenderer.Instance.DrawScreenAlignedTriangle(graphicsDevice);

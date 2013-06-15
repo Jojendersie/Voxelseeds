@@ -181,7 +181,7 @@ namespace VoxelSeeds
             // Handle base.Draw
             base.Draw(gameTime);
 
-            _background.Draw(_camera);
+            _background.Draw(_camera, _currentLevel.LightDirection);
 
             _seedbar.Draw(_currentLevel, gameTime);
 
