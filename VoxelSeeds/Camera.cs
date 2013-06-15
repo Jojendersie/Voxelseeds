@@ -30,7 +30,7 @@ namespace VoxelSeeds
 
         // some intern controlling variables
         private double _phi = MathUtil.Pi * 0.25f;
-        private double _theta = MathUtil.Pi * 1.3f;
+        private double _theta = MathUtil.Pi * 1.35f;
 
         private const double MIN_THETA = MathUtil.Pi * 1.1f;
         private const double MAX_THETA = MathUtil.Pi * 0.4f + MathUtil.Pi;
@@ -48,7 +48,7 @@ namespace VoxelSeeds
         private const float MAX_ZOOM = 100.0f;
         private const float ZOOM_PER_WHEEL_STEP = 0.01f;
 
-        private float _zoom = 20.0f;
+        private float _zoom = 60.0f;
 
         private bool _cameraMouseMoveOn = false;
 
@@ -89,6 +89,19 @@ namespace VoxelSeeds
                 _currentMousePosition = e.Location;
         }
 
+        public Ray GetPickingRay(int screenResolutionX, int screenResolutionY)
+        {
+            Vector2 deviceCor = new Vector2((float)_currentMousePosition.X / screenResolutionX - 0.5f, -(float)_currentMousePosition.Y / screenResolutionY + 0.5f) * 2;
+            Matrix viewProjection = ViewMatrix * ProjectionMatrix;
+            Matrix viewProjectionInverse = viewProjection; viewProjectionInverse.Invert();
+
+            var rayOrigin = Vector3.TransformCoordinate(new Vector3(deviceCor, 0), viewProjectionInverse);
+            var rayTarget = Vector3.TransformCoordinate(new Vector3(deviceCor, 1), viewProjectionInverse);
+            var dir = rayTarget - rayOrigin;
+            dir.Normalize();
+            return new Ray(rayOrigin, dir);
+        }
+
         /// <summary>
         /// The projection matrix for this camera
         /// </summary>
@@ -104,6 +117,7 @@ namespace VoxelSeeds
         {
             get { return _viewMatrix; }
         }
+
 
         /// <summary>
         /// Current position of the camera

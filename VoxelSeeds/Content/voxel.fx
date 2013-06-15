@@ -5,7 +5,10 @@ cbuffer GlobalMapInfo : register(b0)
 }
 
 matrix WorldViewProjection;
-const float Ambient = 0.3f;
+static const float Ambient = 0.3f;
+
+SamplerState PointSampler;
+Texture2D VoxelTexture;
 
 struct VS_INPUT
 {
@@ -19,6 +22,7 @@ struct PS_INPUT
 {
     float4 Position : SV_POSITION;
 	float Light : LIGHT;
+	float2 Texcoord : TEXCOORD;
 };
 
 float3 DecodePosition(int code)
@@ -39,13 +43,14 @@ PS_INPUT VS(VS_INPUT input)
     output.Position = mul(float4(worldPos, 1), WorldViewProjection);
     
 	output.Light = saturate(dot(LightDirection, input.Normal)) + Ambient;
+	output.Texcoord = input.Texcoord;
 
     return output;
 }
 
 float4 PS(PS_INPUT input) : SV_TARGET
 {
-    return float4(input.Light,input.Light,input.Light,1);
+    return VoxelTexture.Sample(PointSampler, input.Texcoord) * input.Light;
 }
 
 technique basic

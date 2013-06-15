@@ -59,16 +59,28 @@ namespace VoxelSeeds
             _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.5f, 1.0f, 1000.0f, windowControl);
         }
 
+
         protected override void LoadContent()
         {
             _currentLevel = new Level1();
 
-            _voxelRenderer = new VoxelRenderer(GraphicsDevice);
+            _voxelRenderer = new VoxelRenderer(GraphicsDevice, Content);
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
 
-			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));       
-            
+			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));
+
+            // testcode for culling
+               var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
+               windowControl.MouseClick += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+               {
+                       var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
+                       Int3 pickedPos;
+                       bool picked = this._currentLevel.GetMap().PickPosition(ray, out pickedPos);
+                       System.Console.WriteLine(picked);
+                       System.Console.WriteLine(pickedPos);
+               };
+
             base.LoadContent();
         }
 
@@ -80,9 +92,6 @@ namespace VoxelSeeds
 
             // move camera
             _camera.Update(gameTime);
-
-            // add/remove voxels from voxelrenderer
-            _voxelRenderer.Update();
 
             _seedbar.Update();
 
@@ -101,7 +110,7 @@ namespace VoxelSeeds
             // Handle base.Draw
             base.Draw(gameTime);
 
-            _seedbar.Draw(_currentLevel);
+            _seedbar.Draw(_currentLevel, gameTime);
         }
     }
 }
