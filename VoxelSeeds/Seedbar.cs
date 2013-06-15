@@ -31,6 +31,7 @@ namespace VoxelSeeds
         private Texture2D helix;
         private Texture2D topbar;
         private Texture2D pixel;
+        private Texture2D frame;
         private int selected = 0;
         private bool picking;
         private System.Drawing.Point mousePosition;
@@ -62,8 +63,8 @@ namespace VoxelSeeds
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
             helix = contentManager.Load<Texture2D>("balls.dds");
-            topbar = contentManager.Load<Texture2D>("dummy1.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
+            frame = contentManager.Load<Texture2D>("frame.png");
 
             for (int i = 0; i < barLength; i++)
             {
@@ -96,22 +97,28 @@ namespace VoxelSeeds
             int evilProgress = windowHeigth * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
 
             spriteBatch.Begin();
-
-            spriteBatch.Draw(topbar, new DrawingRectangle(0, 0, windowWidth - 60, 42), Color.White);
-            if (selected > 0) spriteBatch.DrawString(font, selected.ToString(), new Vector2(200, 100), Color.White);
-
+            
             //draw Progress good/evil
             spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth, windowHeigth, 30, progress), null, Color.Blue, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
             spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth-30, windowHeigth, 30, evilProgress), null, Color.Red, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
             for (int i = 0; i < barLength; i++)
             {
+                spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 82, 32), Color.Black);
+                //draw frame
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 92, 42), Color.White);
                 //draw curency
                 spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 37, (int)seeds[i]._position.Y+5, 10, 20), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 45, seeds[i]._position.Y+5), Color.White); 
                 //draw Icons
-                spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);
+                spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);   
             }
+
+            if (selected > 0)
+            {
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[selected - 1]._position.X - 5, (int)seeds[selected - 1]._position.Y - 5, 92, 42), Color.Gold);
+            }
+
             //draw Tooltip
             for (int i = 0; i < barLength; i++)
             {

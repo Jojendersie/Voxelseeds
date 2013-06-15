@@ -44,7 +44,7 @@
     <None Include="Content\balls.dds">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="Content\dummy1.png">
+    <Content Include="Content\frame.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\fungus.png">
