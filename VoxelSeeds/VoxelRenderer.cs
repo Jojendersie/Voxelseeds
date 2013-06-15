@@ -70,7 +70,8 @@ using SharpDX.Toolkit.Content;
         /// </summary>
         Effect _voxelEffect;
 
-        RasterizerState _rasterizerState;
+        RasterizerState _backfaceCullingState;
+        //RasterizerState _frontCullingState;
         DepthStencilState _depthStencilStateState;
         SamplerState _pointSamplerState;
         BlendState _blendState;
@@ -158,7 +159,7 @@ using SharpDX.Toolkit.Content;
             // setup states
             var rasterizerStateDesc = SharpDX.Direct3D11.RasterizerStateDescription.Default();
             rasterizerStateDesc.CullMode = SharpDX.Direct3D11.CullMode.Back;
-            _rasterizerState = RasterizerState.New(graphicsDevice, "CullModeBack", rasterizerStateDesc);
+            _backfaceCullingState = RasterizerState.New(graphicsDevice, "CullModeBack", rasterizerStateDesc);
 
             var depthStencilStateDesc = SharpDX.Direct3D11.DepthStencilStateDescription.Default();
             depthStencilStateDesc.IsDepthEnabled = true;
@@ -257,7 +258,7 @@ using SharpDX.Toolkit.Content;
         {
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
-            graphicsDevice.SetRasterizerState(_rasterizerState);
+            graphicsDevice.SetRasterizerState(_backfaceCullingState);
             graphicsDevice.SetDepthStencilState(_depthStencilStateState);
             graphicsDevice.SetBlendState(_blendState);
 
@@ -273,6 +274,11 @@ using SharpDX.Toolkit.Content;
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);
             }
+        }
+
+        public void DrawGhost(GraphicsDevice graphicsDevice, VoxelInfo voxel, Int3 levelPosition)
+        {
+
         }
     }
 }

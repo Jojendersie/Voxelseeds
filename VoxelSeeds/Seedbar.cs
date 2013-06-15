@@ -11,7 +11,7 @@ namespace VoxelSeeds
 {
     class Seedbar
     {
- class SeedInfo
+        public class SeedInfo
         {
             public VoxelType _type;
             public Vector2 _position;
@@ -29,10 +29,9 @@ namespace VoxelSeeds
         private SeedInfo[] seeds = new SeedInfo[10];
         private Texture2D[] textures = new Texture2D[10];
         private Texture2D helix;
-        private Texture2D topbar;
         private Texture2D pixel;
         private Texture2D frame;
-        private int selected = 0;
+        private int _selected = -1;
         private bool picking;
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
@@ -40,6 +39,21 @@ namespace VoxelSeeds
         private float[] tooltipCounter = new float[10];
 
         private const int barLength = 10;
+
+        public SeedInfo GetSeedInfo()
+        {
+            return seeds[_selected];
+        }
+
+        public SeedInfo GetSeedInfo(int selected)
+        {
+            return seeds[selected];
+        }
+
+        public int GetSelected()
+        {
+            return _selected;
+        }
 
         public Seedbar(System.Windows.Forms.Control inputControlElement)
         {       
@@ -55,7 +69,25 @@ namespace VoxelSeeds
             inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
                 mousePosition = e.Location;
         }
-
+        /*
+        enum VoxelType
+        {
+            EMPTY = 0,
+            GROUND,
+            TEAK_WOOD,
+            PINE_WOOD,
+            SPRUCE_WOOD,
+            BEECH_WOOD,
+            OAK_WOOD,
+            REDWOOD,
+            WHITEROT_FUNGUS,
+            NOBLEROT_FUNGUS,
+            TERMITES,
+            HOUSE_LONGHORN_BEETLE,
+            HESPEROPHANES_CINNEREUS,
+            GRASSHOPPER
+        };
+         * */
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
             spriteBatch = new SpriteBatch(graphicsDevice);
@@ -69,10 +101,28 @@ namespace VoxelSeeds
             for (int i = 0; i < barLength; i++)
             {
                 seeds[i] = new SeedInfo();
-                seeds[i]._position = new Vector2(i * (windowWidth - 70) / 10 + 5, 5);
-                seeds[i]._type = VoxelType.TEAK_WOOD;
-                textures[i] = contentManager.Load<Texture2D>("balls.dds");
+                seeds[i]._position = new Vector2(i * (windowWidth - 70) / 10 + 5, 5);   
             }
+            seeds[0]._type = VoxelType.TEAK_WOOD;
+            textures[0] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[1]._type = VoxelType.PINE_WOOD;
+            textures[1] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[2]._type = VoxelType.SPRUCE_WOOD;
+            textures[2] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[3]._type = VoxelType.BEECH_WOOD;
+            textures[3] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[4]._type = VoxelType.OAK_WOOD;
+            textures[4] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[5]._type = VoxelType.REDWOOD;
+            textures[5] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[6]._type = VoxelType.TEAK_WOOD;
+            textures[6] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[7]._type = VoxelType.TEAK_WOOD;
+            textures[7] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[8]._type = VoxelType.TEAK_WOOD;
+            textures[8] = contentManager.Load<Texture2D>("balls.dds");
+            seeds[9]._type = VoxelType.TEAK_WOOD;
+            textures[9] = contentManager.Load<Texture2D>("balls.dds");
         }
 
         private bool MouseOver(Vector2 pos, double width, double heigth)
@@ -86,7 +136,7 @@ namespace VoxelSeeds
             {
                 if (MouseOver(seeds[i]._position, 83, 32) && picking)
                 {
-                    selected = i+1;
+                    _selected = i;
                 }
             }  
         }
@@ -114,9 +164,9 @@ namespace VoxelSeeds
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);   
             }
 
-            if (selected > 0)
+            if (_selected > -1)
             {
-                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[selected - 1]._position.X - 5, (int)seeds[selected - 1]._position.Y - 5, 92, 42), Color.Gold);
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[_selected]._position.X - 5, (int)seeds[_selected]._position.Y - 5, 92, 42), Color.Yellow);
             }
 
             //draw Tooltip

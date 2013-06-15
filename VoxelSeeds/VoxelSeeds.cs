@@ -72,7 +72,7 @@ namespace VoxelSeeds
 			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));
 
             // testcode for culling
-               var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
+         /*      var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
                windowControl.MouseClick += (object sender, System.Windows.Forms.MouseEventArgs e) =>
                {
                        var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
@@ -80,7 +80,7 @@ namespace VoxelSeeds
                        bool picked = this._currentLevel.GetMap().PickPosition(ray, out pickedPos);
                        System.Console.WriteLine(picked);
                        System.Console.WriteLine(pickedPos);
-               };
+               }; */
 
             base.LoadContent();
         }

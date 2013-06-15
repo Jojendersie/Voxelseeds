@@ -38,7 +38,7 @@ PS_INPUT VS(VS_INPUT input)
 {
     PS_INPUT output;
     
-	float3 worldPos = input.Position_Cube;
+	float3 worldPos = input.Position_Cube * 0.5f;
 	worldPos += DecodePosition(input.Position_Instance);
     output.Position = mul(float4(worldPos, 1), WorldViewProjection);
     
