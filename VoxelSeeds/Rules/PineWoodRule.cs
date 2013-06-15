@@ -17,12 +17,12 @@ namespace VoxelSeeds.Rules
             int gen = neighbourhood[1, 1, 1].Generation;
             if (gen == 0)
             {
-                // Grow a 2x2 quad (override current generation)
-                output[1, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
+                // Grow Cross and ovveride current generation
+                output[1, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1, 0, TypeInformation.GetGrowingSteps(VoxelType.PINE_WOOD) / 2);
                 output[2, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
-                output[1, 2, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
+                output[0, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
                 output[1, 1, 2] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
-                output[1, 0, 2] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
+                output[1, 1, 0] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1);
             }
             else if (gen < 9)
             {

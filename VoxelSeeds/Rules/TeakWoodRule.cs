@@ -11,7 +11,7 @@ namespace VoxelSeeds.Rules
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
-            if (neighbourhood[1, 1, 1].Ticks < 2) return null;
+            if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.TEAK_WOOD)) return null;
             
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
             int gen = neighbourhood[1, 1, 1].Generation;

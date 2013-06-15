@@ -49,8 +49,8 @@ namespace VoxelSeeds
         readonly static IVoxelRule[] rules = { null, null,
                                                  new TeakWoodRule(),
                                                  new PineWoodRule(),
-                                                 new TeakWoodRule(),
-                                                 new TeakWoodRule(),
+                                                 new SpruceWoodRule(),
+                                                 new BeechWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
@@ -68,7 +68,10 @@ namespace VoxelSeeds
         /// </summary>
         readonly static float[] scalingFactor = { 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f};
 
-        readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
+        //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
+        readonly static int[] growingSteps = { 0, 0, 2, 4, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+
+        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 1, 1 };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -115,6 +118,11 @@ namespace VoxelSeeds
         public static int GetGrowingSteps(VoxelType voxeltype)
         {
             return growingSteps[(int)voxeltype];
+        }
+
+        public static int GetGrowHeight(VoxelType voxeltype)
+        {
+            return growHeight[(int)voxeltype];
         }
     }
 
