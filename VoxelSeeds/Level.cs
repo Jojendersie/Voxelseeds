@@ -25,8 +25,6 @@ namespace VoxelSeeds
 
         public Level(VoxelRenderer voxelRenderer)
         {
-            _numRemainingSeeds = new int[Enum.GetValues(typeof(VoxelType)).Length];
-
             Initialize();
 
             voxelRenderer.Reset(GetMap(), new Vector3(1.0f, -2.0f, 1.0f));
@@ -44,7 +42,7 @@ namespace VoxelSeeds
         public bool IsLost() { return _currentParasiteMass >= _finalParasiteMass; }
 
         public Map GetMap() { return _automaton.Map; }
-        public void InsertSeed(int x, int y, int z, VoxelType type) { _automaton.InsertSeed(x, y, z, type); }
+        public void InsertSeed(int x, int y, int z, VoxelType type) { ++_currentBiomass;  _automaton.InsertSeed(x, y, z, type); }
         void SetInstanceUpdateMethod(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData) { _automaton.SetInstanceUpdateMethod(ref updateInstanceData); }
 
 
@@ -57,7 +55,7 @@ namespace VoxelSeeds
             _currentParasiteMass += newParasites;
 
             Debug.Assert( _currentBiomass >= 0 );
-            Debug.Assert(_currentParasiteMass >= 0);
+            Debug.Assert( _currentParasiteMass >= 0 );
         }
 
         protected Automaton _automaton;
@@ -66,7 +64,5 @@ namespace VoxelSeeds
         protected int _currentParasiteMass;
         protected int _finalParasiteMass;
         protected int _resources;
-
-        protected int[] _numRemainingSeeds;
     }
 }

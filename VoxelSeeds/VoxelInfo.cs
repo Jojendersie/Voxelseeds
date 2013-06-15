@@ -46,6 +46,7 @@ namespace VoxelSeeds
                                              { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
         readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper" };
         readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true };
+        readonly static bool[] biomass = { false, false, true, true, true, true, true, true, false, false, false, false, false, false };
         readonly static IVoxelRule[] rules = { null, null,
                                                  new TeakWoodRule(),
                                                  new PineWoodRule(),
@@ -98,6 +99,11 @@ namespace VoxelSeeds
         public static bool IsParasite(VoxelType voxeltype)
         {
             return parasite[(int)voxeltype];
+        }
+
+        public static bool IsBiomass(VoxelType voxeltype)
+        {
+            return biomass[(int)voxeltype];
         }
 
         public static IVoxelRule GetRule(VoxelType voxeltype)
