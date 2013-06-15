@@ -24,15 +24,15 @@ namespace VoxelSeeds
             _sizeZ = sizeZ;
         }
 
-        public int SizeX { get { return _sizeX; } }
-        public int SizeY { get { return _sizeY; } }
-        public int SizeZ { get { return _sizeZ; } }
+        public Int32 SizeX { get { return _sizeX; } }
+        public Int32 SizeY { get { return _sizeY; } }
+        public Int32 SizeZ { get { return _sizeZ; } }
 
         // The pure data of the whole volume
         byte[] _voxels;
-        readonly int _sizeX;
-        readonly int _sizeY;
-        readonly int _sizeZ;
+        readonly Int32 _sizeX;
+        readonly Int32 _sizeY;
+        readonly Int32 _sizeZ;
 
         /// <summary>
         /// Returns a unique number for each position.
@@ -42,12 +42,12 @@ namespace VoxelSeeds
         /// <param name="z">Voxel postion z</param>
         /// <returns>The PositionCode containting every information for the
         /// position.</returns>
-        public int EncodePosition(int x, int y, int z)
+        public Int32 EncodePosition(int x, int y, int z)
         {
             Debug.Assert((0 <= x) && (x < _sizeX));
             Debug.Assert((0 <= y) && (x < _sizeY));
             Debug.Assert((0 <= z) && (x < _sizeZ));
-            return x+SizeX*(y+SizeY*z);
+            return (Int32)(x+SizeX*(y+SizeY*z));
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace VoxelSeeds
         /// <param name="x">Output of position x</param>
         /// <param name="y">Output of position y</param>
         /// <param name="z">Output of position z</param>
-        public void DecodePosition(int positionCode, out int x, out int y, out int z)
+        public void DecodePosition(Int32 positionCode, out int x, out int y, out int z)
         {
             x = positionCode % SizeX;
             y = (positionCode / SizeX) % SizeY;
@@ -69,6 +69,11 @@ namespace VoxelSeeds
         public byte Sample(int x, int y, int z)
         {
             return _voxels[EncodePosition(x, y, z)];
+        }
+
+        public byte Sample(Int32 positionCode)
+        {
+            return _voxels[positionCode];
         }
     }
 }
