@@ -117,6 +117,7 @@
     <Compile Include="Rules\TeakWoodRule.cs" />
     <Compile Include="ScreenTriangleRenderer.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="ValueNoise.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />
     <Compile Include="VoxelRenderer.cs" />
