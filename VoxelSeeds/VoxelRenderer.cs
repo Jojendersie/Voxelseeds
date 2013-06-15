@@ -27,9 +27,10 @@ using SharpDX.Toolkit.Content;
         /// </summary>
         class VoxelTypeInstanceData
         {
-            public VoxelTypeInstanceData(GraphicsDevice graphicsDevice)
+            public VoxelTypeInstanceData(GraphicsDevice graphicsDevice, VoxelType voxel)
             {
-                InstanceBuffer = Buffer.Vertex.New<Int32>(graphicsDevice, MAX_NUM_VOXELS_PER_TYPE, SharpDX.Direct3D11.ResourceUsage.Dynamic);
+                Voxel = voxel;
+                InstanceBuffer = Buffer.Vertex.New<Int32>(graphicsDevice, TypeInformation.GetMaxNumberOfVoxels(voxel), SharpDX.Direct3D11.ResourceUsage.Dynamic);
                 InstanceDataRAM = new HashSet<Int32>();// System.Runtime.InteropServices.Marshal.AllocHGlobal(sizeof(UInt32) * MAX_NUM_VOXELS_PER_TYPE);
             }
             
@@ -58,10 +59,10 @@ using SharpDX.Toolkit.Content;
             /// used texture for this instance type
             /// </summary>
             public Texture2D Texture;
+
+            public VoxelType Voxel;
         }
         VoxelTypeInstanceData[] _voxelTypeRenderingData;
-
-        const int MAX_NUM_VOXELS_PER_TYPE = 131072;
 
         Matrix _translationMatrix = Matrix.Translation(Vector3.Zero);
 
@@ -139,9 +140,9 @@ using SharpDX.Toolkit.Content;
                 VertexBufferLayout.New(1, new VertexElement[]{new VertexElement("POSITION_INSTANCE", SharpDX.DXGI.Format.R32_SInt)}, 1));
                 
             // Create instance buffer for every VoxelInfo
-            _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length];
+            _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length-1];
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
-                _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice);
+                _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice, (VoxelType)(i+1));
             LoadTextures(contentManager);
 
 
@@ -241,7 +242,7 @@ using SharpDX.Toolkit.Content;
                     }
 
                     // add
-                    if(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].InstanceDataRAM.Count < MAX_NUM_VOXELS_PER_TYPE-1)
+                    if(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].InstanceDataRAM.Count < TypeInformation.GetMaxNumberOfVoxels(voxel)-1)
                         _voxelTypeRenderingData[GetRenderingDataIndex(voxel)].InstanceDataRAM.Add(posCode);
                 }
             }
@@ -296,6 +297,7 @@ using SharpDX.Toolkit.Content;
             // render all instances
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
             {
+                _voxelEffect.Parameters["ScalingFactor"].SetValue(TypeInformation.GetScalingFactor(_voxelTypeRenderingData[i].Voxel) * 0.5f);
                 _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[i].Texture);
                 _voxelEffect.CurrentTechnique.Passes[0].Apply();
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);

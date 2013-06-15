@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace VoxelSeeds
 {
@@ -11,14 +12,14 @@ namespace VoxelSeeds
     {
         class LivingVoxel
         {
-            public LivingVoxel(int x, int y, int z, int generation)
+            public LivingVoxel(int x, int y, int z, int generation, int resources, int ticks)
             {
                 X = x;
                 Y = y;
                 Z = z;
                 Generation = generation;
-                Resources = 0;
-                Ticks = 0;
+                Resources = resources;
+                Ticks = ticks;
             }
 
             public int X;
@@ -37,13 +38,29 @@ namespace VoxelSeeds
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
         }
 
+        private void InsertVoxel(Int32 positionCode, VoxelType type, int generation, bool living, int resources, int ticks)
+        {
+            var pos = _map.DecodePosition(positionCode);
+            if (_map.IsInside(pos.X, pos.Y, pos.Z))
+            {
+                _map.Set(positionCode, type, living);
+                if (living)
+                {
+                    if (_livingVoxels.ContainsKey(positionCode))
+                    {
+                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks);
+                    }
+                    else
+                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks));
+                }
+            }
+        }
+
         public void InsertSeed(int x, int y, int z, VoxelType type)
         {
-            LivingVoxel newVoxel = new LivingVoxel(x,y,z,0);
-
             Int32 pos = _map.EncodePosition(x, y, z);
-            _livingVoxels.Add(pos, newVoxel);
-            _map.Set(pos, type, true);
+
+            InsertVoxel(pos, type, 0, true, 0, 0);
         }
 
 
@@ -72,6 +89,8 @@ namespace VoxelSeeds
             List<Voxel> insertionList = new List<Voxel>();
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
             {
+                var po = _map.DecodePosition(vox.Key);
+                Debug.Assert( _map.IsInside(po.X, po.Y, po.Z) );
                 VoxelType old = _map.Get(vox.Key);
                 if (old != (int)VoxelType.EMPTY)
                 {
@@ -82,16 +101,7 @@ namespace VoxelSeeds
                 if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
                 else if (vox.Value.Type != VoxelType.EMPTY) ++newBiomass;
 
-                _map.Set(vox.Key, vox.Value.Type, vox.Value.Living);
-                if (vox.Value.Living)
-                {
-                    var pos = _map.DecodePosition(vox.Key);
-                    if (_livingVoxels.ContainsKey(vox.Key))
-                    {
-                        _livingVoxels[vox.Key] = new LivingVoxel(pos.X, pos.Y, pos.Z, vox.Value.Generation);
-                    } else
-                        _livingVoxels.Add(vox.Key, new LivingVoxel(pos.X, pos.Y, pos.Z, vox.Value.Generation));
-                }
+                InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks);
 
                 // Insert to instance data only if visible
                 if( !_map.IsOccluded(vox.Key) )
