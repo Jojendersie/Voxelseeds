@@ -23,6 +23,8 @@ namespace VoxelSeeds
         public Level()
         {
             _numRemainingSeeds = new int[Enum.GetValues(typeof(VoxelType)).Length];
+
+            Initialize();
         }
 
         /// <summary>
@@ -34,6 +36,8 @@ namespace VoxelSeeds
 
         public bool IsVictory()    { return _currentBiomass >= _targetBiomass; }
         public bool IsLost() { return _parasiteMass >= _finalParasiteMass; }
+
+        public Map GetMap() { return _automaton.Map; }
 
         public void Tick(Action<Voxel[], Voxel[]> updateInstanceData)
         {

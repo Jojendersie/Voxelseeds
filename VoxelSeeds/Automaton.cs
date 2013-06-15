@@ -40,6 +40,7 @@ namespace VoxelSeeds
 
         // All existing voxels in the current time step.
         Map _map;
+        public Map Map { get { return _map; } }
 
         // Extra data for all living voxels.
         // TODO: hashmap... ersparrt auch das living flag in der map
