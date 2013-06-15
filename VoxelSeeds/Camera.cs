@@ -7,6 +7,8 @@ namespace VoxelSeeds
 {
     class Camera
     {
+        private float _deltaX;
+        private float _deltaY;
         // matrices
         private Matrix _projectionMatrix;
         private Matrix _viewMatrix = Matrix.Identity;
@@ -27,6 +29,7 @@ namespace VoxelSeeds
 
         // movement factors variables
         private float _rotationSpeed = 0.01f;
+        private float _moveSpeed = 0.2f;
 
         // some intern controlling variables
         private double _phi = MathUtil.Pi * 0.25f;
@@ -175,7 +178,7 @@ namespace VoxelSeeds
             // compute side
             Vector3 sideVec = Vector3.Cross(upVec, _viewDirection);
 
-            Position = -_viewDirection * _zoom + Vector3.UnitY * 5;
+            Position = -_viewDirection * _zoom + Vector3.UnitY * 5 - sideVec *_deltaX - Vector3.Cross(upVec, sideVec) * _deltaY;
 
             // compute view matrix
             _viewMatrix = Matrix.LookAtLH(Position, Position + _viewDirection, upVec);
@@ -186,6 +189,12 @@ namespace VoxelSeeds
         /// </summary>
         protected void UpdateThetaPhiFromMouse(float passedTimeSinceLastFrame)
         {
+            if (_cameraMouseMoveOn)
+            {
+                _deltaX += (_currentMousePosition.X - _lastMousePosition.X) * _moveSpeed;
+                _deltaY += (_currentMousePosition.Y - _lastMousePosition.Y) * _moveSpeed;
+            }
+
             if (_cameraMouseRotateOn)
             {
                 // mouse movement
