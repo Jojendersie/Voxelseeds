@@ -22,6 +22,7 @@ namespace VoxelSeeds
         Camera _camera;
         Seedbar _seedbar;
         Level _currentLevel;
+        Background _background;
         double _cumulatedFrameTime;
 
         /// <summary>
@@ -101,6 +102,8 @@ namespace VoxelSeeds
 
             _currentLevel.SetInstanceUpdateMethod(_voxelRenderer.Update);
 
+            _background = new Background(GraphicsDevice);
+
             base.LoadContent();
         }
 
@@ -140,6 +143,8 @@ namespace VoxelSeeds
 
             // Handle base.Draw
             base.Draw(gameTime);
+
+            _background.Draw(_camera);
 
             _seedbar.Draw(_currentLevel, gameTime);
         }

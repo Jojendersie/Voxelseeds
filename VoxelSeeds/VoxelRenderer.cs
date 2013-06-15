@@ -315,6 +315,7 @@ using SharpDX.Toolkit.Content;
             _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].Texture);
             _voxelEffect.Parameters["Transparency"].SetValue(0.7f);
             _voxelEffect.Parameters["Ambient"].SetValue(2.0f);
+            _voxelEffect.Parameters["ScalingFactor"].SetValue(TypeInformation.GetScalingFactor(voxel) * 0.5f);
 
             _singleInstanceBuffer.SetDynamicData(graphicsDevice, (ptr) => System.Runtime.InteropServices.Marshal.Copy(
                                                                  new Int32[] { levelPositionCode }, 0, ptr, 1));
