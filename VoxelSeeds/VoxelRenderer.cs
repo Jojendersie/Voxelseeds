@@ -257,7 +257,7 @@ using SharpDX.Toolkit.Content;
 
             // add voxels
             foreach (Voxel voxel in addList)
-                _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Remove(voxel.PositionCode);
+                _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Add(voxel.PositionCode);
 
             // update gpu
             foreach (var data in _voxelTypeRenderingData)
@@ -288,6 +288,8 @@ using SharpDX.Toolkit.Content;
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);
             }
+
+            graphicsDevice.SetVertexBuffer<int>(1, (Buffer<int>)null);
         }
 
         public void DrawGhost(Camera camera, GraphicsDevice graphicsDevice, VoxelType voxel, Int32 levelPositionCode)

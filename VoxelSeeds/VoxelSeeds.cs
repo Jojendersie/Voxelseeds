@@ -8,6 +8,7 @@ namespace VoxelSeeds
     // Use this namespace here in case we need to use Direct3D11 namespace as well, as this
     // namespace will override the Direct3D11.
     using SharpDX.Toolkit.Graphics;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Simple MiniCube application using SharpDX.Toolkit.
@@ -83,6 +84,7 @@ namespace VoxelSeeds
             base.LoadContent();
         }
 
+        bool was = false;
         protected override void Update(GameTime gameTime)
         {
             // Simulate level if 0.25f seconds passed.
