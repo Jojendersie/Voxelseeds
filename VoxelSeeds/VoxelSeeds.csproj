@@ -98,7 +98,8 @@
     <Compile Include="Level.cs" />
     <Compile Include="Level1.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="Rules.cs" />
+    <Compile Include="Rules\PineWoodRule.cs" />
+    <Compile Include="Rules\TeakWoodRule.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />

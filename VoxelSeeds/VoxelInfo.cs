@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VoxelSeeds.Rules;
 
 namespace VoxelSeeds
 {
@@ -47,7 +48,7 @@ namespace VoxelSeeds
         readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true };
         readonly static IVoxelRule[] rules = { null, null,
                                                  new TeakWoodRule(),
-                                                 new TeakWoodRule(),
+                                                 new PineWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
@@ -66,6 +67,8 @@ namespace VoxelSeeds
         /// A scaling factor for voxels it is used to display bugs and beetles smaller
         /// </summary>
         readonly static float[] scalingFactor = { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f };
+
+        readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -97,6 +100,21 @@ namespace VoxelSeeds
         public static IVoxelRule GetRule(VoxelType voxeltype)
         {
             return rules[(int)voxeltype];
+        }
+
+        public static int GetMaxNumberOfVoxels(VoxelType voxeltype)
+        {
+            return maxNumberOfVoxels[(int)voxeltype];
+        }
+
+        public static float GetScalingFactor(VoxelType voxeltype)
+        {
+            return scalingFactor[(int)voxeltype];
+        }
+
+        public static int GetGrowingSteps(VoxelType voxeltype)
+        {
+            return growingSteps[(int)voxeltype];
         }
     }
 
