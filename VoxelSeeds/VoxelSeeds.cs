@@ -25,8 +25,9 @@ namespace VoxelSeeds
         Background _background;
         double _cumulatedFrameTime;
 
-        private SpriteBatch _spriteBatch;
-        private SpriteFont _font;
+        SpriteBatch _spriteBatch;
+        SpriteFont _largeFont;
+        Texture2D _pixTexture;
 
         /// <summary>
         /// current picked pos
@@ -107,7 +108,8 @@ namespace VoxelSeeds
             _background = new Background(GraphicsDevice);
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            _font = Content.Load<SpriteFont>("Arial16.tkfnt");
+            _largeFont = Content.Load<SpriteFont>("largefont.tkfnt");
+            _pixTexture = Content.Load<Texture2D>("pixel.png");
 
             base.LoadContent();
         }
@@ -186,26 +188,37 @@ namespace VoxelSeeds
             if(_gamePaused)
             {
                 _spriteBatch.Begin();
+                string text1, text2;
+                Vector2 stringSize1, stringSize2;
+                Vector2 textPos1, textPos2;
+                Color color1, color2;
                 if (_currentLevel.IsLost())
                 {
-                    string text = "You Lost against the Rottenness!";
-                    Vector2 stringSize = _font.MeasureString(text);
-                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height - stringSize.Y) - stringSize) * 0.5f, Color.DarkSeaGreen);
-                    text = "Press Enter to restart";
-                    stringSize = _font.MeasureString(text);
-                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height + stringSize.Y) - stringSize) * 0.5f, Color.Black);
-                   
+                    text1 = "You Lost against the Rottenness!";
+                    stringSize1 = _largeFont.MeasureString(text1);
+                    text2 = "Press Enter to restart";
+                    stringSize2 = _largeFont.MeasureString(text2);
+                    textPos1 = (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height - stringSize1.Y) - stringSize1) * 0.5f;
+                    textPos2 = (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height + stringSize2.Y) - stringSize2) * 0.5f;
+                    color1 = Color.DarkGreen;
+                    color2 = Color.Black;
                 }
-                else if (_currentLevel.IsVictory())
+                else// if (_currentLevel.IsVictory())
                 {
-                    string text = "Your seeds prevailed against the Rotteness!";
-                    Vector2 stringSize = _font.MeasureString(text);
-                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height - stringSize.Y) - stringSize) * 0.5f, Color.DarkOrange);
-                    text = "Press Enter to continue to the next level";
-                    stringSize = _font.MeasureString(text);
-                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height + stringSize.Y) - stringSize) * 0.5f, Color.Black);
-
+                    text1 = "Your seeds prevailed against the Rotteness!";
+                    stringSize1 = _largeFont.MeasureString(text1);
+                    text2 = "Press Enter to continue to the next level";
+                    stringSize2 = _largeFont.MeasureString(text2);
+                    textPos1 = (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height - stringSize1.Y) - stringSize1) * 0.5f;
+                    textPos2 = (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height + stringSize2.Y) - stringSize2) * 0.5f;
+                    color1 = Color.DeepSkyBlue;
+                    color2 = Color.Black;
                 }
+
+                _spriteBatch.Draw(_pixTexture, new DrawingRectangle((int)System.Math.Min(textPos1.X, textPos2.X) - 25, (int)textPos1.Y - 25,
+                (int)System.Math.Max(stringSize1.X, stringSize2.X) + 50, (int)(stringSize1.Y + stringSize2.Y) + 50), Color.White * 0.6f);
+                _spriteBatch.DrawString(_largeFont, text1, textPos1, color1);
+                _spriteBatch.DrawString(_largeFont, text2, textPos2, color2);
                 _spriteBatch.End();
             }
         }

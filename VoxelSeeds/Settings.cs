@@ -36,18 +36,8 @@ namespace VoxelSeeds
         /// </summary>
         private void ChooseStandardResolution()
         {
-            ResolutionX = MINIMUM_SCREEN_WIDTH;
-            ResolutionY = MINIMUM_SCREEN_HEIGHT;
-            /* TODO
-            foreach (var mode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes)
-            {
-                if (mode.Format == SurfaceFormat.Color &&
-                    resolutionX <= mode.Width && resolutionY <= mode.Height)
-                {
-                    resolutionX = mode.Width;
-                    resolutionY = mode.Height;
-                }
-            }*/
+            ResolutionX = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
+            ResolutionY = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
         }
 
         /// <summary>
@@ -96,6 +86,13 @@ namespace VoxelSeeds
                 catch
                 {
                 }
+            }
+
+            // override fullscreen resolutions
+            if (fullscreen)
+            {
+                ResolutionX = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width;
+                ResolutionY = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
             }
 
             if(dirty)
