@@ -59,6 +59,7 @@ namespace VoxelSeeds
             _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.5f, 1.0f, 1000.0f, windowControl);
         }
 
+
         protected override void LoadContent()
         {
             _map = new Map(100, 50, 100, LevelType.PLAIN, 34857024);
@@ -67,8 +68,18 @@ namespace VoxelSeeds
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
 
-			_voxelRenderer.Reset(_map, new Vector3(1.0f, -2.0f, 1.0f));       
-            
+			_voxelRenderer.Reset(_map, new Vector3(1.0f, -2.0f, 1.0f));
+
+            // testcode for culling
+         /*   var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
+            windowControl.MouseClick += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+            {
+                    var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
+                    Int3 pickedPos;
+                    bool picked = _map.PickPosition(ray, out pickedPos);
+                    System.Console.WriteLine(picked);
+                    System.Console.WriteLine(pickedPos);
+            };*/
             base.LoadContent();
         }
 

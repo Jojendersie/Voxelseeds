@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using SharpDX;
 
 namespace VoxelSeeds
 {
@@ -129,6 +130,49 @@ namespace VoxelSeeds
             return (_voxels[positionCode] & 0x80) == 0x80;
         }
 
+        public bool PickPosition(Ray pickingRay, out Int3 pickedPosition)
+        {
+            // context knowledge:
+            // - map is centered on x and z
+            // - cubes size is 0.5 lin every direction               
+
+            Vector3 currentPosition = pickingRay.Position;
+            currentPosition.X += (float)SizeX / 2;
+            currentPosition.Z += (float)SizeZ / 2;
+
+            float startOffset = Math.Max(Math.Max((MathUtil.Clamp(currentPosition.X, 0.5f, SizeX - 0.5f) - currentPosition.X) / pickingRay.Direction.X,
+                                                  (MathUtil.Clamp(currentPosition.Y, 0.5f, SizeY - 0.5f) - currentPosition.Y) / pickingRay.Direction.Y),
+                                                  (MathUtil.Clamp(currentPosition.Z, 0.5f, SizeZ - 0.5f) - currentPosition.Z) / pickingRay.Direction.Z);
+            if (startOffset > 0.000001f)
+                startOffset += 0.01f; 
+            currentPosition += pickingRay.Direction * startOffset;
+
+            Vector3 step = pickingRay.Direction * 0.1f;
+
+
+            pickedPosition = new Int3((int)(currentPosition.X + 0.5f),
+                                     (int)(currentPosition.Y + 0.5f),
+                                     (int)(currentPosition.Z + 0.5f));
+
+            while (currentPosition.X > 0.5f &&
+                  currentPosition.Y > 0.5f &&
+                  currentPosition.Z > 0.5f &&
+                  currentPosition.X < SizeX - 0.5f &&
+                  currentPosition.Y < SizeY - 0.5f &&
+                  currentPosition.Z < SizeZ - 0.5f)
+            {
+                Int3 currentVoxel = new Int3((int)(currentPosition.X + 0.5f),
+                                            (int)(currentPosition.Y + 0.5f),
+                                            (int)(currentPosition.Z + 0.5f));
+                if (Get(currentVoxel) != VoxelType.EMPTY)
+                    return true;
+
+                pickedPosition = currentVoxel;
+                currentPosition += step;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Create a relatively flat ground.
