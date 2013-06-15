@@ -89,6 +89,39 @@ namespace VoxelSeeds
             return _voxels[positionCode];
         }
 
+        public VoxelType Get(Int32 positionCode)
+        {
+            return (VoxelType)(_voxels[positionCode] & 0x7f);
+        }
+
+        public void Set(Int32 positionCode, VoxelType type, bool living)
+        {
+            _voxels[positionCode] = (byte)((living ? 0x80 : 0) | (int)type);
+        }
+
+        /// <summary>
+        /// Test if a voxel has 6 filled neighbours.
+        /// </summary>
+        /// <param name="positionCode"></param>
+        /// <returns>True if voxel is not visible.</returns>
+        public bool IsOccluded(Int32 positionCode)
+        {
+            return (_voxels[positionCode - 1] != 0) && (_voxels[positionCode + 1] != 0)
+                && (_voxels[positionCode - SizeX] != 0) && (_voxels[positionCode + SizeX] != 0)
+                && (_voxels[positionCode - SizeX * SizeY] != 0) && (_voxels[positionCode + SizeX * SizeY] != 0);
+        }
+
+        /// <returns>True if voxel is not set.</returns>
+        public bool IsEmpty(Int32 positionCode)
+        {
+            return _voxels[positionCode] == 0;
+        }
+
+        public bool IsLiving(Int32 positionCode)
+        {
+            return (_voxels[positionCode] & 0x80) == 0x80;
+        }
+
 
         /// <summary>
         /// Create a relatively flat ground.

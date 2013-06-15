@@ -63,11 +63,12 @@ namespace VoxelSeeds
             _map = new Map(100, 50, 100, LevelType.PLAIN, 34857024);
 
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
-            _voxelRenderer.Reset(_map);
-
-            _seedbar = new Seedbar();
-            base.LoadContent();
+            _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
+
+			_voxelRenderer.Reset(_map);       
+            
+            base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
