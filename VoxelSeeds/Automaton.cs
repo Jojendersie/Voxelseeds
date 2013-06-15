@@ -60,20 +60,26 @@ namespace VoxelSeeds
                         func(x, y, z);
         }
 
-        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, ref Action<Voxel[],Voxel[]> updateInstanceData)
+        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, ref Action<Voxel[], Voxel[]> updateInstanceData, out int newBiomass, out int newParasites)
         {
+            newBiomass = 0;
+            newParasites = 0;
+
             List<Voxel> deleteList = new List<Voxel>();
             List<Voxel> insertionList = new List<Voxel>();
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
             {
-                byte old = (byte)_map.Get(vox.Key);
+                VoxelType old = _map.Get(vox.Key);
                 if (old != (int)VoxelType.EMPTY)
                 {
+                    if (TypeInformation.IsParasite(old)) --newParasites;
                     // Delete the old one and create a new one (outside branch).
-                    deleteList.Add(new Voxel(vox.Key, (VoxelType)old));
+                    deleteList.Add(new Voxel(vox.Key, old));
                 }
+                if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
+                else ++newBiomass;
                 _map.Set(vox.Key, vox.Value.Type, vox.Value.Living);
-                // Insert only if visible
+                // Insert to instance data only if visible
                 if( _map.IsOccluded(vox.Key) )
                     insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
                 // The map set can cause neighboured voxels to be occluded
@@ -88,12 +94,13 @@ namespace VoxelSeeds
             }
         }
 
+
         /// <summary>
         /// Simulates one step of the automaton.
         /// </summary>
         /// <param name="updateInstanceData">A function which takes an incremental
         /// update for all changed voxels. The first param </param>
-        public void Tick(ref Action<Voxel[],Voxel[]> updateInstanceData)
+        public void Tick(ref Action<Voxel[],Voxel[]> updateInstanceData, out int newBiomass, out int newParasites)
         {
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
@@ -137,7 +144,7 @@ namespace VoxelSeeds
                     }
                 }
             );
-            update(ref results, ref updateInstanceData);
+            update(ref results, ref updateInstanceData, out newBiomass, out newParasites);
         }
     }
 }

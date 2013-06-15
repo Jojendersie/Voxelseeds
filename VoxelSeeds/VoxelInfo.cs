@@ -44,6 +44,7 @@ namespace VoxelSeeds
                                              { "White Rot", "Noble Rot" },
                                              { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
         readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper" };
+        readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -67,6 +68,10 @@ namespace VoxelSeeds
             return prices[(int)voxeltype];
         }
 
+        public static bool IsParasite(VoxelType voxeltype)
+        {
+            return parasite[(int)voxeltype];
+        }
     }
 
     class VoxelInfo
