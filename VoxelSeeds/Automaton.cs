@@ -48,7 +48,25 @@ namespace VoxelSeeds
             List<Voxel> insertionList = new List<Voxel>();
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
             {
-                //_map.Sample(
+                byte old = (byte)_map.Get(vox.Key);
+                if (old != (int)VoxelType.EMPTY)
+                {
+                    // Delete the old one and create a new one (outside branch).
+                    deleteList.Add(new Voxel(vox.Key, (VoxelType)old));
+                }
+                _map.Set(vox.Key, vox.Value.Type, vox.Value.Living);
+                // Insert only if visible
+                if( _map.IsOccluded(vox.Key) )
+                    insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
+                // The map set can cause neighboured voxels to be occluded
+                // if so delete that from GPU.
+                Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) deleteList.Add(new Voxel(pos, _map.Get(pos))); };
+                checkAndRemoveNeighbour(vox.Key - 1);
+                checkAndRemoveNeighbour(vox.Key + 1);
+                checkAndRemoveNeighbour(vox.Key - _map.SizeX);
+                checkAndRemoveNeighbour(vox.Key + _map.SizeX);
+                checkAndRemoveNeighbour(vox.Key - _map.SizeX * _map.SizeY);
+                checkAndRemoveNeighbour(vox.Key + _map.SizeX * _map.SizeY);
             }
         }
 
@@ -68,9 +86,10 @@ namespace VoxelSeeds
                     VoxelInfo[,,] localFrame = new VoxelInfo[3, 3, 3];
                     IterateNeighbours( (x, y, z) =>
                     {
-                        byte voxel = _map.Sample(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
+                        Int32 pos = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
+                        byte voxel = _map.Sample(pos);
                         // Living?
-                        if ((0x80 & voxel) == 0x80)
+                        if (_map.IsLiving(pos))
                         {
                             // Yes: query more information from the dictinary
                             LivingVoxel VoxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
