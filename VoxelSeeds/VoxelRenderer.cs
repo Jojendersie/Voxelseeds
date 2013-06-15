@@ -12,6 +12,7 @@ namespace VoxelSeeds
     // Use this namespace here in case we need to use Direct3D11 namespace as well, as this
     // namespace will override the Direct3D11.
     using SharpDX.Toolkit.Graphics;
+using SharpDX.Toolkit.Content;
 
     class VoxelRenderer
     {
@@ -52,6 +53,11 @@ namespace VoxelSeeds
             /// consisting of UInt32
             /// </summary>
             public HashSet<Int32> InstanceDataRAM;
+
+            /// <summary>
+            /// used texture for this instance type
+            /// </summary>
+            public Texture2D Texture;
         }
         VoxelTypeInstanceData[] _voxelTypeRenderingData;
 
@@ -64,9 +70,10 @@ namespace VoxelSeeds
         /// </summary>
         Effect _voxelEffect;
 
-
         RasterizerState _rasterizerState;
         DepthStencilState _depthStencilStateState;
+        SamplerState _pointSamplerState;
+        BlendState _blendState;
 
         struct CubeVertex
         {
@@ -75,7 +82,7 @@ namespace VoxelSeeds
             public Vector2 Texcoord;
         };
 
-        public VoxelRenderer(GraphicsDevice graphicsDevice)
+        public VoxelRenderer(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
             _cubeVertexBuffer = Buffer.Vertex.New(
                 graphicsDevice,
@@ -124,13 +131,16 @@ namespace VoxelSeeds
             _vertexInputLayout = VertexInputLayout.New(
                 VertexBufferLayout.New(0, new VertexElement[]{new VertexElement("POSITION_CUBE", 0, SharpDX.DXGI.Format.R32G32B32_Float, 0),
                                                               new VertexElement("NORMAL", 0, SharpDX.DXGI.Format.R32G32B32_Float, sizeof(float) * 3),
-                                                              new VertexElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, sizeof(float) * 3)}, 0),
+                                                              new VertexElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, sizeof(float) * 6)}, 0),
                 VertexBufferLayout.New(1, new VertexElement[]{new VertexElement("POSITION_INSTANCE", SharpDX.DXGI.Format.R32_SInt)}, 1));
                 
             // Create instance buffer for every VoxelInfo
             _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length];
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
                 _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice);
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("teak.png");
 
             // load shader
             EffectCompilerFlags compilerFlags = EffectCompilerFlags.None;
@@ -153,6 +163,17 @@ namespace VoxelSeeds
             var depthStencilStateDesc = SharpDX.Direct3D11.DepthStencilStateDescription.Default();
             depthStencilStateDesc.IsDepthEnabled = true;
             _depthStencilStateState = DepthStencilState.New(graphicsDevice, "NormalZBufferUse", depthStencilStateDesc);
+            
+            var samplerStateDesc = SharpDX.Direct3D11.SamplerStateDescription.Default();
+            samplerStateDesc.AddressV = SharpDX.Direct3D11.TextureAddressMode.Border;
+            samplerStateDesc.AddressU = SharpDX.Direct3D11.TextureAddressMode.Border;
+            samplerStateDesc.Filter = SharpDX.Direct3D11.Filter.MinMagMipPoint;
+            samplerStateDesc.BorderColor = Color4.Black;
+            _pointSamplerState = SamplerState.New(graphicsDevice, "PointSampler", samplerStateDesc);
+            _voxelEffect.Parameters["PointSampler"].SetResource(_pointSamplerState);
+
+            var blendStateDesc = SharpDX.Direct3D11.BlendStateDescription.Default();
+            _blendState = BlendState.New(graphicsDevice, "Opaque", blendStateDesc);
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
@@ -214,8 +235,19 @@ namespace VoxelSeeds
         /// <summary>
         /// updates instancebuffer for the current "voxelsituation" (what ever)
         /// </summary>
-        public void Update()
+        public void Update(IEnumerable<Voxel> removeList, IEnumerable<Voxel> addList)
         {
+            // remove voxels
+            foreach (Voxel voxel in removeList)
+                _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Remove(voxel.PositionCode);
+
+            // add voxels
+            foreach (Voxel voxel in addList)
+                _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Remove(voxel.PositionCode);
+
+            // update gpu
+            foreach (var data in _voxelTypeRenderingData)
+                data.UpdateGPUInstanceBuffer();
         }
 
         /// <summary>
@@ -227,15 +259,17 @@ namespace VoxelSeeds
 
             graphicsDevice.SetRasterizerState(_rasterizerState);
             graphicsDevice.SetDepthStencilState(_depthStencilStateState);
+            graphicsDevice.SetBlendState(_blendState);
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
             graphicsDevice.SetVertexInputLayout(_vertexInputLayout);
 
             // render all instances
-            _voxelEffect.CurrentTechnique.Passes[0].Apply();
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
             {
+                _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[i].Texture);
+                _voxelEffect.CurrentTechnique.Passes[0].Apply();
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);
             }

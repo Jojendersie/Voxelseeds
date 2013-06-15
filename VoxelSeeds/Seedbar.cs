@@ -31,11 +31,13 @@ namespace VoxelSeeds
         private Texture2D helix;
         private Texture2D topbar;
         private Texture2D pixel;
+        private Texture2D frame;
         private int selected = 0;
         private bool picking;
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
         private int windowWidth;
+        private float[] tooltipCounter = new float[10];
 
         private const int barLength = 10;
 
@@ -61,8 +63,8 @@ namespace VoxelSeeds
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
             helix = contentManager.Load<Texture2D>("balls.dds");
-            topbar = contentManager.Load<Texture2D>("dummy1.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
+            frame = contentManager.Load<Texture2D>("frame.png");
 
             for (int i = 0; i < barLength; i++)
             {
@@ -89,43 +91,55 @@ namespace VoxelSeeds
             }  
         }
 
-        public void Draw(Level currentlevel)
+        public void Draw(Level currentlevel, GameTime gameTime)
         {
             int progress = windowHeigth * currentlevel.CurrentBiomass/currentlevel.TargetBiomass;
             int evilProgress = windowHeigth * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
 
             spriteBatch.Begin();
-
-            spriteBatch.Draw(topbar, new DrawingRectangle(0, 0, windowWidth - 60, 42), Color.White);
-            if (selected > 0) spriteBatch.DrawString(font, selected.ToString(), new Vector2(200, 100), Color.White);
-
+            
             //draw Progress good/evil
             spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth, windowHeigth, 30, progress), null, Color.Blue, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
             spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth-30, windowHeigth, 30, evilProgress), null, Color.Red, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
             for (int i = 0; i < barLength; i++)
             {
+                spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 82, 32), Color.Black);
+                //draw frame
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 92, 42), Color.White);
                 //draw curency
                 spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 37, (int)seeds[i]._position.Y+5, 10, 20), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 45, seeds[i]._position.Y+5), Color.White); 
                 //draw Icons
-                spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);
+                spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);   
             }
+
+            if (selected > 0)
+            {
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[selected - 1]._position.X - 5, (int)seeds[selected - 1]._position.Y - 5, 92, 42), Color.Gold);
+            }
+
             //draw Tooltip
             for (int i = 0; i < barLength; i++)
             {
                 if (MouseOver(seeds[i]._position, 83, 32))
                 {
-                    int corrector = 0;
-                    if (mousePosition.X+160>windowWidth)corrector = mousePosition.X+160-windowWidth;
+                    tooltipCounter[i] += gameTime.ElapsedGameTime.Milliseconds;
 
-                    spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10-corrector, mousePosition.Y + 10, 150, 183), new Color(0.7f,0.7f,0.7f,0.5f));
-                    spriteBatch.DrawString(font,  TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X+50-corrector, mousePosition.Y+15), Color.Black);
-                    spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 40), Color.DarkBlue);
-                    spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 65), Color.DarkBlue);
-                    spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 115), Color.Crimson);
-                    spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 140), Color.Crimson);
+                    if (tooltipCounter[i] >= 300)
+                    {
+                        int corrector = 0;
+                        if (mousePosition.X + 160 > windowWidth) corrector = mousePosition.X + 160 - windowWidth;
+
+                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 150, 183), new Color(0.7f, 0.7f, 0.7f, 0.5f));
+                        spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 50 - corrector, mousePosition.Y + 15), Color.Black);
+                        spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.DarkBlue);
+                        spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 65), Color.DarkBlue);
+                        spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 115), Color.Crimson);
+                        spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 140), Color.Crimson);
+                    }
                 }
+                else tooltipCounter[i] = 0;
             }
             spriteBatch.End();
         }
