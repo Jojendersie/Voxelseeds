@@ -1,20 +1,23 @@
 cbuffer GlobalMapInfo : register(b0)
 {
 	int3 WorldSize;
+	float3 LightDirection;
 }
 
 matrix WorldViewProjection;
 
-
 struct VS_INPUT
 {
     float3 Position_Cube : POSITION_CUBE;
+	float3 Normal : NORMAL;
+	float2 Texcoord : TEXCOORD;
     int Position_Instance : POSITION_INSTANCE;
 };
 
 struct PS_INPUT
 {
     float4 Position : SV_POSITION;
+	float3 Normal : NORMAL;
 };
 
 float3 DecodePosition(int code)
@@ -34,12 +37,14 @@ PS_INPUT VS(VS_INPUT input)
 	worldPos += DecodePosition(input.Position_Instance);
     output.Position = mul(float4(worldPos, 1), WorldViewProjection);
     
+	output.Normal = input.Normal;
+
     return output;
 }
 
 float4 PS(PS_INPUT input) : SV_TARGET
 {
-    return float4(1,0,1,1);
+    return float4(abs(input.Normal), 1);
 }
 
 technique basic

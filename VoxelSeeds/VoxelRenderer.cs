@@ -18,7 +18,7 @@ namespace VoxelSeeds
         /// <summary>
         /// vertex buffer for a single cube (this one will be instanced)
         /// </summary>
-        Buffer<Vector3> _cubeVertexBuffer;
+        Buffer<CubeVertex> _cubeVertexBuffer;
         VertexInputLayout _vertexInputLayout;
 
         /// <summary>
@@ -64,53 +64,67 @@ namespace VoxelSeeds
         /// </summary>
         Effect _voxelEffect;
 
+
+        RasterizerState _rasterizerState;
+
+        struct CubeVertex
+        {
+            public Vector3 Position;
+            public Vector3 Normal;
+            public Vector2 Texcoord;
+        };
+
         public VoxelRenderer(GraphicsDevice graphicsDevice)
         {
             _cubeVertexBuffer = Buffer.Vertex.New(
                 graphicsDevice,
                 new[]
                     {
-                        new Vector3(-0.5f, -0.5f, -0.5f), // Front
-                        new Vector3(-0.5f, 0.5f, -0.5f),
-                        new Vector3(0.5f, 0.5f, -0.5f),
-                        new Vector3(-0.5f, -0.5f, -0.5f),
-                        new Vector3(0.5f, 0.5f, -0.5f),
-                        new Vector3(0.5f, -0.5f, -0.5f),
-                        new Vector3(-0.5f, -0.5f, 0.5f), // BACK
-                        new Vector3(0.5f, 0.5f, 0.5f),
-                        new Vector3(-0.5f, 0.5f, 0.5f),
-                        new Vector3(-0.5f, -0.5f, 0.5f),
-                        new Vector3(0.5f, -0.5f, 0.5f),
-                        new Vector3(0.5f, 0.5f, 0.5f),
-                        new Vector3(-0.5f, 0.5f, -0.5f), // Top
-                        new Vector3(-0.5f, 0.5f, 0.5f),
-                        new Vector3(0.5f, 0.5f, 0.5f),
-                        new Vector3(-0.5f, 0.5f, -0.5f),
-                        new Vector3(0.5f, 0.5f, 0.5f),
-                        new Vector3(0.5f, 0.5f, -0.5f),
-                        new Vector3(-0.5f, -0.5f, -0.5f), // Bottom
-                        new Vector3(0.5f, -0.5f, 0.5f),
-                        new Vector3(-0.5f, -0.5f, 0.5f),
-                        new Vector3(-0.5f, -0.5f, -0.5f),
-                        new Vector3(0.5f, -0.5f, -0.5f),
-                        new Vector3(0.5f, -0.5f, 0.5f),
-                        new Vector3(-0.5f, -0.5f, -0.5f), // Left
-                        new Vector3(-0.5f, -0.5f, 0.5f),
-                        new Vector3(-0.5f, 0.5f, 0.5f),
-                        new Vector3(-0.5f, -0.5f, -0.5f),
-                        new Vector3(-0.5f, 0.5f, 0.5f),
-                        new Vector3(-0.5f, 0.5f, -0.5f),
-                        new Vector3(0.5f, -0.5f, -0.5f), // Right
-                        new Vector3(0.5f, 0.5f, 0.5f),
-                        new Vector3(0.5f, -0.5f, 0.5f),
-                        new Vector3(0.5f, -0.5f, -0.5f),
-                        new Vector3(0.5f, 0.5f, -0.5f),
-                        new Vector3(0.5f, 0.5f, 0.5f)
+                        // 3D coordinates              UV Texture coordinates
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f, -1.0f), Normal = -Vector3.UnitZ, Texcoord = new Vector2(0.0f, 1.0f) }, // Front
+                        new CubeVertex() { Position = new Vector3(-1.0f,  1.0f, -1.0f), Normal = -Vector3.UnitZ, Texcoord = new Vector2(0.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f, -1.0f ), Normal = -Vector3.UnitZ, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f, -1.0f), Normal = -Vector3.UnitZ, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f, -1.0f ), Normal = -Vector3.UnitZ, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, -1.0f, -1.0f ), Normal = -Vector3.UnitZ, Texcoord = new Vector2(1.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f,  1.0f), Normal = Vector3.UnitZ, Texcoord = new Vector2(1.0f, 0.0f) }, // BACK
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f,  1.0f ), Normal = Vector3.UnitZ, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,  1.0f,  1.0f), Normal = Vector3.UnitZ, Texcoord = new Vector2(1.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f,  1.0f), Normal = Vector3.UnitZ, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, -1.0f,  1.0f ), Normal = Vector3.UnitZ, Texcoord = new Vector2(0.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f,  1.0f ), Normal = Vector3.UnitZ, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, 1.0f, -1.0f ), Normal = Vector3.UnitY, Texcoord = new Vector2(0.0f, 1.0f) }, // Top
+                        new CubeVertex() { Position = new Vector3(-1.0f, 1.0f,  1.0f ), Normal = Vector3.UnitY, Texcoord = new Vector2(0.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, 1.0f,  1.0f  ), Normal = Vector3.UnitY, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, 1.0f, -1.0f ), Normal = Vector3.UnitY, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, 1.0f,  1.0f  ), Normal = Vector3.UnitY, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, 1.0f, -1.0f  ), Normal = Vector3.UnitY, Texcoord = new Vector2(1.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,-1.0f, -1.0f ), Normal = -Vector3.UnitY, Texcoord = new Vector2(1.0f, 0.0f) }, // Bottom
+                        new CubeVertex() { Position = new Vector3(1.0f,-1.0f,  1.0f  ), Normal = -Vector3.UnitY, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,-1.0f,  1.0f ), Normal = -Vector3.UnitY, Texcoord = new Vector2(1.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,-1.0f, -1.0f ), Normal = -Vector3.UnitY, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,-1.0f, -1.0f  ), Normal = -Vector3.UnitY, Texcoord = new Vector2(0.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,-1.0f,  1.0f  ), Normal = -Vector3.UnitY, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f, -1.0f), Normal = -Vector3.UnitX, Texcoord = new Vector2(0.0f, 1.0f) }, // Left
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f,  1.0f), Normal = -Vector3.UnitX, Texcoord = new Vector2(0.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,  1.0f,  1.0f), Normal = -Vector3.UnitX, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f, -1.0f, -1.0f), Normal = -Vector3.UnitX, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,  1.0f,  1.0f), Normal = -Vector3.UnitX, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(-1.0f,  1.0f, -1.0f), Normal = -Vector3.UnitX, Texcoord = new Vector2(1.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, -1.0f, -1.0f ), Normal = Vector3.UnitX, Texcoord = new Vector2(1.0f, 0.0f) }, // Right
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f,  1.0f ), Normal = Vector3.UnitX, Texcoord = new Vector2(0.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, -1.0f,  1.0f ), Normal = Vector3.UnitX, Texcoord = new Vector2(1.0f, 1.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f, -1.0f, -1.0f ), Normal = Vector3.UnitX, Texcoord = new Vector2(1.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f, -1.0f ), Normal = Vector3.UnitX, Texcoord = new Vector2(0.0f, 0.0f) },
+                        new CubeVertex() { Position = new Vector3(1.0f,  1.0f,  1.0f ), Normal = Vector3.UnitX, Texcoord = new Vector2(0.0f, 1.0f) }
                     }, SharpDX.Direct3D11.ResourceUsage.Immutable);
 
             // Create an input layout from the vertices
-            _vertexInputLayout = VertexInputLayout.New(VertexBufferLayout.New(0, new VertexElement[]{new VertexElement("POSITION_CUBE", SharpDX.DXGI.Format.R32G32B32_Float)}, 0),
-                                                       VertexBufferLayout.New(1, new VertexElement[]{new VertexElement("POSITION_INSTANCE", SharpDX.DXGI.Format.R32_SInt)}, 1));
+            _vertexInputLayout = VertexInputLayout.New(
+                VertexBufferLayout.New(0, new VertexElement[]{new VertexElement("POSITION_CUBE", 0, SharpDX.DXGI.Format.R32G32B32_Float, 0),
+                                                              new VertexElement("NORMAL", 0, SharpDX.DXGI.Format.R32G32B32_Float, sizeof(float) * 3),
+                                                              new VertexElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, sizeof(float) * 3)}, 0),
+                VertexBufferLayout.New(1, new VertexElement[]{new VertexElement("POSITION_INSTANCE", SharpDX.DXGI.Format.R32_SInt)}, 1));
                 
             // Create instance buffer for every VoxelInfo
             _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length];
@@ -129,6 +143,11 @@ namespace VoxelSeeds
                 System.Diagnostics.Debugger.Break();
             }
             _voxelEffect = new SharpDX.Toolkit.Graphics.Effect(graphicsDevice, voxelShaderCompileResult.EffectData);
+
+            // setup culling
+            var rasterizerStateDesc = SharpDX.Direct3D11.RasterizerStateDescription.Default();
+            rasterizerStateDesc.CullMode = SharpDX.Direct3D11.CullMode.None;
+            _rasterizerState = RasterizerState.New(graphicsDevice, "CullModeCW", rasterizerStateDesc);
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
@@ -197,6 +216,8 @@ namespace VoxelSeeds
         public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+
+            graphicsDevice.SetRasterizerState(_rasterizerState);
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
