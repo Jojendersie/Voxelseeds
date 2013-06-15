@@ -126,6 +126,16 @@ namespace VoxelSeeds
         }
     }
 
+    enum Direction
+    {
+        LEFT,
+        RIGHT,
+        FOR,
+        BACK,
+        UP,
+        DOWN,
+    };
+
     class VoxelInfo
     {
         /// <summary>
@@ -133,7 +143,7 @@ namespace VoxelSeeds
         /// </summary>
         /// <param name="type">A type of the enumeration type. Do not used more than
         /// 128 different types in the enumeration.</param>
-        public VoxelInfo(VoxelType type, bool living = false, int generation = 0, int resources = 0, int ticks = 0)
+        public VoxelInfo(VoxelType type, bool living = false, int generation = 0, int resources = 0, int ticks = 0, Direction from = Direction.DOWN)
         {
             System.Diagnostics.Debug.Assert( (byte)type < 128 );
             // First bit == living or dead
@@ -142,6 +152,7 @@ namespace VoxelSeeds
             _resources = resources;
             _generation = generation;
             _ticks = ticks;
+            _from = from;
         }
 
         public bool Living { get { return _living; } }
@@ -149,11 +160,13 @@ namespace VoxelSeeds
         public int Resources { get { return _resources; } }
         public int Generation { get { return _generation; } }
         public int Ticks { get { return _ticks; } }
+        public Direction From { get { return _from; } }
 
         readonly VoxelType _type;
         readonly bool _living;
         readonly int _resources;
         readonly int _generation;
+        readonly Direction _from;
         int _ticks;
 
         // TODO Ticks
