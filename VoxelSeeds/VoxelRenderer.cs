@@ -270,6 +270,7 @@ using SharpDX.Toolkit.Content;
         public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
+            _voxelEffect.Parameters["Ambient"].SetValue(0.3f);
 
             graphicsDevice.SetRasterizerState(_backfaceCullingState);
             graphicsDevice.SetDepthStencilState(_depthStencilStateState);
@@ -293,7 +294,8 @@ using SharpDX.Toolkit.Content;
         {
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
             _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].Texture);
-            _voxelEffect.Parameters["Transparency"].SetValue(0.6f);
+            _voxelEffect.Parameters["Transparency"].SetValue(0.7f);
+            _voxelEffect.Parameters["Ambient"].SetValue(2.0f);
 
             _singleInstanceBuffer.SetDynamicData(graphicsDevice, (ptr) => System.Runtime.InteropServices.Marshal.Copy(
                                                                  new Int32[] { levelPositionCode }, 0, ptr, 1));

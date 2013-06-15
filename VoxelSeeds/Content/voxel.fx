@@ -6,7 +6,7 @@ cbuffer GlobalMapInfo : register(b0)
 
 float Transparency;
 matrix WorldViewProjection;
-static const float Ambient = 0.3f;
+float Ambient;
 
 SamplerState PointSampler;
 Texture2D VoxelTexture;

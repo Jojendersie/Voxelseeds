@@ -118,8 +118,8 @@ namespace VoxelSeeds
             // rendererererererererer
             _voxelRenderer.Draw(_camera, GraphicsDevice);
 
-            if (_pickPosAvailable)
-                _voxelRenderer.DrawGhost(_camera, GraphicsDevice, VoxelType.GROUND, _currentLevel.GetMap().EncodePosition(_pickedPos));
+            if (_pickPosAvailable && _seedbar.GetSelected() != -1)
+                _voxelRenderer.DrawGhost(_camera, GraphicsDevice, _seedbar.GetSeedInfo()._type, _currentLevel.GetMap().EncodePosition(_pickedPos));
 
             // Handle base.Draw
             base.Draw(gameTime);
