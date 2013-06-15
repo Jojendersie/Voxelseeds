@@ -170,9 +170,9 @@ namespace VoxelSeeds
                                      (int)(currentPosition.Y + 0.5f),
                                      (int)(currentPosition.Z + 0.5f));
 
-            while (currentPosition.X > 0.5f &&
-                  currentPosition.Y > 0.5f &&
-                  currentPosition.Z > 0.5f &&
+            while (currentPosition.X > -0.5f &&
+                  currentPosition.Y > -0.5f &&
+                  currentPosition.Z > -0.5f &&
                   currentPosition.X < SizeX - 0.5f &&
                   currentPosition.Y < SizeY - 0.5f &&
                   currentPosition.Z < SizeZ - 0.5f)
