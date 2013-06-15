@@ -75,7 +75,7 @@ namespace VoxelSeeds
         /// </summary>
         /// <param name="updateInstanceData">A function which takes an incremental
         /// update for all changed voxels. The first param </param>
-        public void Tick(Action<Voxel[],Voxel[]> updateInstanceData)
+        public void Tick(ref Action<Voxel[],Voxel[]> updateInstanceData)
         {
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
