@@ -8,12 +8,23 @@ namespace VoxelSeeds
 {
     enum VoxelType
     {
+        EMPTY = 0,
         GROUND,
         WOOD,
         FUNGUS
     };
 
-    struct VoxelInfo
+    class TypeInformation
+    {   //Ground,Wood,Fungus
+        readonly static int[] prices = { 0, 5, 0 };
+
+        public static int getPrice(VoxelType voxeltype)
+        {
+            return prices[(int)voxeltype];
+        }
+    }
+
+    class VoxelInfo
     {
         /// <summary>
         /// Create a new voxel. A new voxel is always in living state.
@@ -39,5 +50,22 @@ namespace VoxelSeeds
         readonly bool _living;
         readonly int _resources;
         readonly int _generation;
+
+        // TODO Ticks
+    }
+
+    /// <summary>
+    /// Information for the communication to the graphic pipeline.
+    /// </summary>
+    struct Voxel
+    {
+        public Voxel(Int32 pCode, VoxelType t)
+        {
+            positionCode = pCode;
+            type = t;
+        }
+
+        Int32 positionCode;
+        VoxelType type;
     }
 }
