@@ -15,15 +15,8 @@ namespace VoxelSeeds
         {
             public VoxelType _type;
             public Vector2 _position;
-            /*
-            public SeedInfo(VoxelType type, Texture2D texture, Vector2 position)
-            {
-                _type = type;
-                _texture = texture;
-                _position = position;
-            }
-            */
         }
+
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private SeedInfo[] seeds = new SeedInfo[9];
@@ -31,12 +24,15 @@ namespace VoxelSeeds
         private Texture2D helix;
         private Texture2D pixel;
         private Texture2D frame;
+        private Texture2D progressBar;
         private int _selected = -1;
         private bool picking;
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
         private int windowWidth;
         private float[] tooltipCounter = new float[9];
+        private float progressBarCounter = 0;
+        private float progressAlpha = 0;
 
         private const int barLength = 9;
 
@@ -79,6 +75,7 @@ namespace VoxelSeeds
             helix = contentManager.Load<Texture2D>("helix.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
             frame = contentManager.Load<Texture2D>("frame.png");
+            progressBar = contentManager.Load<Texture2D>("Dummy.png");
 
             for (int i = 0; i < barLength; i++)
             {
@@ -123,13 +120,17 @@ namespace VoxelSeeds
 
         public void Draw(Level currentlevel, GameTime gameTime)
         {
-            int progress = windowHeigth * currentlevel.CurrentBiomass/currentlevel.TargetBiomass;
-            int evilProgress = windowHeigth * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
+            int progress = 800 * currentlevel.CurrentBiomass/currentlevel.TargetBiomass;
+            int evilProgress = 800 * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
+            progressBarCounter = (gameTime.TotalGameTime.Seconds) %4;
+            progressAlpha = progressBarCounter - (int)progressBarCounter;
 
             spriteBatch.Begin();
-            
-            //draw Progress good/evil
-            spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth, windowHeigth, 30, progress), null, Color.Blue, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+
+            //draw Progress good/evil 
+            spriteBatch.Draw(progressBar, new Vector2(windowWidth, windowHeigth), new DrawingRectangle((int)progressBarCounter * 30, 0, 30, progress), Color.White, (float)Math.PI, new Vector2(0, 0), 1, SpriteEffects.None, progressAlpha);
+            spriteBatch.Draw(progressBar, new Vector2(windowWidth, windowHeigth), new DrawingRectangle((int)progressBarCounter + 1 * 30, 0, 30, progress), Color.White, (float)Math.PI, new Vector2(0, 0), 1, SpriteEffects.None, 1 - progressAlpha);
+
             spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth-30, windowHeigth, 30, evilProgress), null, Color.Red, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
             for (int i = 0; i < barLength; i++)
