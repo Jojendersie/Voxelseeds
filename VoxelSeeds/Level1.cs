@@ -13,6 +13,7 @@ namespace VoxelSeeds
             _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024);
             _numRemainingSeeds[(int)VoxelType.TEAK_WOOD] = 3;
 
+            _resources = 10000;
             _finalParasiteMass = 1000;
             _targetBiomass = 500;
             _currentBiomass = 1;
