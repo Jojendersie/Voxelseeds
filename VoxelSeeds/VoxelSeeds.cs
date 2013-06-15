@@ -25,6 +25,9 @@ namespace VoxelSeeds
         Background _background;
         double _cumulatedFrameTime;
 
+        private SpriteBatch _spriteBatch;
+        private SpriteFont _font;
+
         /// <summary>
         /// current picked pos
         /// </summary>
@@ -101,8 +104,10 @@ namespace VoxelSeeds
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
 
-
             _background = new Background(GraphicsDevice);
+
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _font = Content.Load<SpriteFont>("Arial16.tkfnt");
 
             base.LoadContent();
         }
@@ -177,6 +182,32 @@ namespace VoxelSeeds
             _background.Draw(_camera);
 
             _seedbar.Draw(_currentLevel, gameTime);
+
+            if(_gamePaused)
+            {
+                _spriteBatch.Begin();
+                if (_currentLevel.IsLost())
+                {
+                    string text = "You Lost against the Rottenness!";
+                    Vector2 stringSize = _font.MeasureString(text);
+                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height - stringSize.Y) - stringSize) * 0.5f, Color.DarkSeaGreen);
+                    text = "Press Enter to restart";
+                    stringSize = _font.MeasureString(text);
+                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height + stringSize.Y) - stringSize) * 0.5f, Color.Black);
+                   
+                }
+                else if (_currentLevel.IsVictory())
+                {
+                    string text = "Your seeds prevailed against the Rotteness!";
+                    Vector2 stringSize = _font.MeasureString(text);
+                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height - stringSize.Y) - stringSize) * 0.5f, Color.DarkOrange);
+                    text = "Press Enter to continue to the next level";
+                    stringSize = _font.MeasureString(text);
+                    _spriteBatch.DrawString(_font, text, (new Vector2(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height + stringSize.Y) - stringSize) * 0.5f, Color.Black);
+
+                }
+                _spriteBatch.End();
+            }
         }
     }
 }
