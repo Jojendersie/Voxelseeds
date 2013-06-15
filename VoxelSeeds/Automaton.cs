@@ -12,7 +12,7 @@ namespace VoxelSeeds
     {
         class LivingVoxel
         {
-            public LivingVoxel(int x, int y, int z, int generation, int resources, int ticks)
+            public LivingVoxel(int x, int y, int z, int generation, int resources, int ticks, Direction from)
             {
                 X = x;
                 Y = y;
@@ -20,6 +20,7 @@ namespace VoxelSeeds
                 Generation = generation;
                 Resources = resources;
                 Ticks = ticks;
+                From = from;
             }
 
             public int X;
@@ -30,6 +31,8 @@ namespace VoxelSeeds
             public int Resources;
 
             public int Ticks;
+
+            public Direction From;
         };
 
         public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
@@ -53,10 +56,10 @@ namespace VoxelSeeds
                 {
                     if (_livingVoxels.ContainsKey(positionCode))
                     {
-                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks);
+                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, Direction.DOWN);
                     }
                     else
-                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks));
+                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, Direction.DOWN));
                 }
             }
         }
@@ -167,7 +170,7 @@ namespace VoxelSeeds
                         {
                             // Yes: query more information from the dictinary
                             LivingVoxel voxelInfo = _livingVoxels[pos];
-                            localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks);
+                            localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks, voxelInfo.From);
                         } else
                         {
                             // No uses directly
