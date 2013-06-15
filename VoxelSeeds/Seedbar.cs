@@ -26,8 +26,8 @@ namespace VoxelSeeds
         }
         private SpriteBatch spriteBatch;
         private SpriteFont font;
-        private SeedInfo[] seeds = new SeedInfo[10];
-        private Texture2D[] textures = new Texture2D[10];
+        private SeedInfo[] seeds = new SeedInfo[9];
+        private Texture2D[] textures = new Texture2D[9];
         private Texture2D helix;
         private Texture2D pixel;
         private Texture2D frame;
@@ -36,9 +36,9 @@ namespace VoxelSeeds
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
         private int windowWidth;
-        private float[] tooltipCounter = new float[10];
+        private float[] tooltipCounter = new float[9];
 
-        private const int barLength = 10;
+        private const int barLength = 9;
 
         public SeedInfo GetSeedInfo()
         {
@@ -69,39 +69,21 @@ namespace VoxelSeeds
             inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
                 mousePosition = e.Location;
         }
-        /*
-        enum VoxelType
-        {
-            EMPTY = 0,
-            GROUND,
-            TEAK_WOOD,
-            PINE_WOOD,
-            SPRUCE_WOOD,
-            BEECH_WOOD,
-            OAK_WOOD,
-            REDWOOD,
-            WHITEROT_FUNGUS,
-            NOBLEROT_FUNGUS,
-            TERMITES,
-            HOUSE_LONGHORN_BEETLE,
-            HESPEROPHANES_CINNEREUS,
-            GRASSHOPPER
-        };
-         * */
+    
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
             spriteBatch = new SpriteBatch(graphicsDevice);
             windowHeigth = spriteBatch.GraphicsDevice.BackBuffer.Height;
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
-            helix = contentManager.Load<Texture2D>("balls.dds");
+            helix = contentManager.Load<Texture2D>("helix.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
             frame = contentManager.Load<Texture2D>("frame.png");
 
             for (int i = 0; i < barLength; i++)
             {
                 seeds[i] = new SeedInfo();
-                seeds[i]._position = new Vector2(i * (windowWidth - 70) / 10 + 5, 5);   
+                seeds[i]._position = new Vector2(i * (windowWidth - 60) / 10 + 5, 5);   
             }
             seeds[0]._type = VoxelType.TEAK_WOOD;
             textures[0] = contentManager.Load<Texture2D>("balls.dds");
@@ -121,8 +103,6 @@ namespace VoxelSeeds
             textures[7] = contentManager.Load<Texture2D>("balls.dds");
             seeds[8]._type = VoxelType.TEAK_WOOD;
             textures[8] = contentManager.Load<Texture2D>("balls.dds");
-            seeds[9]._type = VoxelType.TEAK_WOOD;
-            textures[9] = contentManager.Load<Texture2D>("balls.dds");
         }
 
         private bool MouseOver(Vector2 pos, double width, double heigth)
@@ -154,19 +134,25 @@ namespace VoxelSeeds
 
             for (int i = 0; i < barLength; i++)
             {
-                spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 82, 32), Color.Black);
                 //draw frame
-                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 92, 42), Color.White);
+                spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 84, 32), Color.Black);
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42), Color.Gray);
                 //draw curency
-                spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 37, (int)seeds[i]._position.Y+5, 10, 20), Color.White);
-                spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 45, seeds[i]._position.Y+5), Color.White); 
+                spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y+5, 10, 20), Color.White);
+                spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
                 //draw Icons
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);   
             }
 
+            //draw Recurses seeds[i]._position = new Vector2(i * (windowWidth - 60) / 10 + 5, 5);
+            spriteBatch.Draw(pixel, new DrawingRectangle(9 * (windowWidth - 60) / 10 + 5, 5, 84, 32), Color.Black);
+            spriteBatch.Draw(frame, new DrawingRectangle(9 * (windowWidth - 60) / 10, 0, 94, 42), Color.Gray);
+            spriteBatch.Draw(helix, new DrawingRectangle(9 * (windowWidth - 60) / 10 + 7, 7, 14, 28), Color.White);
+            spriteBatch.DrawString(font, "99999", new Vector2(9 * (windowWidth - 60) / 10 + 22, 10), Color.White);
+
             if (_selected > -1)
             {
-                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[_selected]._position.X - 5, (int)seeds[_selected]._position.Y - 5, 92, 42), Color.Yellow);
+                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[_selected]._position.X - 5, (int)seeds[_selected]._position.Y - 5, 94, 42), Color.Yellow);
             }
 
             //draw Tooltip
@@ -179,9 +165,9 @@ namespace VoxelSeeds
                     if (tooltipCounter[i] >= 300)
                     {
                         int corrector = 0;
-                        if (mousePosition.X + 160 > windowWidth) corrector = mousePosition.X + 160 - windowWidth;
+                        if (mousePosition.X + 310 > windowWidth) corrector = mousePosition.X + 310 - windowWidth;
 
-                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 150, 183), new Color(0.7f, 0.7f, 0.7f, 0.5f));
+                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 300, 183), new Color(0.7f, 0.7f, 0.7f, 0.5f));
                         spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 50 - corrector, mousePosition.Y + 15), Color.Black);
                         spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.DarkBlue);
                         spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 65), Color.DarkBlue);

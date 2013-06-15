@@ -4,8 +4,9 @@ cbuffer GlobalMapInfo : register(b0)
 	float3 LightDirection;
 }
 
+float Transparency;
 matrix WorldViewProjection;
-static const float Ambient = 0.3f;
+float Ambient;
 
 SamplerState PointSampler;
 Texture2D VoxelTexture;
@@ -50,7 +51,7 @@ PS_INPUT VS(VS_INPUT input)
 
 float4 PS(PS_INPUT input) : SV_TARGET
 {
-    return VoxelTexture.Sample(PointSampler, input.Texcoord) * input.Light;
+    return float4(VoxelTexture.Sample(PointSampler, input.Texcoord).rgb * input.Light, Transparency);
 }
 
 technique basic
