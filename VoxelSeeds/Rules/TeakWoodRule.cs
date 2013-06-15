@@ -23,7 +23,7 @@ namespace VoxelSeeds.Rules
                 output[1, 1, 2] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1);
                 output[2, 1, 2] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1);
             }
-            else if (gen < 7)
+            else if (gen < TypeInformation.GetGrowHeight(VoxelType.TEAK_WOOD))
             {
                 // Grow upwards
                 output[1, 2, 1] = new VoxelInfo(VoxelType.TEAK_WOOD, true, gen + 1);
