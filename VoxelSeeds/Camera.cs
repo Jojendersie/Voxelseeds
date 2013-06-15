@@ -167,7 +167,7 @@ namespace VoxelSeeds
             // compute side
             Vector3 sideVec = Vector3.Cross(upVec, _viewDirection);
 
-            Position = -_viewDirection * _zoom;
+            Position = -_viewDirection * _zoom + Vector3.UnitY * 5;
 
             // compute view matrix
             _viewMatrix = Matrix.LookAtLH(Position, Position + _viewDirection, upVec);
