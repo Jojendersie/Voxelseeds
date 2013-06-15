@@ -39,6 +39,7 @@ namespace VoxelSeeds
             settings.ReadSettings();
             _graphicsDeviceManager.PreferredBackBufferWidth = settings.ResolutionX;
             _graphicsDeviceManager.PreferredBackBufferHeight = settings.ResolutionY;
+            _graphicsDeviceManager.PreferredDepthStencilFormat = DepthFormat.Depth32;
             if (!System.Diagnostics.Debugger.IsAttached)    // fullscreen not allowed if debugger attached
                 _graphicsDeviceManager.IsFullScreen = settings.Fullscreen;
             else
@@ -66,7 +67,7 @@ namespace VoxelSeeds
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
 
-			_voxelRenderer.Reset(_currentLevel.GetMap());       
+			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));       
             
             base.LoadContent();
         }

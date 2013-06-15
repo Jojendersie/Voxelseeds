@@ -5,6 +5,7 @@ cbuffer GlobalMapInfo : register(b0)
 }
 
 matrix WorldViewProjection;
+const float Ambient = 0.3f;
 
 struct VS_INPUT
 {
@@ -17,7 +18,7 @@ struct VS_INPUT
 struct PS_INPUT
 {
     float4 Position : SV_POSITION;
-	float3 Normal : NORMAL;
+	float Light : LIGHT;
 };
 
 float3 DecodePosition(int code)
@@ -37,14 +38,14 @@ PS_INPUT VS(VS_INPUT input)
 	worldPos += DecodePosition(input.Position_Instance);
     output.Position = mul(float4(worldPos, 1), WorldViewProjection);
     
-	output.Normal = input.Normal;
+	output.Light = saturate(dot(LightDirection, input.Normal)) + Ambient;
 
     return output;
 }
 
 float4 PS(PS_INPUT input) : SV_TARGET
 {
-    return float4(abs(input.Normal), 1);
+    return float4(input.Light,input.Light,input.Light,1);
 }
 
 technique basic

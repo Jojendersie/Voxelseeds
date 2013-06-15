@@ -66,6 +66,7 @@ namespace VoxelSeeds
 
 
         RasterizerState _rasterizerState;
+        DepthStencilState _depthStencilStateState;
 
         struct CubeVertex
         {
@@ -144,10 +145,14 @@ namespace VoxelSeeds
             }
             _voxelEffect = new SharpDX.Toolkit.Graphics.Effect(graphicsDevice, voxelShaderCompileResult.EffectData);
 
-            // setup culling
+            // setup states
             var rasterizerStateDesc = SharpDX.Direct3D11.RasterizerStateDescription.Default();
-            rasterizerStateDesc.CullMode = SharpDX.Direct3D11.CullMode.None;
-            _rasterizerState = RasterizerState.New(graphicsDevice, "CullModeCW", rasterizerStateDesc);
+            rasterizerStateDesc.CullMode = SharpDX.Direct3D11.CullMode.Back;
+            _rasterizerState = RasterizerState.New(graphicsDevice, "CullModeBack", rasterizerStateDesc);
+
+            var depthStencilStateDesc = SharpDX.Direct3D11.DepthStencilStateDescription.Default();
+            depthStencilStateDesc.IsDepthEnabled = true;
+            _depthStencilStateState = DepthStencilState.New(graphicsDevice, "NormalZBufferUse", depthStencilStateDesc);
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
@@ -158,7 +163,7 @@ namespace VoxelSeeds
         /// <summary>
         /// setups settings for a new map and clears all instance buffers
         /// </summary>
-        public void Reset(Map map)
+        public void Reset(Map map, Vector3 lightDirection)
         {
             // reset lists
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
@@ -197,8 +202,11 @@ namespace VoxelSeeds
                 data.UpdateGPUInstanceBuffer();
 
             // set vertex scaling
-            _voxelEffect.ConstantBuffers["GlobalMapInfo"].Parameters["WorldSize"].SetValue(new Int3(map.SizeX, map.SizeY, map.SizeZ));
-            _voxelEffect.ConstantBuffers["GlobalMapInfo"].IsDirty = true;
+            var globalMapInfoCB = _voxelEffect.ConstantBuffers["GlobalMapInfo"];
+            globalMapInfoCB.Parameters["WorldSize"].SetValue(new Int3(map.SizeX, map.SizeY, map.SizeZ));
+            lightDirection.Normalize();
+            globalMapInfoCB.Parameters["LightDirection"].SetValue(-lightDirection);
+            globalMapInfoCB.IsDirty = true;
 
             _translationMatrix = Matrix.Translation(- new Vector3(map.SizeX, 0.0f, map.SizeZ) * 0.5f);
         }
@@ -218,6 +226,7 @@ namespace VoxelSeeds
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
             graphicsDevice.SetRasterizerState(_rasterizerState);
+            graphicsDevice.SetDepthStencilState(_depthStencilStateState);
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
