@@ -28,7 +28,7 @@ namespace VoxelSeeds.Rules
                 output[0, 1, 2] = new VoxelInfo(VoxelType.SPRUCE_WOOD, true, 1);
                 output[0, 1, 0] = new VoxelInfo(VoxelType.SPRUCE_WOOD, true, 1);
             }
-            else if (gen < 9)
+            else if (gen < TypeInformation.GetGrowHeight(VoxelType.SPRUCE_WOOD))
             {
                 // Grow upwards
                 output[1, 2, 1] = new VoxelInfo(VoxelType.SPRUCE_WOOD, true, gen + 1);

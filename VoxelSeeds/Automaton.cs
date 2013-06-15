@@ -12,7 +12,7 @@ namespace VoxelSeeds
     {
         class LivingVoxel
         {
-            public LivingVoxel(int x, int y, int z, int generation, int resources, int ticks)
+            public LivingVoxel(int x, int y, int z, int generation, int resources, int ticks, Direction from)
             {
                 X = x;
                 Y = y;
@@ -20,6 +20,7 @@ namespace VoxelSeeds
                 Generation = generation;
                 Resources = resources;
                 Ticks = ticks;
+                From = from;
             }
 
             public int X;
@@ -30,6 +31,8 @@ namespace VoxelSeeds
             public int Resources;
 
             public int Ticks;
+
+            public Direction From;
         };
 
         public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
@@ -53,12 +56,25 @@ namespace VoxelSeeds
                 {
                     if (_livingVoxels.ContainsKey(positionCode))
                     {
-                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks);
+                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, Direction.DOWN);
                     }
                     else
-                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks));
+                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, Direction.DOWN));
                 }
             }
+        }
+
+        private void removeOccludedNeighbours(Int32 positionCode, List<Voxel> deleteList)
+        {
+            // The map set can cause neighboured voxels to be occluded
+            // if so delete that from GPU.
+            Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) deleteList.Add(new Voxel(pos, _map.Get(pos))); };
+            checkAndRemoveNeighbour(positionCode - 1);
+            checkAndRemoveNeighbour(positionCode + 1);
+            checkAndRemoveNeighbour(positionCode - _map.SizeX);
+            checkAndRemoveNeighbour(positionCode + _map.SizeX);
+            checkAndRemoveNeighbour(positionCode - _map.SizeX * _map.SizeY);
+            checkAndRemoveNeighbour(positionCode + _map.SizeX * _map.SizeY);
         }
 
         public void InsertSeed(int x, int y, int z, VoxelType type)
@@ -67,10 +83,15 @@ namespace VoxelSeeds
 
             InsertVoxel(pos, type, 0, true, 0, 0);
 
-            List<Voxel> insertionList = new List<Voxel>();
-            insertionList.Add(new Voxel(pos, type));
             if( _updateInstanceData != null )
+            {
+
+                List<Voxel> deleteList = new List<Voxel>();
+                List<Voxel> insertionList = new List<Voxel>();
+                insertionList.Add(new Voxel(pos, type));
+                removeOccludedNeighbours(pos, deleteList);
                 _updateInstanceData(null, insertionList);
+            }
         }
 
 
@@ -118,15 +139,7 @@ namespace VoxelSeeds
                 // Insert to instance data only if visible
                 if( !_map.IsOccluded(vox.Key) )
                     insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
-                // The map set can cause neighboured voxels to be occluded
-                // if so delete that from GPU.
-                Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) deleteList.Add(new Voxel(pos, _map.Get(pos))); };
-                checkAndRemoveNeighbour(vox.Key - 1);
-                checkAndRemoveNeighbour(vox.Key + 1);
-                checkAndRemoveNeighbour(vox.Key - _map.SizeX);
-                checkAndRemoveNeighbour(vox.Key + _map.SizeX);
-                checkAndRemoveNeighbour(vox.Key - _map.SizeX * _map.SizeY);
-                checkAndRemoveNeighbour(vox.Key + _map.SizeX * _map.SizeY);
+                removeOccludedNeighbours(vox.Key, deleteList);
             }
             _updateInstanceData(deleteList, insertionList);
         }
@@ -157,7 +170,7 @@ namespace VoxelSeeds
                         {
                             // Yes: query more information from the dictinary
                             LivingVoxel voxelInfo = _livingVoxels[pos];
-                            localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks);
+                            localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks, voxelInfo.From);
                         } else
                         {
                             // No uses directly
