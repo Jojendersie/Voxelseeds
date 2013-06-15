@@ -14,7 +14,6 @@ namespace VoxelSeeds
         FUNGUS
     };
 
-    class VoxelInfo
     class TypeInformation
     {   //Ground,Wood,Fungus
         readonly static int[] prices = { 0, 5, 0 };
@@ -25,7 +24,7 @@ namespace VoxelSeeds
         }
     }
 
-    struct VoxelInfo
+    class VoxelInfo
     {
         /// <summary>
         /// Create a new voxel. A new voxel is always in living state.
@@ -60,6 +59,12 @@ namespace VoxelSeeds
     /// </summary>
     struct Voxel
     {
+        public Voxel(Int32 pCode, VoxelType t)
+        {
+            positionCode = pCode;
+            type = t;
+        }
+
         Int32 positionCode;
         VoxelType type;
     }
