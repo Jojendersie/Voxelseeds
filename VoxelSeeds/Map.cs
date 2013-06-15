@@ -124,6 +124,23 @@ namespace VoxelSeeds
                 && (_voxels[positionCode - SizeX * SizeY] != 0) && (_voxels[positionCode + SizeX * SizeY] != 0);
         }
 
+        /// <summary>
+        /// Finds the voxel with the largest y coordinate.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="z"></param>
+        /// <returns>Reports the position of the highest voxel or -1.</returns>
+        public int GetHeighest(int x, int z)
+        {
+            Int32 pos = EncodePosition(x, SizeY - 1, z);
+            for (int y = SizeY - 1; y > 0; --y, pos-=SizeX)
+            {
+                if (Get(pos) != VoxelType.EMPTY)
+                    return y;
+            }
+            return -1;
+        }
+
         /// <returns>True if voxel is not set.</returns>
         public bool IsEmpty(Int32 positionCode)
         {

@@ -125,14 +125,18 @@ namespace VoxelSeeds
                 var po = _map.DecodePosition(vox.Key);
                 Debug.Assert( _map.IsInside(po.X, po.Y, po.Z) );
                 VoxelType old = _map.Get(vox.Key);
-                if (old != (int)VoxelType.EMPTY)
+                if (old != VoxelType.EMPTY)
                 {
+                    if (_livingVoxels.ContainsKey(vox.Key))
+                        _livingVoxels.Remove(vox.Key);
+
                     if (TypeInformation.IsParasite(old)) --newParasites;
+                    else if(TypeInformation.IsBiomass(old)) --newBiomass;
                     // Delete the old one and create a new one (outside branch).
                     deleteList.Add(new Voxel(vox.Key, old));
                 }
                 if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
-                else if (vox.Value.Type != VoxelType.EMPTY) ++newBiomass;
+                else if (TypeInformation.IsBiomass(vox.Value.Type)) ++newBiomass;
 
                 InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks);
 
@@ -155,8 +159,8 @@ namespace VoxelSeeds
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
-            //Parallel.ForEach(_livingVoxels, currentVoxel =>
-            foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
+            Parallel.ForEach(_livingVoxels, currentVoxel =>
+            //foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
                 {
                     ++currentVoxel.Value.Ticks;
                     // Create a local window for the rule algorithms
@@ -194,7 +198,7 @@ namespace VoxelSeeds
                         });
                     }
                 }
-            //);
+            );
             update(ref results, out newBiomass, out newParasites);
         }
     }

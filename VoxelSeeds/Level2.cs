@@ -15,7 +15,6 @@ namespace VoxelSeeds
         override public void Initialize()
         {
             _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 1234);
-            _numRemainingSeeds[(int)VoxelType.TEAK_WOOD] = 3;
 
             _resources = 1000;
             _finalParasiteMass = 1000;
