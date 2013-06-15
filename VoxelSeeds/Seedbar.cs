@@ -137,7 +137,7 @@ namespace VoxelSeeds
                 //draw frame
                 spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 84, 32), Color.Black);
                 spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42), Color.Gray);
-                //draw curency
+                //draw price
                 spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y+5, 10, 20), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
                 //draw Icons
@@ -167,12 +167,10 @@ namespace VoxelSeeds
                         int corrector = 0;
                         if (mousePosition.X + 310 > windowWidth) corrector = mousePosition.X + 310 - windowWidth;
 
-                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 300, 183), new Color(0.7f, 0.7f, 0.7f, 0.5f));
-                        spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 50 - corrector, mousePosition.Y + 15), Color.Black);
-                        spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.DarkBlue);
-                        spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 65), Color.DarkBlue);
-                        spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 115), Color.Crimson);
-                        spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 140), Color.Crimson);
+                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 300, 130), new Color(0.5f, 0.5f, 0.5f, 0.5f));
+                        spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 15), Color.Black);
+                        spriteBatch.DrawString(font, "+"+TypeInformation.GetStrength(seeds[i]._type)[0] + "\n+" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.Green);
+                        spriteBatch.DrawString(font, "-"+TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n-" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 90), Color.Crimson);
                     }
                 }
                 else tooltipCounter[i] = 0;
