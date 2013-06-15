@@ -19,8 +19,6 @@ namespace VoxelSeeds
             public int Resources;
 
             public int Ticks;
-
-            public IVoxelRule Rule;
         };
 
         public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
@@ -36,7 +34,6 @@ namespace VoxelSeeds
             newVoxel.Generation = 0;
             newVoxel.Resources = 0;
             newVoxel.Ticks = 0;
-            // TODO: RULE
 
             Int32 pos = _map.EncodePosition(x, y, z);
             _livingVoxels.Add(pos, newVoxel);
@@ -77,10 +74,10 @@ namespace VoxelSeeds
                     deleteList.Add(new Voxel(vox.Key, old));
                 }
                 if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
-                else ++newBiomass;
+                else if (vox.Value.Type != VoxelType.EMPTY) ++newBiomass;
                 _map.Set(vox.Key, vox.Value.Type, vox.Value.Living);
                 // Insert to instance data only if visible
-                if( _map.IsOccluded(vox.Key) )
+                if( !_map.IsOccluded(vox.Key) )
                     insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
                 // The map set can cause neighboured voxels to be occluded
                 // if so delete that from GPU.
@@ -105,7 +102,8 @@ namespace VoxelSeeds
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
-            Parallel.ForEach(_livingVoxels, currentVoxel =>
+            //Parallel.ForEach(_livingVoxels, currentVoxel =>
+            foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
                 {
                     ++currentVoxel.Value.Ticks;
                     // Create a local window for the rule algorithms
@@ -118,23 +116,23 @@ namespace VoxelSeeds
                         if (_map.IsLiving(pos))
                         {
                             // Yes: query more information from the dictinary
-                            LivingVoxel VoxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
-                            localFrame[z, y, x] = new VoxelInfo(voxel, true, VoxelInfo.Generation, VoxelInfo.Resources, currentVoxel.Value.Ticks);
-                        }
+                            LivingVoxel voxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
+                            localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks);
+                        } else
                         {
                             // No uses directly
                             localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel);
                         }
                     });
                     // Apply the rule for currentVoxel
-                    VoxelInfo[,,] ruleResult = currentVoxel.Value.Rule.ApplyRule( localFrame );
+                    VoxelInfo[, ,] ruleResult = TypeInformation.GetRule(localFrame[1,1,1].Type).ApplyRule(localFrame);
                     if (ruleResult != null)
                     {
                         currentVoxel.Value.Ticks = 0;
                         // Add changes to the change collection
                         IterateNeighbours((x, y, z) =>
                         {
-                            if (ruleResult[z, y, x] == null)
+                            if (ruleResult[z, y, x] != null)
                             {
                                 Int32 positionCode = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
                                 // Two rules tried to grow at the same location. Use decision function
@@ -143,7 +141,7 @@ namespace VoxelSeeds
                         });
                     }
                 }
-            );
+            //);
             update(ref results, ref updateInstanceData, out newBiomass, out newParasites);
         }
     }
