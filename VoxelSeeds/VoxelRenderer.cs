@@ -28,14 +28,24 @@ namespace VoxelSeeds
         {
             public VoxelTypeInstanceData(GraphicsDevice graphicsDevice)
             {
-                InstanceBuffers = Buffer.Vertex.New<Int32>(graphicsDevice, MAX_NUM_VOXELS_PER_TYPE, SharpDX.Direct3D11.ResourceUsage.Dynamic);
+                InstanceBuffer = Buffer.Vertex.New<Int32>(graphicsDevice, MAX_NUM_VOXELS_PER_TYPE, SharpDX.Direct3D11.ResourceUsage.Dynamic);
                 InstanceDataRAM = new HashSet<Int32>();// System.Runtime.InteropServices.Marshal.AllocHGlobal(sizeof(UInt32) * MAX_NUM_VOXELS_PER_TYPE);
             }
-             
+            
+            public void UpdateGPUInstanceBuffer()
+            {
+                InstanceBuffer.SetDynamicData(InstanceBuffer.GraphicsDevice,
+                    (ptr) =>
+                    {
+                        System.Runtime.InteropServices.Marshal.Copy(InstanceDataRAM.ToArray(), 0,
+                                                                ptr, InstanceDataRAM.Count);
+                    }, 0, SetDataOptions.Discard);
+            }
+
             /// <summary>
             /// one instance buffer per VoxelType
             /// </summary>
-            public Buffer<Int32> InstanceBuffers;
+            public Buffer<Int32> InstanceBuffer;
 
             /// <summary>
             /// ram copy of all instance data
@@ -58,42 +68,42 @@ namespace VoxelSeeds
                 graphicsDevice,
                 new[]
                     {
-                        new Vector3(-1.0f, -1.0f, -1.0f), // Front
-                        new Vector3(-1.0f, 1.0f, -1.0f),
-                        new Vector3(1.0f, 1.0f, -1.0f),
-                        new Vector3(-1.0f, -1.0f, -1.0f),
-                        new Vector3(1.0f, 1.0f, -1.0f),
-                        new Vector3(1.0f, -1.0f, -1.0f),
-                        new Vector3(-1.0f, -1.0f, 1.0f), // BACK
-                        new Vector3(1.0f, 1.0f, 1.0f),
-                        new Vector3(-1.0f, 1.0f, 1.0f),
-                        new Vector3(-1.0f, -1.0f, 1.0f),
-                        new Vector3(1.0f, -1.0f, 1.0f),
-                        new Vector3(1.0f, 1.0f, 1.0f),
-                        new Vector3(-1.0f, 1.0f, -1.0f), // Top
-                        new Vector3(-1.0f, 1.0f, 1.0f),
-                        new Vector3(1.0f, 1.0f, 1.0f),
-                        new Vector3(-1.0f, 1.0f, -1.0f),
-                        new Vector3(1.0f, 1.0f, 1.0f),
-                        new Vector3(1.0f, 1.0f, -1.0f),
-                        new Vector3(-1.0f, -1.0f, -1.0f), // Bottom
-                        new Vector3(1.0f, -1.0f, 1.0f),
-                        new Vector3(-1.0f, -1.0f, 1.0f),
-                        new Vector3(-1.0f, -1.0f, -1.0f),
-                        new Vector3(1.0f, -1.0f, -1.0f),
-                        new Vector3(1.0f, -1.0f, 1.0f),
-                        new Vector3(-1.0f, -1.0f, -1.0f), // Left
-                        new Vector3(-1.0f, -1.0f, 1.0f),
-                        new Vector3(-1.0f, 1.0f, 1.0f),
-                        new Vector3(-1.0f, -1.0f, -1.0f),
-                        new Vector3(-1.0f, 1.0f, 1.0f),
-                        new Vector3(-1.0f, 1.0f, -1.0f),
-                        new Vector3(1.0f, -1.0f, -1.0f), // Right
-                        new Vector3(1.0f, 1.0f, 1.0f),
-                        new Vector3(1.0f, -1.0f, 1.0f),
-                        new Vector3(1.0f, -1.0f, -1.0f),
-                        new Vector3(1.0f, 1.0f, -1.0f),
-                        new Vector3(1.0f, 1.0f, 1.0f)
+                        new Vector3(-0.5f, -0.5f, -0.5f), // Front
+                        new Vector3(-0.5f, 0.5f, -0.5f),
+                        new Vector3(0.5f, 0.5f, -0.5f),
+                        new Vector3(-0.5f, -0.5f, -0.5f),
+                        new Vector3(0.5f, 0.5f, -0.5f),
+                        new Vector3(0.5f, -0.5f, -0.5f),
+                        new Vector3(-0.5f, -0.5f, 0.5f), // BACK
+                        new Vector3(0.5f, 0.5f, 0.5f),
+                        new Vector3(-0.5f, 0.5f, 0.5f),
+                        new Vector3(-0.5f, -0.5f, 0.5f),
+                        new Vector3(0.5f, -0.5f, 0.5f),
+                        new Vector3(0.5f, 0.5f, 0.5f),
+                        new Vector3(-0.5f, 0.5f, -0.5f), // Top
+                        new Vector3(-0.5f, 0.5f, 0.5f),
+                        new Vector3(0.5f, 0.5f, 0.5f),
+                        new Vector3(-0.5f, 0.5f, -0.5f),
+                        new Vector3(0.5f, 0.5f, 0.5f),
+                        new Vector3(0.5f, 0.5f, -0.5f),
+                        new Vector3(-0.5f, -0.5f, -0.5f), // Bottom
+                        new Vector3(0.5f, -0.5f, 0.5f),
+                        new Vector3(-0.5f, -0.5f, 0.5f),
+                        new Vector3(-0.5f, -0.5f, -0.5f),
+                        new Vector3(0.5f, -0.5f, -0.5f),
+                        new Vector3(0.5f, -0.5f, 0.5f),
+                        new Vector3(-0.5f, -0.5f, -0.5f), // Left
+                        new Vector3(-0.5f, -0.5f, 0.5f),
+                        new Vector3(-0.5f, 0.5f, 0.5f),
+                        new Vector3(-0.5f, -0.5f, -0.5f),
+                        new Vector3(-0.5f, 0.5f, 0.5f),
+                        new Vector3(-0.5f, 0.5f, -0.5f),
+                        new Vector3(0.5f, -0.5f, -0.5f), // Right
+                        new Vector3(0.5f, 0.5f, 0.5f),
+                        new Vector3(0.5f, -0.5f, 0.5f),
+                        new Vector3(0.5f, -0.5f, -0.5f),
+                        new Vector3(0.5f, 0.5f, -0.5f),
+                        new Vector3(0.5f, 0.5f, 0.5f)
                     }, SharpDX.Direct3D11.ResourceUsage.Immutable);
 
             // Create an input layout from the vertices
@@ -124,18 +134,21 @@ namespace VoxelSeeds
         /// </summary>
         public void Reset(Map map)
         {
+            // reset lists
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
                 _voxelTypeRenderingData[i].InstanceDataRAM.Clear();
 
+            // add current world
             // test
             _voxelTypeRenderingData[0].InstanceDataRAM.Add(0);
             _voxelTypeRenderingData[0].InstanceDataRAM.Add(1);
-            _voxelTypeRenderingData[0].InstanceBuffers.SetDynamicData(_voxelTypeRenderingData[0].InstanceBuffers.GraphicsDevice,
-                                (ptr) => 
-                                 {
-                                    System.Runtime.InteropServices.Marshal.Copy(_voxelTypeRenderingData[0].InstanceDataRAM.ToArray(), 0,
-                                                                            ptr, _voxelTypeRenderingData[0].InstanceDataRAM.Count);
-                                 }, 0, SetDataOptions.Discard); 
+            _voxelTypeRenderingData[0].InstanceDataRAM.Add(2);
+            _voxelTypeRenderingData[0].InstanceDataRAM.Add(3);
+            _voxelTypeRenderingData[0].UpdateGPUInstanceBuffer();
+
+            // set vertex scaling
+            _voxelEffect.ConstantBuffers["GlobalMapInfo"].Parameters["WorldSize"].SetValue(new Int3(map.SizeX, map.SizeY, map.SizeZ));
+            _voxelEffect.ConstantBuffers["GlobalMapInfo"].IsDirty = true;
         }
 
         /// <summary>
@@ -148,7 +161,6 @@ namespace VoxelSeeds
         public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
             _voxelEffect.Parameters["WorldViewProjection"].SetValue(camera.ViewMatrix * camera.ProjectionMatrix);
-            _voxelEffect.ConstantBuffers[0].IsDirty = true;
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
@@ -158,8 +170,7 @@ namespace VoxelSeeds
             _voxelEffect.CurrentTechnique.Passes[0].Apply();
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
             {
-                
-                graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffers);
+                graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);
             }
         }

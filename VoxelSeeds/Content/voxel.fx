@@ -1,5 +1,12 @@
-// global constants (global constant buffer)
+cbuffer GlobalMapInfo : register(b0)
+{
+	int3 WorldSize;
+}
+
 matrix WorldViewProjection;
+
+
+
 
 struct VS_INPUT
 {
@@ -12,12 +19,21 @@ struct PS_INPUT
     float4 Position : SV_POSITION;
 };
 
+float3 DecodePosition(int code)
+{
+	float3 o;
+	o.x = code % WorldSize.x;
+    o.y = (code / WorldSize.x) % WorldSize.y;
+    o.z =  code / (WorldSize.x * WorldSize.y);
+	return o;
+}
+
 PS_INPUT VS(VS_INPUT input)
 {
     PS_INPUT output;
     
 	float3 worldPos = input.Position_Cube;
-	worldPos.x += input.Position_Instance * 5;
+	worldPos += DecodePosition(input.Position_Instance);
     output.Position = mul(float4(worldPos, 1), WorldViewProjection);
     
     return output;

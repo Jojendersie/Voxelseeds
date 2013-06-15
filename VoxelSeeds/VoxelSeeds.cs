@@ -60,7 +60,7 @@ namespace VoxelSeeds
 
         protected override void LoadContent()
         {
-            _map = new Map(100, 50, 100);
+            _map = new Map(100, 50, 100, LevelType.PLAIN, 34857024);
 
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
             _voxelRenderer.Reset(_map);
@@ -69,8 +69,6 @@ namespace VoxelSeeds
             base.LoadContent();
             _seedbar.LoadContent(GraphicsDevice, Content);
         }
-
-
 
         protected override void Update(GameTime gameTime)
         {
