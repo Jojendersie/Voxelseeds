@@ -51,7 +51,7 @@ namespace VoxelSeeds
                                                  new PineWoodRule(),
                                                  new SpruceWoodRule(),
                                                  new BeechWoodRule(),
-                                                 new TeakWoodRule(),
+                                                 new OakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),

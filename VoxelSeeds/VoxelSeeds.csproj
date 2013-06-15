@@ -108,6 +108,7 @@
     <Compile Include="Level1.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Rules\BeechWoodRule.cs" />
+    <Compile Include="Rules\OakWoodRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
     <Compile Include="Rules\SpruceWoodRule.cs" />
     <Compile Include="Rules\TeakWoodRule.cs" />
