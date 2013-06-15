@@ -9,7 +9,7 @@ namespace VoxelSeeds
 {
     class Automaton
     {
-        struct LivingVoxel
+        class LivingVoxel
         {
             public int X;
             public int Y;
@@ -17,6 +17,8 @@ namespace VoxelSeeds
 
             public int Generation;
             public int Resources;
+
+            public int Ticks;
 
             public IVoxelRule Rule;
         };
@@ -33,6 +35,7 @@ namespace VoxelSeeds
             newVoxel.X = x; newVoxel.Y = y; newVoxel.Z = z;
             newVoxel.Generation = 0;
             newVoxel.Resources = 0;
+            newVoxel.Ticks = 0;
             // TODO: RULE
 
             Int32 pos = _map.EncodePosition(x, y, z);
@@ -97,6 +100,7 @@ namespace VoxelSeeds
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
             Parallel.ForEach(_livingVoxels, currentVoxel =>
                 {
+                    ++currentVoxel.Value.Ticks;
                     // Create a local window for the rule algorithms
                     VoxelInfo[,,] localFrame = new VoxelInfo[3, 3, 3];
                     IterateNeighbours( (x, y, z) =>
@@ -108,17 +112,18 @@ namespace VoxelSeeds
                         {
                             // Yes: query more information from the dictinary
                             LivingVoxel VoxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
-                            localFrame[z, y, x] = new VoxelInfo(voxel, true, VoxelInfo.Generation, VoxelInfo.Resources);
+                            localFrame[z, y, x] = new VoxelInfo(voxel, true, VoxelInfo.Generation, VoxelInfo.Resources, currentVoxel.Value.Ticks);
                         }
                         {
                             // No uses directly
-                            localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel, false);
+                            localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel);
                         }
                     });
                     // Apply the rule for currentVoxel
                     VoxelInfo[,,] ruleResult = currentVoxel.Value.Rule.ApplyRule( localFrame );
-                    if( ruleResult != null )
+                    if (ruleResult != null)
                     {
+                        currentVoxel.Value.Ticks = 0;
                         // Add changes to the change collection
                         IterateNeighbours((x, y, z) =>
                         {
@@ -129,7 +134,7 @@ namespace VoxelSeeds
                                 results.AddOrUpdate(positionCode, ruleResult[z, y, x], (key, old) => GamePlayUtils.GetStrongerVoxel(ref old, ref ruleResult[z, y, x]));
                             }
                         });
-                     }
+                    }
                 }
             );
             update(ref results, ref updateInstanceData);

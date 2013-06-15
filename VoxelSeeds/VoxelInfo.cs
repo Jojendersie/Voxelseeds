@@ -46,7 +46,7 @@ namespace VoxelSeeds
         /// </summary>
         /// <param name="type">A type of the enumeration type. Do not used more than
         /// 128 different types in the enumeration.</param>
-        public VoxelInfo(VoxelType type, bool living = false, int generation = 0, int resources = 0)
+        public VoxelInfo(VoxelType type, bool living = false, int generation = 0, int resources = 0, int ticks = 0)
         {
             System.Diagnostics.Debug.Assert( (byte)type < 128 );
             // First bit == living or dead
@@ -54,7 +54,7 @@ namespace VoxelSeeds
             _living = living;
             _resources = resources;
             _generation = generation;
-            _ticks = 0;
+            _ticks = ticks;
         }
 
         public bool Living { get { return _living; } }
@@ -62,7 +62,6 @@ namespace VoxelSeeds
         public int Resources { get { return _resources; } }
         public int Generation { get { return _generation; } }
         public int Ticks { get { return _ticks; } }
-        public void IncrementTicks() { ++_ticks;  }
 
         readonly VoxelType _type;
         readonly bool _living;
