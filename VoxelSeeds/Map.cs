@@ -83,6 +83,7 @@ namespace VoxelSeeds
             return _voxels[EncodePosition(x, y, z)];
         }
 
+
         public byte Sample(Int32 positionCode)
         {
             return _voxels[positionCode];
@@ -103,6 +104,12 @@ namespace VoxelSeeds
                     for (int y = 0; y < maxHeight + rand.Next(4)-2; ++y)
                         _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
                 }
+        }
+
+		// TODO: find a better name
+		public static int getGoodVoxels()
+        { 
+            return 100;
         }
 
     }

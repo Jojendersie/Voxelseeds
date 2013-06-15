@@ -87,10 +87,13 @@ namespace VoxelSeeds
             spriteBatch.Begin();
             for (int i = 0; i < barLength; i++)
             {
-                spriteBatch.Draw(textures[(int)seeds[i]._type], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y + 37, 10, 20), Color.White);
+                //draw curency
+                spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y + 37, 10, 20), Color.White);
+                //draw Icons
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.getPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X+7,seeds[i]._position.Y + 36), Color.White);
             }
+            spriteBatch.Draw(helix , new DrawingRectangle(1000, 500, 30, Map.getGoodVoxels()),null,Color.White,(float)Math.PI,new Vector2(0,0),SpriteEffects.None,0);
             spriteBatch.End();
         }
 
