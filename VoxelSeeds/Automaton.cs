@@ -32,7 +32,7 @@ namespace VoxelSeeds
             LivingVoxel newVoxel = new LivingVoxel();
             newVoxel.X = x; newVoxel.Y = y; newVoxel.Z = z;
             newVoxel.Generation = 0;
-            newVoxel.Resources = TypeInformation.GetStartResources(type);
+            newVoxel.Resources = 0;
             // TODO: RULE
 
             Int32 pos = _map.EncodePosition(x, y, z);
@@ -102,13 +102,13 @@ namespace VoxelSeeds
                     IterateNeighbours( (x, y, z) =>
                     {
                         Int32 pos = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
-                        byte voxel = _map.Sample(pos);
+                        VoxelType voxel = _map.Get(pos);
                         // Living?
                         if (_map.IsLiving(pos))
                         {
                             // Yes: query more information from the dictinary
                             LivingVoxel VoxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
-                            localFrame[z, y, x] = new VoxelInfo((VoxelType)(voxel & 0x7f), true, VoxelInfo.Resources, VoxelInfo.Generation );
+                            localFrame[z, y, x] = new VoxelInfo(voxel, true, VoxelInfo.Generation, VoxelInfo.Resources);
                         }
                         {
                             // No uses directly

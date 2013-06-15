@@ -59,6 +59,7 @@
     <Compile Include="Level.cs" />
     <Compile Include="Level1.cs" />
     <Compile Include="Map.cs" />
+    <Compile Include="Rules.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="VoxelInfo.cs" />
     <Compile Include="Seedbar.cs" />

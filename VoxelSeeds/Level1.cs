@@ -11,9 +11,9 @@ namespace VoxelSeeds
         override public void Initialize()
         {
             _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024);
-            _numRemainingSeeds[(int)VoxelType.WOOD] = 3;
+            _numRemainingSeeds[(int)VoxelType.TEAK_WOOD] = 3;
 
-            _automaton.InsertSeed(50, 45, 50, VoxelType.WOOD);
+            _automaton.InsertSeed(50, 45, 50, VoxelType.TEAK_WOOD);
         }
     }
 }
