@@ -61,7 +61,7 @@ namespace VoxelSeeds
         {
             
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
-            _seedbar = new Seedbar();
+            _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             base.LoadContent();
             _seedbar.LoadContent(GraphicsDevice, Content);
         }
