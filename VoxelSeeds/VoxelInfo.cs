@@ -11,16 +11,40 @@ namespace VoxelSeeds
         EMPTY = 0,
         GROUND,
         TEAK_WOOD,
-        FUNGUS
+        PINE_WOOD,
+        SPRUCE_WOOD,
+        BEECH_WOOD,
+        OAK_WOOD,
+        REDWOOD,
+        WHITEROT_FUNGUS,
+        NOBLEROT_FUNGUS,
+        TERMITES,
+        HOUSE_LONGHORN_BEETLE,
+        HESPEROPHANES_CINNEREUS,
+        GRASSHOPPER
     };
 
     class TypeInformation
-    {   //empty,Ground,Teak_Wood,Fungus
-        readonly static int[] prices = {0, 0, 5, 0 };
-        readonly static String[,] strength = { {"",""}, { "-", "-" }, { "Water", "Earth" }, { "-", "-" } };
-        readonly static String[,] weakness = { { "", "" }, { "-", "-" }, { "Fire", "Heaven" }, { "-", "-" } };
-        readonly static String[] name = { "", "Ground", "Teak", "Fungus" };
-        readonly static bool[] parasite = { false, false, false, true };
+    {   //same order as the VoxelType enum
+        readonly static int[] prices = {0, 0, 120, 90, 152, 68, 116, 956, 0, 0, 0, 0, 0 };
+        readonly static String[,] strength = { { "", "" }, { "-", "-" }, 
+                                             { "White Rot", "Noble Rot" }, 
+                                             { "Hesperophanes Cinnereus", "Grasshopper" }, 
+                                             { "Hesperophanes Cinnereus", "Grasshopper" }, 
+                                             { "House Longhorn Beetle", "Grasshopper" }, 
+                                             { "House Longhorn Beetle", "Grasshopper" },
+                                             { "Termites", "Grasshopper" },
+                                             { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
+        readonly static String[,] weakness = { { "", "" }, { "-", "-" }, 
+                                             { "Termites", "Hesperophanes Cinnereus" },
+                                             { "White Rot", "Noble Rot" },
+                                             { "Termites", "House Longhorn Beetle" },
+                                             { "White Rot", "Noble Rot" },
+                                             { "White Rot", "Hesperophanes Cinnereus" },
+                                             { "White Rot", "Noble Rot" },
+                                             { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
+        readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper" };
+        readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true };
 
         public static String GetName(VoxelType voxeltype)
         {
