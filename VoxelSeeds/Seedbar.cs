@@ -29,9 +29,9 @@ namespace VoxelSeeds
         private SeedInfo[] seeds = new SeedInfo[10];
         private Texture2D[] textures = new Texture2D[10];
         private Texture2D helix;
-        private int selected;
+        private int selected = 0;
         private bool picking;
-        private System.Drawing.Point MousePosition;
+        private System.Drawing.Point mousePosition;
 
         private const int barLength = 10;
 
@@ -49,11 +49,11 @@ namespace VoxelSeeds
                 picking = e.Button == System.Windows.Forms.MouseButtons.Left;
             inputControlElement.MouseUp += (object sender, System.Windows.Forms.MouseEventArgs e) =>
             {
-                if (picking && e.Button == System.Windows.Forms.MouseButtons.Right)
+                if (picking && e.Button == System.Windows.Forms.MouseButtons.Left)
                     picking = false;
             };
             inputControlElement.MouseMove += (object sender, System.Windows.Forms.MouseEventArgs e) =>
-                MousePosition = e.Location;
+                mousePosition = e.Location;
         }
 
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
@@ -74,29 +74,28 @@ namespace VoxelSeeds
             // if it happens as feared, look at the handler registrations in the ctor of Camera
             // hf ;)
 
-            double mouseX = Mouse.GetPosition(null).X;
-            double mouseY = Mouse.GetPosition(null).Y;
-
-            return(mouseX >= pos.X && mouseX <= pos.X + width && mouseY >= pos.Y && mouseY < pos.Y + heigth);
+            return (mousePosition.X >= pos.X && mousePosition.X <= pos.X + width && mousePosition.Y >= pos.Y && mousePosition.Y < pos.Y + heigth);
         }
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             for (int i = 0; i < barLength; i++)
             {
-                if (MouseOver(seeds[i]._position, 32, 32) && Mouse.LeftButton == MouseButtonState.Pressed)
-                { 
-                    //TODO:MOUSE_CHange_TO_VOXEL
+                if (MouseOver(seeds[i]._position, 32, 32) && picking)
+                {
+                    selected = i+1;
                 }
             }  
         }
 
-        public void Draw(GameTime gameTime)
+        public void Draw()
         {
             int soll = 200;
             int width = spriteBatch.GraphicsDevice.BackBuffer.Width;
             int progress = 200 * Map.getGoodVoxels()/soll;
+
             spriteBatch.Begin();
+
             for (int i = 0; i < barLength; i++)
             {
                 //draw curency
@@ -111,6 +110,8 @@ namespace VoxelSeeds
                 }
             }
             spriteBatch.Draw(helix , new DrawingRectangle(width-20, 400, 30, progress),null,Color.White,(float)Math.PI,new Vector2(0,0),SpriteEffects.None,0);
+            if (selected > 0) spriteBatch.DrawString(font, selected.ToString(), new Vector2(200, 100), Color.White);
+
             spriteBatch.End();
         }
 
