@@ -266,10 +266,12 @@ using SharpDX.Toolkit.Content;
         public void Update(IEnumerable<Voxel> removeList, IEnumerable<Voxel> addList)
         {
             // remove voxels
+            if( removeList != null )
             foreach (Voxel voxel in removeList)
                 _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Remove(voxel.PositionCode);
 
             // add voxels
+            if (addList != null)
             foreach (Voxel voxel in addList)
                 _voxelTypeRenderingData[GetRenderingDataIndex(voxel.Type)].InstanceDataRAM.Add(voxel.PositionCode);
 

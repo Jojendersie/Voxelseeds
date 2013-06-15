@@ -41,12 +41,14 @@ namespace VoxelSeeds
 
         public Map GetMap() { return _automaton.Map; }
         public void InsertSeed(int x, int y, int z, VoxelType type) { _automaton.InsertSeed(x, y, z, type); }
+        public void SetInstanceUpdateMethod(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData) { _automaton.SetInstanceUpdateMethod(ref updateInstanceData); }
 
-        public void Tick(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData)
+
+        public void Tick()
         {
             int newBiomass;
             int newParasites;
-            _automaton.Tick(ref updateInstanceData, out newBiomass, out newParasites);
+            _automaton.Tick(out newBiomass, out newParasites);
             _currentBiomass += newBiomass;
             _currentParasiteMass += newParasites;
 
