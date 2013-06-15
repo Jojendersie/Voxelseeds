@@ -61,16 +61,34 @@ namespace VoxelSeeds
             }
         }
 
+        private void removeOccludedNeighbours(Int32 positionCode, List<Voxel> deleteList)
+        {
+            // The map set can cause neighboured voxels to be occluded
+            // if so delete that from GPU.
+            Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) deleteList.Add(new Voxel(pos, _map.Get(pos))); };
+            checkAndRemoveNeighbour(positionCode - 1);
+            checkAndRemoveNeighbour(positionCode + 1);
+            checkAndRemoveNeighbour(positionCode - _map.SizeX);
+            checkAndRemoveNeighbour(positionCode + _map.SizeX);
+            checkAndRemoveNeighbour(positionCode - _map.SizeX * _map.SizeY);
+            checkAndRemoveNeighbour(positionCode + _map.SizeX * _map.SizeY);
+        }
+
         public void InsertSeed(int x, int y, int z, VoxelType type)
         {
             Int32 pos = _map.EncodePosition(x, y, z);
 
             InsertVoxel(pos, type, 0, true, 0, 0);
 
-            List<Voxel> insertionList = new List<Voxel>();
-            insertionList.Add(new Voxel(pos, type));
             if( _updateInstanceData != null )
+            {
+
+                List<Voxel> deleteList = new List<Voxel>();
+                List<Voxel> insertionList = new List<Voxel>();
+                insertionList.Add(new Voxel(pos, type));
+                removeOccludedNeighbours(pos, deleteList);
                 _updateInstanceData(null, insertionList);
+            }
         }
 
 
@@ -118,15 +136,7 @@ namespace VoxelSeeds
                 // Insert to instance data only if visible
                 if( !_map.IsOccluded(vox.Key) )
                     insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
-                // The map set can cause neighboured voxels to be occluded
-                // if so delete that from GPU.
-                Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) deleteList.Add(new Voxel(pos, _map.Get(pos))); };
-                checkAndRemoveNeighbour(vox.Key - 1);
-                checkAndRemoveNeighbour(vox.Key + 1);
-                checkAndRemoveNeighbour(vox.Key - _map.SizeX);
-                checkAndRemoveNeighbour(vox.Key + _map.SizeX);
-                checkAndRemoveNeighbour(vox.Key - _map.SizeX * _map.SizeY);
-                checkAndRemoveNeighbour(vox.Key + _map.SizeX * _map.SizeY);
+                removeOccludedNeighbours(vox.Key, deleteList);
             }
             _updateInstanceData(deleteList, insertionList);
         }
