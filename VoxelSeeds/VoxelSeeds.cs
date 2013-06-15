@@ -24,6 +24,15 @@ namespace VoxelSeeds
         double _cumulatedFrameTime;
 
         /// <summary>
+        /// current picked pos
+        /// </summary>
+        Int3 _pickedPos;
+        /// <summary>
+        /// true if there is a valid _pickedPos
+        /// </summary>
+        bool _pickPosAvailable;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
         /// </summary>
         public VoxelSeeds()
@@ -57,7 +66,7 @@ namespace VoxelSeeds
 
             var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
             System.Diagnostics.Debug.Assert(windowControl != null);
-            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.5f, 1.0f, 1000.0f, windowControl);
+            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.35f, 1.0f, 1000.0f, windowControl);
         }
 
 
@@ -70,17 +79,6 @@ namespace VoxelSeeds
             _seedbar.LoadContent(GraphicsDevice, Content);
 
 			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));
-
-            // testcode for culling
-         /*      var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
-               windowControl.MouseClick += (object sender, System.Windows.Forms.MouseEventArgs e) =>
-               {
-                       var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
-                       Int3 pickedPos;
-                       bool picked = this._currentLevel.GetMap().PickPosition(ray, out pickedPos);
-                       System.Console.WriteLine(picked);
-                       System.Console.WriteLine(pickedPos);
-               }; */
 
             base.LoadContent();
         }
@@ -104,6 +102,10 @@ namespace VoxelSeeds
 
             _seedbar.Update();
 
+            // the permanent picking
+            var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
+            _pickPosAvailable = this._currentLevel.GetMap().PickPosition(ray, out _pickedPos);
+
             // Handle base.Update
             base.Update(gameTime);
         }
@@ -115,6 +117,9 @@ namespace VoxelSeeds
 
             // rendererererererererer
             _voxelRenderer.Draw(_camera, GraphicsDevice);
+
+            if (_pickPosAvailable)
+                _voxelRenderer.DrawGhost(_camera, GraphicsDevice, VoxelType.GROUND, _currentLevel.GetMap().EncodePosition(_pickedPos));
 
             // Handle base.Draw
             base.Draw(gameTime);
