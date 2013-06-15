@@ -17,7 +17,18 @@ namespace VoxelSeeds
             _finalParasiteMass = 1000;
             _targetBiomass = 500;
             _currentBiomass = 1;
-            _currentParasiteMass = 0;
+            _currentParasiteMass = 1;
+            int x = GetMap().SizeX / 2;
+            int z = GetMap().SizeZ / 2;
+            int y;
+            for (y = GetMap().SizeY - 1; y > 0; --y)
+            {
+                if (GetMap().Get(GetMap().EncodePosition(x, y, z)) == VoxelType.GROUND)
+                {
+                    break;
+                }
+            }
+            _automaton.InsertSeed(x,y+1,z,VoxelType.WHITEROT_FUNGUS);
         }
     }
 }
