@@ -17,10 +17,16 @@ namespace VoxelSeeds
     class TypeInformation
     {   //empty,Ground,Wood,Fungus
         readonly static int[] prices = {0, 0, 5, 0 };
+        readonly static int[] startResources = { 0, 0, 50, 0 };
 
-        public static int getPrice(VoxelType voxeltype)
+        public static int GetPrice(VoxelType voxeltype)
         {
             return prices[(int)voxeltype];
+        }
+
+        public static int GetStartResources(VoxelType voxeltype)
+        {
+            return startResources[(int)voxeltype];
         }
     }
 

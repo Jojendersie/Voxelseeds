@@ -21,9 +21,20 @@ namespace VoxelSeeds
             public IVoxelRule Rule;
         };
 
-        Automaton()
+        public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
         {
+            _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed);
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
+        }
+
+        public void InsertSeed(int x, int y, int z, VoxelType type)
+        {
+            LivingVoxel newVoxel = new LivingVoxel();
+            newVoxel.X = x; newVoxel.Y = y; newVoxel.Z = z;
+            newVoxel.Generation = 0;
+            newVoxel.Resources = TypeInformation.GetStartResources(type);
+            // TODO: RULE
+            _livingVoxels.Add(_map.EncodePosition(x, y, z), newVoxel);
         }
 
 
