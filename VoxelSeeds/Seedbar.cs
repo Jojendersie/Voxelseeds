@@ -94,9 +94,9 @@ namespace VoxelSeeds
             seeds[3]._type = VoxelType.BEECH_WOOD;
             textures[3] = contentManager.Load<Texture2D>("Beech.png");
             seeds[4]._type = VoxelType.OAK_WOOD;
-            textures[4] = contentManager.Load<Texture2D>("balls.dds");
+            textures[4] = contentManager.Load<Texture2D>("oak.png");
             seeds[5]._type = VoxelType.REDWOOD;
-            textures[5] = contentManager.Load<Texture2D>("balls.dds");
+            textures[5] = contentManager.Load<Texture2D>("redwood.png");
             seeds[6]._type = VoxelType.TEAK_WOOD;
             textures[6] = contentManager.Load<Texture2D>("teak.png");
             seeds[7]._type = VoxelType.TEAK_WOOD;
@@ -144,11 +144,11 @@ namespace VoxelSeeds
                 spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);   
             }
 
-            //draw Recurses seeds[i]._position = new Vector2(i * (windowWidth - 60) / 10 + 5, 5);
+            //draw Resources
             spriteBatch.Draw(pixel, new DrawingRectangle(9 * (windowWidth - 60) / 10 + 5, 5, 84, 32), Color.Black);
             spriteBatch.Draw(frame, new DrawingRectangle(9 * (windowWidth - 60) / 10, 0, 94, 42), Color.Gray);
             spriteBatch.Draw(helix, new DrawingRectangle(9 * (windowWidth - 60) / 10 + 7, 7, 14, 28), Color.White);
-            spriteBatch.DrawString(font, "99999", new Vector2(9 * (windowWidth - 60) / 10 + 22, 10), Color.White);
+            spriteBatch.DrawString(font, currentlevel.Resources.ToString(), new Vector2(9 * (windowWidth - 60) / 10 + 22, 10), Color.White);
 
             if (_selected > -1)
             {
