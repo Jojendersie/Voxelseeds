@@ -36,6 +36,7 @@ namespace VoxelSeeds
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
         private int windowWidth;
+        private float[] tooltipCounter = new float[10];
 
         private const int barLength = 10;
 
@@ -89,7 +90,7 @@ namespace VoxelSeeds
             }  
         }
 
-        public void Draw(Level currentlevel)
+        public void Draw(Level currentlevel, GameTime gameTime)
         {
             int progress = windowHeigth * currentlevel.CurrentBiomass/currentlevel.TargetBiomass;
             int evilProgress = windowHeigth * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
@@ -116,16 +117,22 @@ namespace VoxelSeeds
             {
                 if (MouseOver(seeds[i]._position, 83, 32))
                 {
-                    int corrector = 0;
-                    if (mousePosition.X+160>windowWidth)corrector = mousePosition.X+160-windowWidth;
+                    tooltipCounter[i] += gameTime.ElapsedGameTime.Milliseconds;
 
-                    spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10-corrector, mousePosition.Y + 10, 150, 183), new Color(0.7f,0.7f,0.7f,0.5f));
-                    spriteBatch.DrawString(font,  TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X+50-corrector, mousePosition.Y+15), Color.Black);
-                    spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 40), Color.DarkBlue);
-                    spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 65), Color.DarkBlue);
-                    spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 115), Color.Crimson);
-                    spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35-corrector, mousePosition.Y + 140), Color.Crimson);
+                    if (tooltipCounter[i] >= 300)
+                    {
+                        int corrector = 0;
+                        if (mousePosition.X + 160 > windowWidth) corrector = mousePosition.X + 160 - windowWidth;
+
+                        spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 150, 183), new Color(0.7f, 0.7f, 0.7f, 0.5f));
+                        spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 50 - corrector, mousePosition.Y + 15), Color.Black);
+                        spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 40), Color.DarkBlue);
+                        spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 65), Color.DarkBlue);
+                        spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 115), Color.Crimson);
+                        spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 140), Color.Crimson);
+                    }
                 }
+                else tooltipCounter[i] = 0;
             }
             spriteBatch.End();
         }
