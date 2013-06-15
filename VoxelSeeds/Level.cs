@@ -40,7 +40,7 @@ namespace VoxelSeeds
         public bool IsLost() { return _currentParasiteMass >= _finalParasiteMass; }
 
         public Map GetMap() { return _automaton.Map; }
-        public void InsertSeed(int x, int y, int z, VoxelType type) { return _automaton.InsertSeed(x, y, z, type); }
+        public void InsertSeed(int x, int y, int z, VoxelType type) { _automaton.InsertSeed(x, y, z, type); }
 
         public void Tick(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData)
         {
