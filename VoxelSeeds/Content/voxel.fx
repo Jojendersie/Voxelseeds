@@ -7,6 +7,7 @@ cbuffer GlobalMapInfo : register(b0)
 float Transparency;
 matrix WorldViewProjection;
 float Ambient;
+float ScalingFactor;
 
 SamplerState PointSampler;
 Texture2D VoxelTexture;
@@ -39,7 +40,7 @@ PS_INPUT VS(VS_INPUT input)
 {
     PS_INPUT output;
     
-	float3 worldPos = input.Position_Cube * 0.5f;
+	float3 worldPos = input.Position_Cube * ScalingFactor;
 	worldPos += DecodePosition(input.Position_Instance);
     output.Position = mul(float4(worldPos, 1), WorldViewProjection);
     
