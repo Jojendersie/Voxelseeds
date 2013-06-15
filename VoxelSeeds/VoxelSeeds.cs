@@ -21,6 +21,7 @@ namespace VoxelSeeds
         Camera _camera;
         Seedbar _seedbar;
         Level _currentLevel;
+        double _cumulatedFrameTime;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
@@ -86,6 +87,14 @@ namespace VoxelSeeds
 
         protected override void Update(GameTime gameTime)
         {
+            // Simulate level if 0.25f seconds passed.
+            _cumulatedFrameTime += gameTime.ElapsedGameTime.TotalSeconds;
+            if (_cumulatedFrameTime > 0.25)
+            {
+                _cumulatedFrameTime -= 0.25;
+               // _currentLevel.Tick(_voxelRenderer.Update);
+            }
+
             // Rotate the cube.
           //  var time = (float)gameTime.TotalGameTime.TotalSeconds;
           //  basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);

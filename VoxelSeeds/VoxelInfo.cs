@@ -20,6 +20,7 @@ namespace VoxelSeeds
         readonly static String[,] strength = { {"",""}, { "-", "-" }, { "Water", "Earth" }, { "-", "-" } };
         readonly static String[,] weakness = { { "", "" }, { "-", "-" }, { "Fire", "Heaven" }, { "-", "-" } };
         readonly static String[] name = { "", "Ground", "Teak", "Fungus" };
+        readonly static bool[] parasite = { false, false, false, true };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -43,6 +44,10 @@ namespace VoxelSeeds
             return prices[(int)voxeltype];
         }
 
+        public static bool IsParasite(VoxelType voxeltype)
+        {
+            return parasite[(int)voxeltype];
+        }
     }
 
     class VoxelInfo

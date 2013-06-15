@@ -15,6 +15,8 @@ namespace VoxelSeeds
 
             _finalParasiteMass = 1000;
             _targetBiomass = 500;
+            _currentBiomass = 1;
+            _currentParasiteMass = 0;
 
             _automaton.InsertSeed(50, 45, 50, VoxelType.TEAK_WOOD);
         }
