@@ -6,8 +6,6 @@ cbuffer GlobalMapInfo : register(b0)
 matrix WorldViewProjection;
 
 
-
-
 struct VS_INPUT
 {
     float3 Position_Cube : POSITION_CUBE;

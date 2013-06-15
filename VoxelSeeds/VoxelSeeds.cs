@@ -55,7 +55,7 @@ namespace VoxelSeeds
 
             var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
             System.Diagnostics.Debug.Assert(windowControl != null);
-            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.7f, 1.0f, 1000.0f, windowControl);
+            _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.5f, 1.0f, 1000.0f, windowControl);
         }
 
         protected override void LoadContent()

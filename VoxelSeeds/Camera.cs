@@ -45,7 +45,7 @@ namespace VoxelSeeds
 
 
         private const float MIN_ZOOM = 5.0f;
-        private const float MAX_ZOOM = 50.0f;
+        private const float MAX_ZOOM = 100.0f;
         private const float ZOOM_PER_WHEEL_STEP = 0.01f;
 
         private float _zoom = 20.0f;

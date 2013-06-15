@@ -61,6 +61,10 @@ namespace VoxelSeeds
             Debug.Assert((0 <= z) && (z < _sizeZ));
             return (Int32)(x+SizeX*(y+SizeY*z));
         }
+        public Int32 EncodePosition(SharpDX.Int3 pos)
+        {
+            return EncodePosition(pos.X, pos.Y, pos.Z);
+        }
 
         /// <summary>
         /// Calculates the original position from a position code.
@@ -68,14 +72,12 @@ namespace VoxelSeeds
         /// This direction is slower than EncodePosition.
         /// </summary>
         /// <param name="positionCode"></param>
-        /// <param name="x">Output of position x</param>
-        /// <param name="y">Output of position y</param>
-        /// <param name="z">Output of position z</param>
-        public void DecodePosition(Int32 positionCode, out int x, out int y, out int z)
+        public SharpDX.Int3 DecodePosition(Int32 positionCode)
         {
-            x = positionCode % SizeX;
-            y = (positionCode / SizeX) % SizeY;
-            z = positionCode / (SizeX * SizeY);
+            return new SharpDX.Int3(
+                positionCode % SizeX,
+                (positionCode / SizeX) % SizeY,
+                positionCode / (SizeX * SizeY));
         }
 
         public byte Sample(int x, int y, int z)
@@ -92,6 +94,11 @@ namespace VoxelSeeds
         public VoxelType Get(Int32 positionCode)
         {
             return (VoxelType)(_voxels[positionCode] & 0x7f);
+        }
+
+        public VoxelType Get(SharpDX.Int3 position)
+        {
+            return Get(EncodePosition(position));
         }
 
         public void Set(Int32 positionCode, VoxelType type, bool living)

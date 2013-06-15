@@ -55,7 +55,9 @@ namespace VoxelSeeds
         }
         VoxelTypeInstanceData[] _voxelTypeRenderingData;
 
-        const int MAX_NUM_VOXELS_PER_TYPE = 8192;
+        const int MAX_NUM_VOXELS_PER_TYPE = 131072;
+
+        Matrix _translationMatrix = Matrix.Translation(Vector3.Zero);
 
         /// <summary>
         /// Effect for all Voxel-Renderings
@@ -129,6 +131,11 @@ namespace VoxelSeeds
             _voxelEffect = new SharpDX.Toolkit.Graphics.Effect(graphicsDevice, voxelShaderCompileResult.EffectData);
         }
 
+        private static int GetRenderingDataIndex(VoxelType voxel)
+        {
+            return (int)voxel - 1;
+        }
+
         /// <summary>
         /// setups settings for a new map and clears all instance buffers
         /// </summary>
@@ -139,16 +146,42 @@ namespace VoxelSeeds
                 _voxelTypeRenderingData[i].InstanceDataRAM.Clear();
 
             // add current world
-            // test
-            _voxelTypeRenderingData[0].InstanceDataRAM.Add(0);
-            _voxelTypeRenderingData[0].InstanceDataRAM.Add(1);
-            _voxelTypeRenderingData[0].InstanceDataRAM.Add(2);
-            _voxelTypeRenderingData[0].InstanceDataRAM.Add(3);
-            _voxelTypeRenderingData[0].UpdateGPUInstanceBuffer();
+            for (int posCode = 0; posCode < map.SizeX * map.SizeY * map.SizeZ; ++posCode)
+            {
+                var voxel = map.Get(posCode);
+                if (voxel != VoxelType.EMPTY)
+                {
+                    // occluded?
+                    var pos = map.DecodePosition(posCode);
+                    if (pos.X > 0 && pos.X < map.SizeX-1 &&
+                        pos.Y > 0 && pos.Y < map.SizeY-1 &&
+                        pos.Z > 0 && pos.Z < map.SizeZ-1)
+                    {
+                        if (map.Get(pos + Int3.UnitX) != VoxelType.EMPTY &&
+                            map.Get(pos + Int3.UnitY) != VoxelType.EMPTY &&
+                            map.Get(pos + Int3.UnitZ) != VoxelType.EMPTY &&
+                            map.Get(pos - Int3.UnitX) != VoxelType.EMPTY &&
+                            map.Get(pos - Int3.UnitY) != VoxelType.EMPTY &&
+                            map.Get(pos - Int3.UnitZ) != VoxelType.EMPTY)
+                        {
+                            continue;
+                        }
+                    }
+
+                    // add
+                    if(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].InstanceDataRAM.Count < MAX_NUM_VOXELS_PER_TYPE-1)
+                        _voxelTypeRenderingData[GetRenderingDataIndex(voxel)].InstanceDataRAM.Add(posCode);
+                }
+            }
+
+            foreach(var data in _voxelTypeRenderingData)
+                data.UpdateGPUInstanceBuffer();
 
             // set vertex scaling
             _voxelEffect.ConstantBuffers["GlobalMapInfo"].Parameters["WorldSize"].SetValue(new Int3(map.SizeX, map.SizeY, map.SizeZ));
             _voxelEffect.ConstantBuffers["GlobalMapInfo"].IsDirty = true;
+
+            _translationMatrix = Matrix.Translation(- new Vector3(map.SizeX, 0.0f, map.SizeZ) * 0.5f);
         }
 
         /// <summary>
@@ -158,9 +191,12 @@ namespace VoxelSeeds
         {
         }
 
+        /// <summary>
+        /// draw what else
+        /// </summary>
         public void Draw(Camera camera, GraphicsDevice graphicsDevice)
         {
-            _voxelEffect.Parameters["WorldViewProjection"].SetValue(camera.ViewMatrix * camera.ProjectionMatrix);
+            _voxelEffect.Parameters["WorldViewProjection"].SetValue(_translationMatrix * camera.ViewMatrix * camera.ProjectionMatrix);
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
