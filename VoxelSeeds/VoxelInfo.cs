@@ -66,7 +66,7 @@ namespace VoxelSeeds
         /// <summary>
         /// A scaling factor for voxels it is used to display bugs and beetles smaller
         /// </summary>
-        readonly static float[] scalingFactor = { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f };
+        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f};
 
         readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
 
