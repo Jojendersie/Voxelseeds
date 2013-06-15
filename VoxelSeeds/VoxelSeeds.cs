@@ -76,7 +76,8 @@ namespace VoxelSeeds
                 if (e.Button == System.Windows.Forms.MouseButtons.Left)
                     mainThreadDispatcher.BeginInvoke(new Action(() =>
                         {
-                            if (_seedbar.GetSelected() >= 0 &&
+                            if (_pickPosAvailable &&
+                                _seedbar.GetSelected() >= 0 &&
                                 _currentLevel.GetMap().IsInside(_pickedPos.X, _pickedPos.Y, _pickedPos.Z) &&
                                 TypeInformation.GetPrice(_seedbar.GetSeedInfo()._type) <= _currentLevel.Resources)
                             {
