@@ -34,7 +34,10 @@ namespace VoxelSeeds
             newVoxel.Generation = 0;
             newVoxel.Resources = TypeInformation.GetStartResources(type);
             // TODO: RULE
-            _livingVoxels.Add(_map.EncodePosition(x, y, z), newVoxel);
+
+            Int32 pos = _map.EncodePosition(x, y, z);
+            _livingVoxels.Add(pos, newVoxel);
+            _map.Set(pos, type, true);
         }
 
 
