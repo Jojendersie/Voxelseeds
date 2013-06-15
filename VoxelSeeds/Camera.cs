@@ -30,7 +30,7 @@ namespace VoxelSeeds
 
         // some intern controlling variables
         private double _phi = MathUtil.Pi * 0.25f;
-        private double _theta = MathUtil.Pi * 1.35f;
+        private double _theta = MathUtil.Pi * 1.3f;
 
         private const double MIN_THETA = MathUtil.Pi * 1.1f;
         private const double MAX_THETA = MathUtil.Pi * 0.4f + MathUtil.Pi;
@@ -48,7 +48,7 @@ namespace VoxelSeeds
         private const float MAX_ZOOM = 100.0f;
         private const float ZOOM_PER_WHEEL_STEP = 0.01f;
 
-        private float _zoom = 60.0f;
+        private float _zoom = 80.0f;
 
         private bool _cameraMouseMoveOn = false;
 
