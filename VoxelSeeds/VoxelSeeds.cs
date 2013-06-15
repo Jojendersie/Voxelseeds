@@ -83,6 +83,8 @@ namespace VoxelSeeds
             // add/remove voxels from voxelrenderer
             _voxelRenderer.Update();
 
+            _seedbar.Update();
+
             // Handle base.Update
             base.Update(gameTime);
         }
@@ -98,7 +100,7 @@ namespace VoxelSeeds
             // Handle base.Draw
             base.Draw(gameTime);
 
-            _seedbar.Draw(gameTime);
+            _seedbar.Draw();
         }
     }
 }

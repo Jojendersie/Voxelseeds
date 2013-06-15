@@ -15,8 +15,8 @@ namespace VoxelSeeds
     };
 
     class TypeInformation
-    {   //Ground,Wood,Fungus
-        readonly static int[] prices = { 0, 5, 0 };
+    {   //empty,Ground,Wood,Fungus
+        readonly static int[] prices = {0, 0, 5, 0 };
 
         public static int getPrice(VoxelType voxeltype)
         {
