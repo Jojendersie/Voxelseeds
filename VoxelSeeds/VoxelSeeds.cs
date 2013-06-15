@@ -20,6 +20,7 @@ namespace VoxelSeeds
         VoxelRenderer _voxelRenderer;
         Camera _camera;
         Seedbar _seedbar;
+        Map _map;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
@@ -59,8 +60,11 @@ namespace VoxelSeeds
 
         protected override void LoadContent()
         {
-            
+            _map = new Map(100, 50, 100);
+
             _voxelRenderer = new VoxelRenderer(GraphicsDevice);
+            _voxelRenderer.Reset(_map);
+
             _seedbar = new Seedbar();
             base.LoadContent();
             _seedbar.LoadContent(GraphicsDevice, Content);
