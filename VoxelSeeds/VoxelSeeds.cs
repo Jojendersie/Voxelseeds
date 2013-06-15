@@ -101,7 +101,7 @@ namespace VoxelSeeds
             // Handle base.Draw
             base.Draw(gameTime);
 
-            _seedbar.Draw();
+            _seedbar.Draw(_currentLevel);
         }
     }
 }

@@ -15,10 +15,16 @@ namespace VoxelSeeds
     };
 
     class TypeInformation
-    {   //empty,Ground,Wood,Fungus
+    {   //empty,Ground,Teak_Wood,Fungus
         readonly static int[] prices = {0, 0, 5, 0 };
         readonly static String[,] strength = { {"",""}, { "-", "-" }, { "Water", "Earth" }, { "-", "-" } };
         readonly static String[,] weakness = { { "", "" }, { "-", "-" }, { "Fire", "Heaven" }, { "-", "-" } };
+        readonly static String[] name = { "", "Ground", "Teak", "Fungus" };
+
+        public static String GetName(VoxelType voxeltype)
+        {
+            return name[(int)voxeltype];
+        }
 
         public static String[] GetStrength(VoxelType voxeltype)
         {

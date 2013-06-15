@@ -89,12 +89,10 @@ namespace VoxelSeeds
             }  
         }
 
-        public void Draw()
-        {       
-            int soll = 100;
-            int evilSoll = 150;
-            int progress = windowHeigth * Map.getGoodVoxels()/soll;
-            int evilProgress = windowHeigth * Map.getGoodVoxels() / evilSoll;
+        public void Draw(Level currentlevel)
+        {
+            int progress = windowHeigth * currentlevel.CurrentBiomass/currentlevel.TargetBiomass;
+            int evilProgress = windowHeigth * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
 
             spriteBatch.Begin();
 
@@ -113,13 +111,13 @@ namespace VoxelSeeds
                 //draw Icons
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);
             }
-
+            //draw Tooltip
             for (int i = 0; i < barLength; i++)
             {
                 if (MouseOver(seeds[i]._position, 32, 32))
                 {
-                    spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10, mousePosition.Y + 10, 150, 400), new Color(0.7f,0.7f,0.7f,0.5f));
-                    spriteBatch.DrawString(font, seeds[i]._type.ToString(), new Vector2(mousePosition.X+50, mousePosition.Y+15), Color.Gray);
+                    spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10, mousePosition.Y + 10, 150, 180), new Color(0.7f,0.7f,0.7f,0.5f));
+                    spriteBatch.DrawString(font,  TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X+50, mousePosition.Y+15), Color.Black);
                     spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35, mousePosition.Y + 40), Color.DarkBlue);
                     spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35, mousePosition.Y + 65), Color.DarkBlue);
                     spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35, mousePosition.Y + 115), Color.Crimson);
