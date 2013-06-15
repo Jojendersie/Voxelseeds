@@ -13,6 +13,16 @@ namespace VoxelSeeds
         FUNGUS
     };
 
+    class TypeInformation
+    {   //Ground,Wood,Fungus
+        readonly static int[] prices = { 0, 5, 0 };
+
+        public static int getPrice(VoxelType voxeltype)
+        {
+            return prices[(int)voxeltype];
+        }
+    }
+
     struct VoxelInfo
     {
         /// <summary>
