@@ -58,6 +58,14 @@ namespace VoxelSeeds
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule() };
+        /// <summary>
+        /// The maximum number of voxels of a type which can be simultaneously in the world
+        /// </summary>
+        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 512, 512, 512, 512 };
+        /// <summary>
+        /// A scaling factor for voxels it is used to display bugs and beetles smaller
+        /// </summary>
+        readonly static float[] scalingFactor = { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f };
 
         public static String GetName(VoxelType voxeltype)
         {
