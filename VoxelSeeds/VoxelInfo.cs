@@ -8,7 +8,7 @@ namespace VoxelSeeds
 {
     enum VoxelType
     {
-        EMPTY,
+        EMPTY = 0,
         GROUND,
         WOOD,
         FUNGUS

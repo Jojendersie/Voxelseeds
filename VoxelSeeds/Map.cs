@@ -7,6 +7,11 @@ using System.Diagnostics;
 
 namespace VoxelSeeds
 {
+    enum LevelType
+    {
+        PLAIN
+    };
+
     /// <summary>
     /// The map is a 3D array of byte values.
     /// 
@@ -16,12 +21,19 @@ namespace VoxelSeeds
     /// </summary>
     class Map
     {
-        public Map(int sizeX, int sizeY, int sizeZ)
+        public Map(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
         {
             _voxels = new byte[sizeX*sizeY*sizeZ];
             _sizeX = sizeX;
             _sizeY = sizeY;
             _sizeZ = sizeZ;
+
+            // Create the ground
+            Random rand = new Random(seed);
+            switch (lvlType)
+            {
+                case LevelType.PLAIN: GeneratePlainLevel(ref rand); break;
+            }
         }
 
         public Int32 SizeX { get { return _sizeX; } }
@@ -75,5 +87,23 @@ namespace VoxelSeeds
         {
             return _voxels[positionCode];
         }
+
+
+        /// <summary>
+        /// Create a relatively flat ground.
+        /// </summary>
+        /// <param name="rand"></param>
+        private void GeneratePlainLevel(ref Random rand)
+        {
+            // Fill half to test
+            Int32 maxHeight = SizeY / 2;
+            for( int z=0; z<SizeZ; ++z )
+                for (int x = 0; x < SizeX; ++x)
+                {
+                    for (int y = 0; y < maxHeight + rand.Next(4)-2; ++y)
+                        _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
+                }
+        }
+
     }
 }
