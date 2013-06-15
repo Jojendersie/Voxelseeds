@@ -53,6 +53,8 @@
     <Compile Include="Camera.cs" />
     <Compile Include="GamePlayUtils.cs" />
     <Compile Include="IVoxelRule.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="Level1.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="VoxelInfo.cs" />

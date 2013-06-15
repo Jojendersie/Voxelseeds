@@ -13,13 +13,14 @@ namespace VoxelSeeds
     /// The level is a base class. To define a spezific level create a child
     /// class.
     /// </summary>
-    class Level
+    abstract class Level
     {
-        public int TargetBiomass { get { return _targetBiomass; } }
-        public int CurrentBiomass { get { return _targetBiomass; } }
-        public int ParasiteBiomass { get { return _targetBiomass; } }
+        public int TargetBiomass { get { return _targetBiomass; } protected set { _targetBiomass = value; } }
+        public int CurrentBiomass { get { return _currentBiomass; } protected set { _currentBiomass = value; } }
+        public int ParasiteBiomass { get { return _parasiteMass; } protected set { _parasiteMass = value; } }
+        public int FinalParasiteBiomass { get { return _finalParasiteMass; } protected set { _finalParasiteMass = value; } }
 
-        Level()
+        public Level()
         {
             _numRemainingSeeds = new int[Enum.GetValues(typeof(VoxelType)).Length];
         }
@@ -29,22 +30,22 @@ namespace VoxelSeeds
         /// It is not necessary to allocate the _numRemainingSeeds array
         /// just fill it.
         /// </summary>
-        virtual abstract void Initialize();
+        public abstract void Initialize();
 
-        bool IsVictory()    { return _currentBiomass >= _targetBiomass; }
-        bool IsLost()       { return _parasiteMass >= _finalParasiteMass;  }
+        public bool IsVictory()    { return _currentBiomass >= _targetBiomass; }
+        public bool IsLost() { return _parasiteMass >= _finalParasiteMass; }
 
-        void Tick(Action<Voxel[], Voxel[]> updateInstanceData)
+        public void Tick(Action<Voxel[], Voxel[]> updateInstanceData)
         {
             _automaton.Tick(ref updateInstanceData);
         }
 
-        Automaton _automaton;
-        int _targetBiomass;
-        int _currentBiomass;
-        int _parasiteMass;
-        int _finalParasiteMass;
+        protected Automaton _automaton;
+        protected int _targetBiomass;
+        protected int _currentBiomass;
+        protected int _parasiteMass;
+        protected int _finalParasiteMass;
 
-        int[] _numRemainingSeeds;
+        protected int[] _numRemainingSeeds;
     }
 }

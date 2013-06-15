@@ -102,7 +102,7 @@ namespace VoxelSeeds
                 spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y + 37, 10, 20), Color.White);
                 //draw Icons
                 spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);
-                spriteBatch.DrawString(font, TypeInformation.getPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X+7,seeds[i]._position.Y + 36), Color.White);
+                spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X+7,seeds[i]._position.Y + 36), Color.White);
                 
                 if (MouseOver(seeds[i]._position, 32, 32))
                 {
