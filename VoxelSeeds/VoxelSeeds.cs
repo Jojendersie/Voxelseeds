@@ -99,6 +99,8 @@ namespace VoxelSeeds
 
 			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));
 
+            _currentLevel.SetInstanceUpdateMethod(_voxelRenderer.Update);
+
             base.LoadContent();
         }
 
@@ -109,7 +111,7 @@ namespace VoxelSeeds
             if (_cumulatedFrameTime > 0.25)
             {
                 _cumulatedFrameTime -= 0.25;
-                _currentLevel.Tick(_voxelRenderer.Update);
+                _currentLevel.Tick();
             }
 
             // move camera

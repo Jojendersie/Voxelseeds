@@ -196,12 +196,14 @@ namespace VoxelSeeds
         /// <param name="rand"></param>
         private void GeneratePlainLevel(ref Random rand)
         {
+            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             // Fill half to test
-            Int32 maxHeight = SizeY / 2;
-            for( int z=0; z<SizeZ; ++z )
+            Int32 maxHeight = Math.Min( 8, SizeY-1 );
+            for( int z = 0; z < SizeZ; ++z )
                 for (int x = 0; x < SizeX; ++x)
                 {
-                    int height =  maxHeight + rand.Next(SizeY / 2 - 1) - SizeY / 4;
+                    float radialHeight = 0.02f*(float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
+                    int height = (int)(maxHeight * (noise.Get(x, z) - radialHeight + 0.2f));
                     for (int y = 0; y < height; ++y)
                         _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
                 }

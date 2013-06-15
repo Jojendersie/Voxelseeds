@@ -38,6 +38,11 @@ namespace VoxelSeeds
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
         }
 
+        public void SetInstanceUpdateMethod( ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData )
+        {
+            _updateInstanceData = updateInstanceData;
+        }
+
         private void InsertVoxel(Int32 positionCode, VoxelType type, int generation, bool living, int resources, int ticks)
         {
             var pos = _map.DecodePosition(positionCode);
@@ -61,6 +66,11 @@ namespace VoxelSeeds
             Int32 pos = _map.EncodePosition(x, y, z);
 
             InsertVoxel(pos, type, 0, true, 0, 0);
+
+            List<Voxel> insertionList = new List<Voxel>();
+            insertionList.Add(new Voxel(pos, type));
+            if( _updateInstanceData != null )
+                _updateInstanceData(null, insertionList);
         }
 
 
@@ -69,8 +79,10 @@ namespace VoxelSeeds
         public Map Map { get { return _map; } }
 
         // Extra data for all living voxels.
-        // TODO: hashmap... ersparrt auch das living flag in der map
         Dictionary<Int32, LivingVoxel> _livingVoxels;
+
+        // Method for incremental update of GPU resources
+        Action<IEnumerable<Voxel>, IEnumerable<Voxel>> _updateInstanceData;
 
         private void IterateNeighbours(Action<int, int, int> func )
         {
@@ -80,7 +92,7 @@ namespace VoxelSeeds
                         func(x, y, z);
         }
 
-        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData, out int newBiomass, out int newParasites)
+        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, out int newBiomass, out int newParasites)
         {
             newBiomass = 0;
             newParasites = 0;
@@ -116,7 +128,7 @@ namespace VoxelSeeds
                 checkAndRemoveNeighbour(vox.Key - _map.SizeX * _map.SizeY);
                 checkAndRemoveNeighbour(vox.Key + _map.SizeX * _map.SizeY);
             }
-            updateInstanceData(deleteList, insertionList);
+            _updateInstanceData(deleteList, insertionList);
         }
 
 
@@ -125,7 +137,7 @@ namespace VoxelSeeds
         /// </summary>
         /// <param name="updateInstanceData">A function which takes an incremental
         /// update for all changed voxels. The first param </param>
-        public void Tick(ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData, out int newBiomass, out int newParasites)
+        public void Tick(out int newBiomass, out int newParasites)
         {
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
@@ -170,7 +182,7 @@ namespace VoxelSeeds
                     }
                 }
             //);
-            update(ref results, ref updateInstanceData, out newBiomass, out newParasites);
+            update(ref results, out newBiomass, out newParasites);
         }
     }
 }
