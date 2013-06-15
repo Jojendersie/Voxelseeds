@@ -106,6 +106,7 @@
     <Compile Include="Automaton.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Level2.cs" />
     <Compile Include="GamePlayUtils.cs" />
     <Compile Include="IVoxelRule.cs" />
     <Compile Include="Level.cs" />

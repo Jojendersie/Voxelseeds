@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -22,11 +23,14 @@ namespace VoxelSeeds
         public int FinalParasiteBiomass { get { return _finalParasiteMass; } protected set { _finalParasiteMass = value; } }
         public int Resources { get { return _resources; } set { _resources = value; } }
 
-        public Level()
+        public Level(VoxelRenderer voxelRenderer)
         {
             _numRemainingSeeds = new int[Enum.GetValues(typeof(VoxelType)).Length];
 
             Initialize();
+
+            voxelRenderer.Reset(GetMap(), new Vector3(1.0f, -2.0f, 1.0f));
+            SetInstanceUpdateMethod(voxelRenderer.Update);
         }
 
         /// <summary>
@@ -41,7 +45,7 @@ namespace VoxelSeeds
 
         public Map GetMap() { return _automaton.Map; }
         public void InsertSeed(int x, int y, int z, VoxelType type) { _automaton.InsertSeed(x, y, z, type); }
-        public void SetInstanceUpdateMethod(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData) { _automaton.SetInstanceUpdateMethod(ref updateInstanceData); }
+        void SetInstanceUpdateMethod(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData) { _automaton.SetInstanceUpdateMethod(ref updateInstanceData); }
 
 
         public void Tick()

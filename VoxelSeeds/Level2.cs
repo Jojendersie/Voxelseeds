@@ -6,21 +6,20 @@ using System.Threading.Tasks;
 
 namespace VoxelSeeds
 {
-    class Level1: Level
+    class Level2 : Level
     {
-        public Level1(VoxelRenderer voxelRenderer)
-            : base(voxelRenderer)
+        public Level2(VoxelRenderer voxelRenderer) : base(voxelRenderer)
         {
         }
 
         override public void Initialize()
         {
-            _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024);
+            _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 1234);
             _numRemainingSeeds[(int)VoxelType.TEAK_WOOD] = 3;
 
-            _resources = 10000;
+            _resources = 1000;
             _finalParasiteMass = 1000;
-            _targetBiomass = 500;
+            _targetBiomass = 1000;
             _currentBiomass = 1;
             _currentParasiteMass = 0;
         }

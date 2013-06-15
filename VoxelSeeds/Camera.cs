@@ -177,11 +177,18 @@ namespace VoxelSeeds
 
             // compute side
             Vector3 sideVec = Vector3.Cross(upVec, _viewDirection);
+            Vector3 coVec = Vector3.Cross(upVec, sideVec);
 
-            Position = -_viewDirection * _zoom + Vector3.UnitY * 5 - sideVec *_deltaX - Vector3.Cross(upVec, sideVec) * _deltaY;
+            Vector3 center = -sideVec * _deltaX - coVec * _deltaY + Vector3.UnitY * 5;
+            Position = -_viewDirection * _zoom + center;
 
             // compute view matrix
             _viewMatrix = Matrix.LookAtLH(Position, Position + _viewDirection, upVec);
+            /*_viewMatrix.Column1 = new Vector4(coVec, 0);
+            _viewMatrix.Column2 = new Vector4(sideVec, 0);
+            _viewMatrix.Column3 = new Vector4(_viewDirection, 0);
+            _viewMatrix.Column4 = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+            _viewMatrix *= Matrix.Translation(Position);*/
         }
 
         /// <summary>

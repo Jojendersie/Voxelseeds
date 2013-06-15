@@ -34,6 +34,9 @@ namespace VoxelSeeds
         /// </summary>
         bool _pickPosAvailable;
 
+
+        bool _gamePaused = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="VoxelSeeds" /> class.
         /// </summary>
@@ -92,39 +95,66 @@ namespace VoxelSeeds
 
         protected override void LoadContent()
         {
-            _currentLevel = new Level1();
-
             _voxelRenderer = new VoxelRenderer(GraphicsDevice, Content);
+            _currentLevel = new Level1(_voxelRenderer);
+            
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
 
-			_voxelRenderer.Reset(_currentLevel.GetMap(),new Vector3(1.0f, -2.0f, 1.0f));
-
-            _currentLevel.SetInstanceUpdateMethod(_voxelRenderer.Update);
 
             _background = new Background(GraphicsDevice);
 
             base.LoadContent();
         }
 
+        void NextLevel()
+        {
+        //    if(_currentLevel.GetType() == typeof(Level1))
+            _currentLevel = new Level2(_voxelRenderer);
+        }
+
         protected override void Update(GameTime gameTime)
         {
-            // Simulate level if 0.25f seconds passed.
-            _cumulatedFrameTime += gameTime.ElapsedGameTime.TotalSeconds;
-            if (_cumulatedFrameTime > 0.25)
-            {
-                _cumulatedFrameTime -= 0.25;
-                _currentLevel.Tick();
-            }
+   
 
             // move camera
             _camera.Update(gameTime);
 
-            _seedbar.Update();
+            if (!_gamePaused)
+            {
 
-            // the permanent picking
-            var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
-            _pickPosAvailable = this._currentLevel.GetMap().PickPosition(ray, out _pickedPos);
+                // Simulate level if 0.25f seconds passed.
+                _cumulatedFrameTime += gameTime.ElapsedGameTime.TotalSeconds;
+                if (_cumulatedFrameTime > 0.25)
+                {
+                    _cumulatedFrameTime -= 0.25;
+                    _currentLevel.Tick();
+                }
+
+                _seedbar.Update();
+
+                // the permanent picking
+                var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
+                _pickPosAvailable = this._currentLevel.GetMap().PickPosition(ray, out _pickedPos);
+
+                // stop game?
+                if (_currentLevel.IsVictory() || _currentLevel.IsLost())
+                {
+                    _gamePaused = true;
+                    // TODO: Display message
+                }
+            }
+            else
+            {
+                if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Enter))
+                {
+                    if (_currentLevel.IsVictory())
+                        NextLevel();
+                    else if (_currentLevel.IsLost())
+                        _currentLevel = (Level)_currentLevel.GetType().GetConstructor(new[] { typeof(VoxelRenderer) }).Invoke(new object[] { (object)_voxelRenderer} );
+                    _gamePaused = false;
+                }
+            }
 
             // Handle base.Update
             base.Update(gameTime);
