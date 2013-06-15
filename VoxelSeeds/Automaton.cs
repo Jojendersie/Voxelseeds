@@ -9,7 +9,7 @@ namespace VoxelSeeds
 {
     class Automaton
     {
-        struct LivingVoxel
+        class LivingVoxel
         {
             public int X;
             public int Y;
@@ -17,6 +17,8 @@ namespace VoxelSeeds
 
             public int Generation;
             public int Resources;
+
+            public int Ticks;
 
             public IVoxelRule Rule;
         };
@@ -32,14 +34,19 @@ namespace VoxelSeeds
             LivingVoxel newVoxel = new LivingVoxel();
             newVoxel.X = x; newVoxel.Y = y; newVoxel.Z = z;
             newVoxel.Generation = 0;
-            newVoxel.Resources = TypeInformation.GetStartResources(type);
+            newVoxel.Resources = 0;
+            newVoxel.Ticks = 0;
             // TODO: RULE
-            _livingVoxels.Add(_map.EncodePosition(x, y, z), newVoxel);
+
+            Int32 pos = _map.EncodePosition(x, y, z);
+            _livingVoxels.Add(pos, newVoxel);
+            _map.Set(pos, type, true);
         }
 
 
         // All existing voxels in the current time step.
         Map _map;
+        public Map Map { get { return _map; } }
 
         // Extra data for all living voxels.
         // TODO: hashmap... ersparrt auch das living flag in der map
@@ -93,28 +100,30 @@ namespace VoxelSeeds
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
             Parallel.ForEach(_livingVoxels, currentVoxel =>
                 {
+                    ++currentVoxel.Value.Ticks;
                     // Create a local window for the rule algorithms
                     VoxelInfo[,,] localFrame = new VoxelInfo[3, 3, 3];
                     IterateNeighbours( (x, y, z) =>
                     {
                         Int32 pos = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
-                        byte voxel = _map.Sample(pos);
+                        VoxelType voxel = _map.Get(pos);
                         // Living?
                         if (_map.IsLiving(pos))
                         {
                             // Yes: query more information from the dictinary
                             LivingVoxel VoxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
-                            localFrame[z, y, x] = new VoxelInfo((VoxelType)(voxel & 0x7f), true, VoxelInfo.Resources, VoxelInfo.Generation );
+                            localFrame[z, y, x] = new VoxelInfo(voxel, true, VoxelInfo.Generation, VoxelInfo.Resources, currentVoxel.Value.Ticks);
                         }
                         {
                             // No uses directly
-                            localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel, false);
+                            localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel);
                         }
                     });
                     // Apply the rule for currentVoxel
                     VoxelInfo[,,] ruleResult = currentVoxel.Value.Rule.ApplyRule( localFrame );
-                    if( ruleResult != null )
+                    if (ruleResult != null)
                     {
+                        currentVoxel.Value.Ticks = 0;
                         // Add changes to the change collection
                         IterateNeighbours((x, y, z) =>
                         {
@@ -125,7 +134,7 @@ namespace VoxelSeeds
                                 results.AddOrUpdate(positionCode, ruleResult[z, y, x], (key, old) => GamePlayUtils.GetStrongerVoxel(ref old, ref ruleResult[z, y, x]));
                             }
                         });
-                     }
+                    }
                 }
             );
             update(ref results, ref updateInstanceData);
