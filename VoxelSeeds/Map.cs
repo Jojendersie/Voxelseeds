@@ -71,9 +71,15 @@ namespace VoxelSeeds
             return _voxels[EncodePosition(x, y, z)];
         }
 
+
         public byte Sample(Int32 positionCode)
         {
             return _voxels[positionCode];
+        }
+
+        public static int getGoodVoxels()
+        { 
+            return 100;
         }
     }
 }
