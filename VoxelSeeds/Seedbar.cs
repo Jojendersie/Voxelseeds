@@ -30,6 +30,7 @@ namespace VoxelSeeds
         private Texture2D[] textures = new Texture2D[10];
         private Texture2D helix;
         private Texture2D topbar;
+        private Texture2D pixel;
         private int selected = 0;
         private bool picking;
         private System.Drawing.Point mousePosition;
@@ -60,11 +61,13 @@ namespace VoxelSeeds
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
             helix = contentManager.Load<Texture2D>("balls.dds");
-           // topbar = contentManager.Load<Texture2D>("dummy1.png");
+            topbar = contentManager.Load<Texture2D>("dummy1.png");
+            pixel = contentManager.Load<Texture2D>("pixel.png");
+
             for (int i = 0; i < barLength; i++)
             {
                 seeds[i] = new SeedInfo();
-                seeds[i]._position = new Vector2(i * (windowWidth - 40) / 10 + 5, 5);
+                seeds[i]._position = new Vector2(i * (windowWidth - 70) / 10 + 5, 5);
                 seeds[i]._type = VoxelType.WOOD;
                 textures[i] = contentManager.Load<Texture2D>("balls.dds");
             }
@@ -72,11 +75,6 @@ namespace VoxelSeeds
 
         private bool MouseOver(Vector2 pos, double width, double heigth)
         {
-            // hi pat - nice try, but now I know better - this will not work most likely :(
-            // (don't know exactly why...)
-            // if it happens as feared, look at the handler registrations in the ctor of Camera
-            // hf ;)
-
             return (mousePosition.X >= pos.X && mousePosition.X <= pos.X + width && mousePosition.Y >= pos.Y && mousePosition.Y < pos.Y + heigth);
         }
 
@@ -93,14 +91,19 @@ namespace VoxelSeeds
 
         public void Draw()
         {       
-            int soll = 200;
+            int soll = 100;
+            int evilSoll = 150;
             int progress = windowHeigth * Map.getGoodVoxels()/soll;
+            int evilProgress = windowHeigth * Map.getGoodVoxels() / evilSoll;
 
             spriteBatch.Begin();
 
-           // spriteBatch.Draw(topbar)
-            spriteBatch.Draw(helix, new DrawingRectangle(windowWidth, windowHeigth, 30, progress), null, Color.White, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+            spriteBatch.Draw(topbar, new DrawingRectangle(0, 0, windowWidth - 60, 42), Color.White);
             if (selected > 0) spriteBatch.DrawString(font, selected.ToString(), new Vector2(200, 100), Color.White);
+
+            //draw Progress good/evil
+            spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth, windowHeigth, 30, progress), null, Color.Blue, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+            spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth-30, windowHeigth, 30, evilProgress), null, Color.Red, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
             for (int i = 0; i < barLength; i++)
             {
@@ -115,7 +118,12 @@ namespace VoxelSeeds
             {
                 if (MouseOver(seeds[i]._position, 32, 32))
                 {
-                    spriteBatch.DrawString(font, "test" + i.ToString(), new Vector2(mousePosition.X+10, mousePosition.Y+10), Color.White);
+                    spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10, mousePosition.Y + 10, 150, 400), new Color(0.7f,0.7f,0.7f,0.5f));
+                    spriteBatch.DrawString(font, seeds[i]._type.ToString(), new Vector2(mousePosition.X+50, mousePosition.Y+15), Color.Gray);
+                    spriteBatch.DrawString(font, "Strength:", new Vector2(mousePosition.X + 35, mousePosition.Y + 40), Color.DarkBlue);
+                    spriteBatch.DrawString(font, TypeInformation.GetStrength(seeds[i]._type)[0] + "\n" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 35, mousePosition.Y + 65), Color.DarkBlue);
+                    spriteBatch.DrawString(font, "Weakness:", new Vector2(mousePosition.X + 35, mousePosition.Y + 115), Color.Crimson);
+                    spriteBatch.DrawString(font, TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 35, mousePosition.Y + 140), Color.Crimson);
                 }
             }
             spriteBatch.End();

@@ -18,6 +18,20 @@ namespace VoxelSeeds
     {   //empty,Ground,Wood,Fungus
         readonly static int[] prices = {0, 0, 5, 0 };
         readonly static int[] startResources = { 0, 0, 50, 0 };
+        readonly static String[,] strength = { {"",""}, { "-", "-" }, { "Water", "Earth" }, { "-", "-" } };
+        readonly static String[,] weakness = { { "", "" }, { "-", "-" }, { "Fire", "Heaven" }, { "-", "-" } };
+
+        public static String[] GetStrength(VoxelType voxeltype)
+        {
+            String[] result = { strength[(int)voxeltype, 0], strength[(int)voxeltype, 1] };
+            return result;
+        }
+
+        public static String[] GetWeakness(VoxelType voxeltype)
+        {
+            String[] result = { weakness[(int)voxeltype, 0], weakness[(int)voxeltype, 1] };
+            return result;
+        }
 
         public static int GetPrice(VoxelType voxeltype)
         {
