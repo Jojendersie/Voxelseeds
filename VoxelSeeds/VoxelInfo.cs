@@ -68,7 +68,8 @@ namespace VoxelSeeds
         /// </summary>
         readonly static float[] scalingFactor = { 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f };
 
-        readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
+        //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
+        readonly static int[] growingSteps = { 0, 0, 2, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
 
         public static String GetName(VoxelType voxeltype)
         {
