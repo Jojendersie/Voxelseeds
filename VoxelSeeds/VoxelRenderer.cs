@@ -12,6 +12,7 @@ namespace VoxelSeeds
     // Use this namespace here in case we need to use Direct3D11 namespace as well, as this
     // namespace will override the Direct3D11.
     using SharpDX.Toolkit.Graphics;
+using SharpDX.Toolkit.Content;
 
     class VoxelRenderer
     {
@@ -52,6 +53,11 @@ namespace VoxelSeeds
             /// consisting of UInt32
             /// </summary>
             public HashSet<Int32> InstanceDataRAM;
+
+            /// <summary>
+            /// used texture for this instance type
+            /// </summary>
+            public Texture2D Texture;
         }
         VoxelTypeInstanceData[] _voxelTypeRenderingData;
 
@@ -64,9 +70,10 @@ namespace VoxelSeeds
         /// </summary>
         Effect _voxelEffect;
 
-
         RasterizerState _rasterizerState;
         DepthStencilState _depthStencilStateState;
+        SamplerState _pointSamplerState;
+        BlendState _blendState;
 
         struct CubeVertex
         {
@@ -75,7 +82,7 @@ namespace VoxelSeeds
             public Vector2 Texcoord;
         };
 
-        public VoxelRenderer(GraphicsDevice graphicsDevice)
+        public VoxelRenderer(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
             _cubeVertexBuffer = Buffer.Vertex.New(
                 graphicsDevice,
@@ -131,6 +138,9 @@ namespace VoxelSeeds
             _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length];
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
                 _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice);
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.FUNGUS)].Texture = contentManager.Load<Texture2D>("balls.dds");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("balls.dds");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("balls.dds");
 
             // load shader
             EffectCompilerFlags compilerFlags = EffectCompilerFlags.None;
@@ -153,6 +163,17 @@ namespace VoxelSeeds
             var depthStencilStateDesc = SharpDX.Direct3D11.DepthStencilStateDescription.Default();
             depthStencilStateDesc.IsDepthEnabled = true;
             _depthStencilStateState = DepthStencilState.New(graphicsDevice, "NormalZBufferUse", depthStencilStateDesc);
+            
+            var samplerStateDesc = SharpDX.Direct3D11.SamplerStateDescription.Default();
+            samplerStateDesc.AddressV = SharpDX.Direct3D11.TextureAddressMode.Border;
+            samplerStateDesc.AddressU = SharpDX.Direct3D11.TextureAddressMode.Border;
+            samplerStateDesc.Filter = SharpDX.Direct3D11.Filter.MinMagMipPoint;
+            samplerStateDesc.BorderColor = Color4.Black;
+            _pointSamplerState = SamplerState.New(graphicsDevice, "PointSampler", samplerStateDesc);
+            _voxelEffect.Parameters["PointSampler"].SetResource(_pointSamplerState);
+
+            var blendStateDesc = SharpDX.Direct3D11.BlendStateDescription.Default();
+            _blendState = BlendState.New(graphicsDevice, "Opaque", blendStateDesc);
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
@@ -227,6 +248,7 @@ namespace VoxelSeeds
 
             graphicsDevice.SetRasterizerState(_rasterizerState);
             graphicsDevice.SetDepthStencilState(_depthStencilStateState);
+            graphicsDevice.SetBlendState(_blendState);
 
             // Setup the vertices
             graphicsDevice.SetVertexBuffer(_cubeVertexBuffer, 0);
@@ -236,6 +258,7 @@ namespace VoxelSeeds
             _voxelEffect.CurrentTechnique.Passes[0].Apply();
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
             {
+                _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[i].Texture);
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);
             }
