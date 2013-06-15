@@ -86,23 +86,23 @@ namespace VoxelSeeds
                 seeds[i]._position = new Vector2(i * (windowWidth - 60) / 10 + 5, 5);   
             }
             seeds[0]._type = VoxelType.TEAK_WOOD;
-            textures[0] = contentManager.Load<Texture2D>("balls.dds");
+            textures[0] = contentManager.Load<Texture2D>("teak.png");
             seeds[1]._type = VoxelType.PINE_WOOD;
-            textures[1] = contentManager.Load<Texture2D>("balls.dds");
+            textures[1] = contentManager.Load<Texture2D>("Pine.png");
             seeds[2]._type = VoxelType.SPRUCE_WOOD;
-            textures[2] = contentManager.Load<Texture2D>("balls.dds");
+            textures[2] = contentManager.Load<Texture2D>("spruce.png");
             seeds[3]._type = VoxelType.BEECH_WOOD;
-            textures[3] = contentManager.Load<Texture2D>("balls.dds");
+            textures[3] = contentManager.Load<Texture2D>("Beech.png");
             seeds[4]._type = VoxelType.OAK_WOOD;
             textures[4] = contentManager.Load<Texture2D>("balls.dds");
             seeds[5]._type = VoxelType.REDWOOD;
             textures[5] = contentManager.Load<Texture2D>("balls.dds");
             seeds[6]._type = VoxelType.TEAK_WOOD;
-            textures[6] = contentManager.Load<Texture2D>("balls.dds");
+            textures[6] = contentManager.Load<Texture2D>("teak.png");
             seeds[7]._type = VoxelType.TEAK_WOOD;
-            textures[7] = contentManager.Load<Texture2D>("balls.dds");
+            textures[7] = contentManager.Load<Texture2D>("teak.png");
             seeds[8]._type = VoxelType.TEAK_WOOD;
-            textures[8] = contentManager.Load<Texture2D>("balls.dds");
+            textures[8] = contentManager.Load<Texture2D>("teak.png");
         }
 
         private bool MouseOver(Vector2 pos, double width, double heigth)
@@ -141,7 +141,7 @@ namespace VoxelSeeds
                 spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y+5, 10, 20), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
                 //draw Icons
-                spriteBatch.Draw(textures[(int)seeds[i]._type], seeds[i]._position, new DrawingRectangle(0, 0, 32, 32), Color.White);   
+                spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);   
             }
 
             //draw Recurses seeds[i]._position = new Vector2(i * (windowWidth - 60) / 10 + 5, 5);

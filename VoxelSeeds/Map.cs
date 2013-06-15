@@ -104,6 +104,8 @@ namespace VoxelSeeds
 
         public void Set(Int32 positionCode, VoxelType type, bool living)
         {
+            Int3 p;
+            p = DecodePosition(positionCode);
             _voxels[positionCode] = (byte)((living ? 0x80 : 0) | (int)type);
         }
 
@@ -128,6 +130,17 @@ namespace VoxelSeeds
         public bool IsLiving(Int32 positionCode)
         {
             return (_voxels[positionCode] & 0x80) == 0x80;
+        }
+
+        /// <summary>
+        /// Testing if a voxel can be set at a certain position.
+        /// 
+        /// This method preserves a border of one which do not count as inside.
+        /// </summary>
+        /// <returns>True if the position is truly inside and not on the boundary.</returns>
+        public bool IsInside(int x, int y, int z)
+        {
+            return x >= 1 && x < SizeX-1 && y >= 1 && y < SizeY-1 && z >= 1 && z < SizeZ-1;
         }
 
         public bool PickPosition(Ray pickingRay, out Int3 pickedPosition)
@@ -190,12 +203,5 @@ namespace VoxelSeeds
                         _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
                 }
         }
-
-		// TODO: find a better name
-		public static int getGoodVoxels()
-        { 
-            return 100;
-        }
-
     }
 }

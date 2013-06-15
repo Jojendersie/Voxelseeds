@@ -11,6 +11,16 @@ namespace VoxelSeeds
     {
         class LivingVoxel
         {
+            public LivingVoxel(int x, int y, int z, int generation)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+                Generation = generation;
+                Resources = 0;
+                Ticks = 0;
+            }
+
             public int X;
             public int Y;
             public int Z;
@@ -29,11 +39,7 @@ namespace VoxelSeeds
 
         public void InsertSeed(int x, int y, int z, VoxelType type)
         {
-            LivingVoxel newVoxel = new LivingVoxel();
-            newVoxel.X = x; newVoxel.Y = y; newVoxel.Z = z;
-            newVoxel.Generation = 0;
-            newVoxel.Resources = 0;
-            newVoxel.Ticks = 0;
+            LivingVoxel newVoxel = new LivingVoxel(x,y,z,0);
 
             Int32 pos = _map.EncodePosition(x, y, z);
             _livingVoxels.Add(pos, newVoxel);
@@ -75,7 +81,18 @@ namespace VoxelSeeds
                 }
                 if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
                 else if (vox.Value.Type != VoxelType.EMPTY) ++newBiomass;
+
                 _map.Set(vox.Key, vox.Value.Type, vox.Value.Living);
+                if (vox.Value.Living)
+                {
+                    var pos = _map.DecodePosition(vox.Key);
+                    if (_livingVoxels.ContainsKey(vox.Key))
+                    {
+                        _livingVoxels[vox.Key] = new LivingVoxel(pos.X, pos.Y, pos.Z, vox.Value.Generation);
+                    } else
+                        _livingVoxels.Add(vox.Key, new LivingVoxel(pos.X, pos.Y, pos.Z, vox.Value.Generation));
+                }
+
                 // Insert to instance data only if visible
                 if( !_map.IsOccluded(vox.Key) )
                     insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
@@ -116,7 +133,7 @@ namespace VoxelSeeds
                         if (_map.IsLiving(pos))
                         {
                             // Yes: query more information from the dictinary
-                            LivingVoxel voxelInfo = _livingVoxels[_map.EncodePosition( currentVoxel.Value.X, currentVoxel.Value.Y, currentVoxel.Value.Z)];
+                            LivingVoxel voxelInfo = _livingVoxels[pos];
                             localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks);
                         } else
                         {
@@ -132,7 +149,7 @@ namespace VoxelSeeds
                         // Add changes to the change collection
                         IterateNeighbours((x, y, z) =>
                         {
-                            if (ruleResult[z, y, x] != null)
+                            if (ruleResult[z, y, x] != null && _map.IsInside(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1))
                             {
                                 Int32 positionCode = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
                                 // Two rules tried to grow at the same location. Use decision function
