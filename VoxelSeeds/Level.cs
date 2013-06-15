@@ -20,7 +20,7 @@ namespace VoxelSeeds
         public int CurrentBiomass { get { return _currentBiomass; } protected set { _currentBiomass = value; } }
         public int ParasiteBiomass { get { return _currentParasiteMass; } protected set { _currentParasiteMass = value; } }
         public int FinalParasiteBiomass { get { return _finalParasiteMass; } protected set { _finalParasiteMass = value; } }
-        public int Resources { get { return _resources; } protected set { _resources = value; } }
+        public int Resources { get { return _resources; } set { _resources = value; } }
 
         public Level()
         {

@@ -68,6 +68,23 @@ namespace VoxelSeeds
             var windowControl = Window.NativeWindow as System.Windows.Forms.Control;
             System.Diagnostics.Debug.Assert(windowControl != null);
             _camera = new Camera((float)GraphicsDevice.BackBuffer.Width / GraphicsDevice.BackBuffer.Height, (float)Math.PI * 0.35f, 1.0f, 1000.0f, windowControl);
+
+            
+            var mainThreadDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+            windowControl.MouseClick += (object sender, System.Windows.Forms.MouseEventArgs e) =>
+            {
+                if (e.Button == System.Windows.Forms.MouseButtons.Left)
+                    mainThreadDispatcher.BeginInvoke(new Action(() =>
+                        {
+                            if (_seedbar.GetSelected() >= 0 &&
+                                _currentLevel.GetMap().IsInside(_pickedPos.X, _pickedPos.Y, _pickedPos.Z) &&
+                                TypeInformation.GetPrice(_seedbar.GetSeedInfo()._type) <= _currentLevel.Resources)
+                            {
+                                _currentLevel.Resources -= TypeInformation.GetPrice(_seedbar.GetSeedInfo()._type);
+                                _currentLevel.InsertSeed(_pickedPos.X, _pickedPos.Y, _pickedPos.Z, _seedbar.GetSeedInfo()._type);
+                            }
+                        }));
+            };
         }
 
 
@@ -84,7 +101,6 @@ namespace VoxelSeeds
             base.LoadContent();
         }
 
-        bool was = false;
         protected override void Update(GameTime gameTime)
         {
             // Simulate level if 0.25f seconds passed.
@@ -94,10 +110,6 @@ namespace VoxelSeeds
                 _cumulatedFrameTime -= 0.25;
                 _currentLevel.Tick(_voxelRenderer.Update);
             }
-
-            // Rotate the cube.
-          //  var time = (float)gameTime.TotalGameTime.TotalSeconds;
-          //  basicEffect.World = Matrix.RotationX(time) * Matrix.RotationY(time * 2.0f) * Matrix.RotationZ(time * .7f);
 
             // move camera
             _camera.Update(gameTime);
@@ -120,7 +132,7 @@ namespace VoxelSeeds
             // rendererererererererer
             _voxelRenderer.Draw(_camera, GraphicsDevice);
 
-            if (_pickPosAvailable && _seedbar.GetSelected() != -1)
+            if (_pickPosAvailable && _seedbar.GetSelected() != -1 && _currentLevel.GetMap().IsInside(_pickedPos.X,_pickedPos.Y, _pickedPos.Z))
                 _voxelRenderer.DrawGhost(_camera, GraphicsDevice, _seedbar.GetSeedInfo()._type, _currentLevel.GetMap().EncodePosition(_pickedPos));
 
             // Handle base.Draw
