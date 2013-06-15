@@ -131,16 +131,16 @@ using SharpDX.Toolkit.Content;
             _vertexInputLayout = VertexInputLayout.New(
                 VertexBufferLayout.New(0, new VertexElement[]{new VertexElement("POSITION_CUBE", 0, SharpDX.DXGI.Format.R32G32B32_Float, 0),
                                                               new VertexElement("NORMAL", 0, SharpDX.DXGI.Format.R32G32B32_Float, sizeof(float) * 3),
-                                                              new VertexElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, sizeof(float) * 3)}, 0),
+                                                              new VertexElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, sizeof(float) * 6)}, 0),
                 VertexBufferLayout.New(1, new VertexElement[]{new VertexElement("POSITION_INSTANCE", SharpDX.DXGI.Format.R32_SInt)}, 1));
                 
             // Create instance buffer for every VoxelInfo
             _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length];
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
                 _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice);
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.FUNGUS)].Texture = contentManager.Load<Texture2D>("balls.dds");
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("balls.dds");
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("balls.dds");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("teak.png");
 
             // load shader
             EffectCompilerFlags compilerFlags = EffectCompilerFlags.None;
@@ -255,10 +255,10 @@ using SharpDX.Toolkit.Content;
             graphicsDevice.SetVertexInputLayout(_vertexInputLayout);
 
             // render all instances
-            _voxelEffect.CurrentTechnique.Passes[0].Apply();
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
             {
                 _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[i].Texture);
+                _voxelEffect.CurrentTechnique.Passes[0].Apply();
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);
             }
