@@ -18,6 +18,7 @@ namespace VoxelSeeds
     {
         private GraphicsDeviceManager _graphicsDeviceManager;
 
+        Audio _audio;
         VoxelRenderer _voxelRenderer;
         Camera _camera;
         Seedbar _seedbar;
@@ -46,6 +47,10 @@ namespace VoxelSeeds
         /// </summary>
         public VoxelSeeds()
         {
+
+            _audio = new Audio("ergon.wav");
+            _audio.startSound();
+
             // Creates a graphics manager. This is mandatory.
             _graphicsDeviceManager = new GraphicsDeviceManager(this);
 

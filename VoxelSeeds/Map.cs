@@ -277,6 +277,8 @@ namespace VoxelSeeds
                             _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
                     }
             });
+
+            Rockyfy();
         }
 
         private void GenerateCanoynsLevel(ref Random rand, float heightOffset)
@@ -291,7 +293,7 @@ namespace VoxelSeeds
                         //float radialHeight = 0.08f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
                         float value = SizeY * (noise.Get(x, z, d) + noise.Get(x, z) - d*3 / sizeYscaled);// -heightOffset;// -radialHeight;
                         if (value > 0)
-                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
+                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.ROCK;
                     }
             });
         }
@@ -302,13 +304,13 @@ namespace VoxelSeeds
                 for (int x = 0; x < SizeX; ++x)
                 {
                     int streak = 0;
-                    for (int d = 0; d < SizeY; ++d)
+                    for (int d = SizeY-1; d >= 0; --d)
                     {
                         Int32 pos = EncodePosition(x, d, z);
                         byte value = Sample(pos);
                         if (value != 0)
                         {
-                            if (streak > 3) _voxels[pos] = (int)VoxelType.GROUND;
+                            if (streak > 1) _voxels[pos] = (int)VoxelType.ROCK;
                             ++streak;
                         }
                         else streak = 0;

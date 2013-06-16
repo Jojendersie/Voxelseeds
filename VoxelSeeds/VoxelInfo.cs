@@ -141,7 +141,7 @@ namespace VoxelSeeds
 
         public static bool CanFungusGrowOn(VoxelType voxeltype)
         {
-            return IsBiomass(voxeltype) || voxeltype == VoxelType.GROUND;
+            return IsBiomass(voxeltype) || voxeltype == VoxelType.GROUND || voxeltype == VoxelType.ROCK;
         }
 
         public static bool IsWood(VoxelType voxeltype)
@@ -156,7 +156,7 @@ namespace VoxelSeeds
 
         public static bool IsGroundOrFungus(VoxelType voxeltype)
         {
-            return voxeltype == VoxelType.GROUND || voxeltype == VoxelType.WHITEROT_FUNGUS || voxeltype == VoxelType.NOBLEROT_FUNGUS;
+            return voxeltype == VoxelType.ROCK || voxeltype == VoxelType.GROUND || voxeltype == VoxelType.WHITEROT_FUNGUS || voxeltype == VoxelType.NOBLEROT_FUNGUS;
         }
 
         public static bool IsNotWoodButBiomass(VoxelType voxeltype)
