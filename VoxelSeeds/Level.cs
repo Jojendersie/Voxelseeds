@@ -45,7 +45,7 @@ namespace VoxelSeeds
         public abstract void Initialize();
 
         public bool IsVictory()    { return _currentBiomass >= _targetBiomass; }
-        public bool IsLost() { return (_currentParasiteMass >= _finalParasiteMass) || _resources < 68; }
+        public bool IsLost() { return (_currentParasiteMass >= _finalParasiteMass) || (_resources < 68 && _automaton.NumLivingBiomass==0); }
 
         public Map GetMap() { return _automaton.Map; }
         public void InsertSeed(int x, int y, int z, VoxelType type) { if (TypeInformation.IsBiomass(type)) ++_currentBiomass; else if (TypeInformation.IsParasite(type)) ++_currentParasiteMass; _automaton.InsertSeed(x, y, z, type); }
