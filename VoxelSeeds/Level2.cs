@@ -21,7 +21,7 @@ namespace VoxelSeeds
             _targetBiomass = 1000;
 
             Random rand = new Random();
-            for (int i = 0; i < 100; ++i)
+            for (int i = 0; i < 50; ++i)
             {
                 InsertSeed(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 5, rand.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
             }

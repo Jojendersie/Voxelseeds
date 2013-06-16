@@ -21,11 +21,15 @@ namespace VoxelSeeds
             _finalParasiteMass = 1000;
             _targetBiomass = 1000;
 
-            InsertSeed(125, Math.Max(GetMap().GetHeighest(125, 80), 0) + 1, 80, VoxelType.WHITEROT_FUNGUS);
+            InsertSeed(15, Math.Max(GetMap().GetHeighest(15, 180), 0) + 1, 180, VoxelType.WHITEROT_FUNGUS);
             InsertSeed(61, Math.Max(GetMap().GetHeighest(61, 24), 0) + 1, 24, VoxelType.NOBLEROT_FUNGUS);
-            InsertSeed(74, Math.Max(GetMap().GetHeighest(74, 109), 0) + 1, 109, VoxelType.WHITEROT_FUNGUS);
+            InsertSeed(74, Math.Max(GetMap().GetHeighest(74, 209), 0) + 1, 209, VoxelType.WHITEROT_FUNGUS);
 
-            for(int i=15; i<500; i+=36) InsertSeed(13, Math.Max(GetMap().GetHeighest(13, i), 0) + 1, i, VoxelType.HOUSE_LONGHORN_BEETLE);
+            Random rand = new Random();
+            for (int i = 0; i < 100; ++i)
+            {
+                InsertSeed(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 28, rand.Next(GetMap().SizeZ), VoxelType.HOUSE_LONGHORN_BEETLE);
+            }
         }
     }
 }
