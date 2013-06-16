@@ -29,8 +29,10 @@ namespace VoxelSeeds
         public Level(VoxelRenderer voxelRenderer)
         {
             Initialize();
-            lightDirection.Normalize();
+            _currentBiomass = _automaton.NumLivingBiomass;
+            _currentParasiteMass = _automaton.NumLivingParasites;
 
+            lightDirection.Normalize();
             voxelRenderer.Reset(GetMap(), lightDirection);
             SetInstanceUpdateMethod(voxelRenderer.Update);
         }
@@ -43,11 +45,10 @@ namespace VoxelSeeds
         public abstract void Initialize();
 
         public bool IsVictory()    { return _currentBiomass >= _targetBiomass; }
-        public bool IsLost() { return _currentParasiteMass >= _finalParasiteMass; }
+        public bool IsLost() { return (_currentParasiteMass >= _finalParasiteMass) || (_resources < 68 && _automaton.NumLivingBiomass==0); }
 
         public Map GetMap() { return _automaton.Map; }
-        public void InsertSeed(int x, int y, int z, VoxelType type) { ++_currentBiomass;  _automaton.InsertSeed(x, y, z, type); }
-        public void InsertParasite(int x, int y, int z, VoxelType type) { ++_currentParasiteMass; _automaton.InsertSeed(x, y, z, type); }
+        public void InsertSeed(int x, int y, int z, VoxelType type) { if (TypeInformation.IsBiomass(type)) ++_currentBiomass; else if (TypeInformation.IsParasite(type)) ++_currentParasiteMass; _automaton.InsertSeed(x, y, z, type); }
         void SetInstanceUpdateMethod(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData) { _automaton.SetInstanceUpdateMethod(ref updateInstanceData); }
 
 

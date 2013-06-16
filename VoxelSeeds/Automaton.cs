@@ -35,6 +35,23 @@ namespace VoxelSeeds
             public Direction From;
         };
 
+
+
+        // All existing voxels in the current time step.
+        Map _map;
+        public Map Map { get { return _map; } }
+
+        // Extra data for all living voxels.
+        Dictionary<Int32, LivingVoxel> _livingVoxels;
+        int _numLivingBiomass;
+        int _numLivingParasites;
+
+        public int NumLivingParasites { get { return _numLivingParasites; } }
+        public int NumLivingBiomass { get { return _numLivingBiomass; } }
+
+        // Method for incremental update of GPU resources
+        Action<IEnumerable<Voxel>, IEnumerable<Voxel>> _updateInstanceData;
+
         public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed, float heightoffset)
         {
             _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed, heightoffset);
@@ -46,6 +63,9 @@ namespace VoxelSeeds
             _updateInstanceData = updateInstanceData;
         }
 
+        /// <summary>
+        /// Add to map and to living list. Does nothing if tries to set outside.
+        /// </summary>
         private void InsertVoxel(Int32 positionCode, VoxelType type, int generation, bool living, int resources, int ticks, Direction from)
         {
             var pos = _map.DecodePosition(positionCode);
@@ -56,21 +76,33 @@ namespace VoxelSeeds
                 {
                     if (_livingVoxels.ContainsKey(positionCode))
                     {
+                        Debug.Assert(false);
                         _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from);
                     }
                     else
                         _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from));
+                    if (TypeInformation.IsBiomass(type)) ++_numLivingBiomass;
+                    else if (TypeInformation.IsParasite(type)) ++_numLivingParasites;
                 }
             }
         }
 
+        /// <summary>
+        /// Remove from map and from living list
+        /// </summary>
+        /// <param name="positionCode"></param>
         private void RemoveVoxel(Int32 positionCode)
         {
             var pos = _map.DecodePosition(positionCode);
-            if (_map.IsInside(pos.X, pos.Y, pos.Z))
+            VoxelType type = _map.Get(positionCode);
+            _map.Set(positionCode, VoxelType.EMPTY, false);
+            if (_livingVoxels.ContainsKey(positionCode))
             {
-                _map.Set(positionCode, VoxelType.EMPTY, false);
-                if (_livingVoxels.ContainsKey(positionCode))  _livingVoxels.Remove(positionCode);
+                _livingVoxels.Remove(positionCode);
+                if (TypeInformation.IsBiomass(type)) --_numLivingBiomass;
+                else if (TypeInformation.IsParasite(type)) --_numLivingParasites;
+                Debug.Assert(_numLivingBiomass >= 0);
+                Debug.Assert(_numLivingParasites >= 0);
             }
         }
 
@@ -104,29 +136,27 @@ namespace VoxelSeeds
         {
             Int32 pos = _map.EncodePosition(x, y, z);
 
+            VoxelType old = _map.Get(pos);
+            if (old != VoxelType.EMPTY)
+                RemoveVoxel(pos);
+
             InsertVoxel(pos, type, 0, true, 0, 0, from);
 
             if( _updateInstanceData != null )
             {
-
                 List<Voxel> deleteList = new List<Voxel>();
                 List<Voxel> insertionList = new List<Voxel>();
+
+                if (old != VoxelType.EMPTY)
+                    deleteList.Add(new Voxel(pos, old));
+
                 insertionList.Add(new Voxel(pos, type));
                 removeOccludedNeighbours(pos, deleteList);
-                _updateInstanceData(null, insertionList);
+                _updateInstanceData(deleteList, insertionList);
             }
         }
 
 
-        // All existing voxels in the current time step.
-        Map _map;
-        public Map Map { get { return _map; } }
-
-        // Extra data for all living voxels.
-        Dictionary<Int32, LivingVoxel> _livingVoxels;
-
-        // Method for incremental update of GPU resources
-        Action<IEnumerable<Voxel>, IEnumerable<Voxel>> _updateInstanceData;
 
         private void IterateNeighbours(Action<int, int, int> func )
         {
@@ -150,8 +180,7 @@ namespace VoxelSeeds
                 VoxelType old = _map.Get(vox.Key);
                 if (old != VoxelType.EMPTY)
                 {
-                    if (_livingVoxels.ContainsKey(vox.Key))
-                        _livingVoxels.Remove(vox.Key);
+                    RemoveVoxel(vox.Key);
 
                     if (TypeInformation.IsParasite(old)) --newParasites;
                     else if(TypeInformation.IsBiomass(old)) --newBiomass;
@@ -163,7 +192,6 @@ namespace VoxelSeeds
 
                 if (vox.Value.Type == VoxelType.EMPTY)
                 {
-                    RemoveVoxel(vox.Key);
                     reinsertVisibleNeighbours(vox.Key, insertionList);
                 }
                 else

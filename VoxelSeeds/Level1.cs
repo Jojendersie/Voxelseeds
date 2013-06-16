@@ -21,12 +21,10 @@ namespace VoxelSeeds
             _resources = 6000;
             _finalParasiteMass = 3500;
             _targetBiomass = 1000;
-            _currentBiomass = 0;
-            _currentParasiteMass = 1;
             int x = GetMap().SizeX / 2;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
-            InsertParasite(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
+            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
         }
     }
 }
