@@ -10,7 +10,9 @@ namespace VoxelSeeds
 {
     enum LevelType
     {
-        PLAIN
+        PLAIN,
+        BUBBLE,
+        STEP,
     };
 
     /// <summary>
@@ -22,7 +24,7 @@ namespace VoxelSeeds
     /// </summary>
     class Map
     {
-        public Map(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
+        public Map(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed, float heightoffset)
         {
             _voxels = new byte[sizeX*sizeY*sizeZ];
             _sizeX = sizeX;
@@ -33,7 +35,15 @@ namespace VoxelSeeds
             Random rand = new Random(seed);
             switch (lvlType)
             {
-                case LevelType.PLAIN: GeneratePlainLevel(ref rand); break;
+                case LevelType.PLAIN:
+                    GeneratePlainLevel(ref rand, heightoffset);
+                    break;
+                case LevelType.BUBBLE:
+                    GenerateBubbleLevel(ref rand, heightoffset);
+                    break;
+                case LevelType.STEP:
+                    GenerateStepLevel(ref rand, heightoffset);
+                    break;
             }
         }
 
@@ -211,7 +221,7 @@ namespace VoxelSeeds
         /// Create a relatively flat ground.
         /// </summary>
         /// <param name="rand"></param>
-        private void GeneratePlainLevel(ref Random rand)
+        private void GeneratePlainLevel(ref Random rand, float heightOffset = 0.2f)
         {
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             // Fill half to test
@@ -219,11 +229,36 @@ namespace VoxelSeeds
             for( int z = 0; z < SizeZ; ++z )
                 for (int x = 0; x < SizeX; ++x)
                 {
-                    float radialHeight = 0.02f*(float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
-                    int height = (int)(maxHeight * (noise.Get(x, z) - radialHeight + 0.2f));
+                    float radialHeight = 0.02f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
+                    int height = (int)(maxHeight * (noise.Get(x, z) - radialHeight + heightOffset));
                     for (int y = 0; y < height; ++y)
                         _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
                 }
+        }
+
+        private void GenerateStepLevel(ref Random rand, float heightOffset = 0.2f)
+        {
+            GeneratePlainLevel(ref rand, heightOffset);
+            GeneratePlainLevel(ref rand, heightOffset * 0.5f);
+            GeneratePlainLevel(ref rand, heightOffset * 2);
+            GeneratePlainLevel(ref rand, heightOffset * 1);
+        }
+
+        private void GenerateBubbleLevel(ref Random rand, float heightOffset)
+        {
+            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            int sizeYscaled = SizeY / 3;
+            // Fill half to test
+            for (int z = 0; z < SizeZ; ++z)
+                for (int x = 0; x < SizeX; ++x)
+                    for (int d = 0; d < sizeYscaled; ++d)
+                    {
+                        float radialHeight = 0.08f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
+                        float value = SizeY * (noise.Get(x, z, d) - noise.Get(x, z)) / radialHeight - heightOffset - radialHeight;
+                       // for (int y = 0; y < height; ++y)
+                        if(value > 0)
+                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
+                    }
         }
     }
 }

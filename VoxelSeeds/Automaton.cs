@@ -35,9 +35,9 @@ namespace VoxelSeeds
             public Direction From;
         };
 
-        public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
+        public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed, float heightoffset)
         {
-            _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed);
+            _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed, heightoffset);
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
         }
 
