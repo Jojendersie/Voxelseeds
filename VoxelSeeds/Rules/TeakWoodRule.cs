@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,29 +27,33 @@ namespace VoxelSeeds.Rules
                 output[1, 1, 2] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1);
                 output[2, 1, 2] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1);
 
-                if (neighbourhood[1, 0, 1].Type == VoxelType.EMPTY)
+                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 0, 1].Type) || neighbourhood[1, 0, 1].Type == VoxelType.EMPTY)
                     output[1, 0, 1] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1, 0, 0, Direction.UP);
-                if (neighbourhood[2, 0, 1].Type == VoxelType.EMPTY)
+                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[2, 0, 1].Type) || neighbourhood[2, 0, 1].Type == VoxelType.EMPTY)
                     output[2, 0, 1] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1, 0, 0, Direction.UP);
-                if (neighbourhood[1, 0, 2].Type == VoxelType.EMPTY)
+                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 0, 2].Type) || neighbourhood[1, 0, 2].Type == VoxelType.EMPTY)
                     output[1, 0, 2] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1, 0, 0, Direction.UP);
-                if (neighbourhood[2, 0, 2].Type == VoxelType.EMPTY)
+                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[2, 0, 2].Type) || neighbourhood[2, 0, 2].Type == VoxelType.EMPTY)
                     output[2, 0, 2] = new VoxelInfo(VoxelType.TEAK_WOOD, true, 1, 0, 0, Direction.UP);
             }
             else if (gen < height)
             {
-                // Grow upwards
-                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 2, 1].Type) || neighbourhood[1, 2, 1].Type == VoxelType.EMPTY)
+                Int3 coord = DirectionConverter.FromDirection(DirectionConverter.ToOppositeDirection(neighbourhood[1, 1, 1].From));
+                // Grow in given direction
+                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[coord.X, coord.Y, coord.Z].Type) || neighbourhood[coord.X, coord.Y, coord.Z].Type == VoxelType.EMPTY)
                 {
-                    output[1, 2, 1] = new VoxelInfo(VoxelType.TEAK_WOOD, true, gen + 1);
+                    output[coord.X, coord.Y, coord.Z] = new VoxelInfo(VoxelType.TEAK_WOOD, true, gen + 1,0,0,neighbourhood[1,1,1].From);
                 }
                 output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
             }
             else
             {
-                if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 2, 1].Type) || neighbourhood[1, 2, 1].Type == VoxelType.EMPTY)
+                if (neighbourhood[1, 1, 1].From == Direction.DOWN)
                 {
-                    output[1, 2, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, 1);
+                    if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 2, 1].Type) || neighbourhood[1, 2, 1].Type == VoxelType.EMPTY)
+                    {
+                        output[1, 2, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, 1);
+                    }
                 }
                 output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
             }

@@ -77,7 +77,7 @@ namespace VoxelSeeds
         //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2, 5 };
         readonly static int[] growingSteps = { 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5 };
 
-        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 1, 1, 3 };
+        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 1, 1, 5 };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -191,7 +191,7 @@ namespace VoxelSeeds
 
     class DirectionConverter
     {
-        static Int3 FromDirection(Direction direction)
+        public static Int3 FromDirection(Direction direction)
         {
             int t = 1;
             int h = 1;
@@ -227,7 +227,7 @@ namespace VoxelSeeds
             return new Int3(t,h,b);
         }
 
-        static Direction ToOppositeDirection(Direction direction)
+        public static Direction ToOppositeDirection(Direction direction)
         {
             switch (direction)
             {

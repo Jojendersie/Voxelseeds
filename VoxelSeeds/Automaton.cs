@@ -46,7 +46,7 @@ namespace VoxelSeeds
             _updateInstanceData = updateInstanceData;
         }
 
-        private void InsertVoxel(Int32 positionCode, VoxelType type, int generation, bool living, int resources, int ticks)
+        private void InsertVoxel(Int32 positionCode, VoxelType type, int generation, bool living, int resources, int ticks, Direction from)
         {
             var pos = _map.DecodePosition(positionCode);
             if (_map.IsInside(pos.X, pos.Y, pos.Z))
@@ -56,10 +56,10 @@ namespace VoxelSeeds
                 {
                     if (_livingVoxels.ContainsKey(positionCode))
                     {
-                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, Direction.DOWN);
+                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from);
                     }
                     else
-                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, Direction.DOWN));
+                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from));
                 }
             }
         }
@@ -77,11 +77,11 @@ namespace VoxelSeeds
             checkAndRemoveNeighbour(positionCode + _map.SizeX * _map.SizeY);
         }
 
-        public void InsertSeed(int x, int y, int z, VoxelType type)
+        public void InsertSeed(int x, int y, int z, VoxelType type, Direction from = Direction.DOWN)
         {
             Int32 pos = _map.EncodePosition(x, y, z);
 
-            InsertVoxel(pos, type, 0, true, 0, 0);
+            InsertVoxel(pos, type, 0, true, 0, 0, from);
 
             if( _updateInstanceData != null )
             {
@@ -138,7 +138,7 @@ namespace VoxelSeeds
                 if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
                 else if (TypeInformation.IsBiomass(vox.Value.Type)) ++newBiomass;
 
-                InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks);
+                InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks,vox.Value.From);
 
                 // Insert to instance data only if visible
                 if( !_map.IsOccluded(vox.Key) )
