@@ -112,6 +112,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio.cs" />
     <Compile Include="Automaton.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="Camera.cs" />
