@@ -51,7 +51,12 @@ namespace VoxelSeeds.Rules
                 Direction food = FoodInDirection(neighbourhood);
                 if (food != Direction.SELF)
                 {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(0, 3), 10, 0, food);
+                    Int3 foodPos = DirectionConverter.FromDirection(food);
+                    int eattime = -10;
+                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.PINE_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.SPRUCE_WOOD) eattime = -20;
+                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.TEAK_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.OAK_WOOD) eattime = -5;
+
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(0, 3), 10, eattime, food);
                 }
                 else if (IsWalkable(neighbourhood[t, h, b]))
                 {

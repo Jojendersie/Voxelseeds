@@ -18,6 +18,7 @@ namespace VoxelSeeds.Rules
             int gen = neighbourhood[1, 1, 1].Generation;
             int min = 0;// TypeInformation.GetGrowingSteps(VoxelType.WHITEROT_FUNGUS) / 2;
             int max = TypeInformation.GetGrowingSteps(VoxelType.WHITEROT_FUNGUS) / 2;
+            int growadd;
 
             if (gen == 0)
             {
@@ -34,8 +35,14 @@ namespace VoxelSeeds.Rules
                                     && !TypeInformation.IsGroundOrFungus(voxeltype))
                                 {
                                     if (CanFungusGrowOn(t, h, b, neighbourhood)) // there is a voxel in d6 on which the fungus can grow on
+                                    {
                                         // grow
-                                        output[t, h, b] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
+                                        growadd = 0;
+                                        if (voxeltype == VoxelType.ROCK || voxeltype == VoxelType.TEAK_WOOD) growadd = -10;
+                                        if (voxeltype == VoxelType.PINE_WOOD || voxeltype == VoxelType.BEECH_WOOD ||
+                                            voxeltype == VoxelType.OAK_WOOD || voxeltype == VoxelType.REDWOOD) growadd = 3;
+                                        output[t, h, b] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, (int)(random.Next(min, max) + growadd));
+                                    }
                                 }
                             }
                 // check for kill the fungus (if in d6 all places are occupied)
