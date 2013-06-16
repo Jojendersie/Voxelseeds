@@ -46,7 +46,7 @@ namespace VoxelSeeds.Rules
                 else
                     output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
             }
-            else if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS))
+            else// if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS))
             {
                 Direction food = FoodInDirection(neighbourhood);
                 if (food != Direction.SELF)
@@ -68,10 +68,10 @@ namespace VoxelSeeds.Rules
                     output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(1, 5));
                 }
             }
-            else
+           /* else
             {
                 output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-            }
+            }*/
 
             return output;
         }

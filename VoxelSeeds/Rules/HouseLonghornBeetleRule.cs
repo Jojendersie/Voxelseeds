@@ -46,7 +46,7 @@ namespace VoxelSeeds.Rules
                 else
                     output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
             }
-            else if (gen < TypeInformation.GetGrowHeight(VoxelType.HOUSE_LONGHORN_BEETLE))
+            else //if (gen < TypeInformation.GetGrowHeight(VoxelType.HOUSE_LONGHORN_BEETLE))
             {
                 Direction food = FoodInDirection(neighbourhood);
                 if (food != Direction.SELF)
@@ -72,10 +72,10 @@ namespace VoxelSeeds.Rules
                     output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
                 }
             }
-            else
+           /* else
             {
                 output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-            }
+            }*/
 
             return output;
         }
