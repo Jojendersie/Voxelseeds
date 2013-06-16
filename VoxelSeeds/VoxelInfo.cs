@@ -62,7 +62,7 @@ namespace VoxelSeeds
                                                  new OakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new WhiterotFungusRules(),
-                                                 new TeakWoodRule(),
+                                                 new NobleRotRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new HesperophanesCinnereusRule(),
