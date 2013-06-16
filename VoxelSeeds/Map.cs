@@ -288,13 +288,23 @@ namespace VoxelSeeds
             // Fill half to test
             Parallel.For( 0, SizeZ, (z) => {
                 for (int x = 0; x < SizeX; ++x)
-                    for (int d = 0; d < sizeYscaled; ++d)
+                {
+                    _voxels[EncodePosition(x, 0, z)] = (byte)VoxelType.GROUND;
+                    for (int d = 1; d < sizeYscaled; ++d)
                     {
                         //float radialHeight = 0.08f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
-                        float value = SizeY * (noise.Get(x, z, d) + noise.Get(x, z) - d*3 / sizeYscaled);// -heightOffset;// -radialHeight;
+                        //float value = SizeY * (noise.Get(x, z, d) + noise.Get(x, z) - d*3 / sizeYscaled);// -heightOffset;// -radialHeight;
+                        float value = noise.Get(x / 2, z / 2, d / 5) - 0.5f;
                         if (value > 0)
-                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.ROCK;
+                            _voxels[EncodePosition(x, d, z)] = (byte)VoxelType.ROCK;
                     }
+                    for (int d = sizeYscaled; d < sizeYscaled+5; ++d)
+                    {
+                        float value = noise.Get(x / 2, z / 2, d / 5) - 0.6f;
+                        if (value > 0)
+                            _voxels[EncodePosition(x, d, z)] = (byte)VoxelType.ROCK;
+                    }
+                }
             });
         }
 
