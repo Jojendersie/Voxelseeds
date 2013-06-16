@@ -127,7 +127,7 @@ namespace VoxelSeeds
         {
             for (int i = 0; i < barLength; i++)
             {
-                if (i == 0 || i == 1)
+                if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
                 {
                 if (MouseOver(seeds[i]._position, 83, 32) && picking)
                 {
@@ -170,7 +170,7 @@ namespace VoxelSeeds
 
             for (int i = 0; i < barLength; i++)
             {
-                if(i==1||i==0)
+                if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
                 {
                 //draw frame
                 spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y , 84, 32), Color.Black);
@@ -197,7 +197,7 @@ namespace VoxelSeeds
             //draw Tooltip
             for (int i = 0; i < barLength; i++)
             {
-                if (i == 0 || i == 1)
+                if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
                 {
                 if (MouseOver(seeds[i]._position, 83, 32))
                 {

@@ -16,8 +16,8 @@ namespace VoxelSeeds.Rules
 
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
             int gen = neighbourhood[1, 1, 1].Generation;
-            int min = TypeInformation.GetGrowingSteps(VoxelType.WHITEROT_FUNGUS) / 2;
-            int max = TypeInformation.GetGrowingSteps(VoxelType.WHITEROT_FUNGUS);
+            int min = 0;// TypeInformation.GetGrowingSteps(VoxelType.WHITEROT_FUNGUS) / 2;
+            int max = TypeInformation.GetGrowingSteps(VoxelType.WHITEROT_FUNGUS) / 2;
 
             if (gen == 0)
             {
