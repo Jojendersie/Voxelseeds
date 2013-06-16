@@ -136,13 +136,20 @@ namespace VoxelSeeds
         {
             Int32 pos = _map.EncodePosition(x, y, z);
 
+            VoxelType old = _map.Get(pos);
+            if (old != VoxelType.EMPTY)
+                RemoveVoxel(pos);
+
             InsertVoxel(pos, type, 0, true, 0, 0, from);
 
             if( _updateInstanceData != null )
             {
-
                 List<Voxel> deleteList = new List<Voxel>();
                 List<Voxel> insertionList = new List<Voxel>();
+
+                if (old != VoxelType.EMPTY)
+                    deleteList.Add(new Voxel(pos, old));
+
                 insertionList.Add(new Voxel(pos, type));
                 removeOccludedNeighbours(pos, deleteList);
                 _updateInstanceData(deleteList, insertionList);

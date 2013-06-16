@@ -23,7 +23,7 @@ namespace VoxelSeeds
             int x = GetMap().SizeX / 2 + 5;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
-            InsertParasite(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
+            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
 /*            x = GetMap().SizeX - GetMap().SizeX / 4;
             InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.NOBLEROT_FUNGUS); */
         }
