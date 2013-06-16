@@ -31,12 +31,16 @@ namespace VoxelSeeds
         private Texture2D helix;
         private Texture2D pixel;
         private Texture2D frame;
+        private Texture2D progressBar;
+        private Texture2D evilProgressBar;
         private int _selected = -1;
         private bool picking;
         private System.Drawing.Point mousePosition;
         private int windowHeigth;
         private int windowWidth;
         private float[] tooltipCounter = new float[9];
+        private float progressCount;
+        private float alpha;
 
         private const int barLength = 9;
 
@@ -79,12 +83,15 @@ namespace VoxelSeeds
             helix = contentManager.Load<Texture2D>("helix.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
             frame = contentManager.Load<Texture2D>("frame.png");
+            progressBar = contentManager.Load<Texture2D>("Dummy.png");
+            evilProgressBar = contentManager.Load<Texture2D>("Dummy.png");
 
             for (int i = 0; i < barLength; i++)
             {
                 seeds[i] = new SeedInfo();
                 seeds[i]._position = new Vector2(i * (windowWidth - 60) / 10 + 5, 5);   
             }
+
             seeds[0]._type = VoxelType.TEAK_WOOD;
             textures[0] = contentManager.Load<Texture2D>("teak.png");
             seeds[1]._type = VoxelType.PINE_WOOD;
@@ -126,11 +133,34 @@ namespace VoxelSeeds
             int progress = windowHeigth * currentlevel.CurrentBiomass/currentlevel.TargetBiomass;
             int evilProgress = windowHeigth * currentlevel.ParasiteBiomass/currentlevel.FinalParasiteBiomass;
 
-            spriteBatch.Begin();
+            const int pictureCount = 4;
+            const int pictureWidth = 30;
+            const int pictureHeight = 800;
+
+            progressCount = (float)gameTime.TotalGameTime.TotalSeconds;
+
+            alpha = progressCount - (float)Math.Floor(progressCount);
+
+            spriteBatch.Begin(SpriteSortMode.Deferred, spriteBatch.GraphicsDevice.BlendStates.NonPremultiplied);
             
             //draw Progress good/evil
-            spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth, windowHeigth, 30, progress), null, Color.Blue, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(pixel, new DrawingRectangle(windowWidth-30, windowHeigth, 30, evilProgress), null, Color.Red, (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, pictureWidth, progress),
+                new DrawingRectangle(pictureWidth * ((int)progressCount % pictureCount), 0, pictureWidth, pictureHeight * progress / windowHeigth),
+                new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, pictureWidth, progress),
+                new DrawingRectangle(pictureWidth * (((int)progressCount + 1) % pictureCount), 0, pictureWidth, pictureHeight * progress / windowHeigth),
+                new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+
+
+            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth, windowHeigth, pictureWidth, progress),
+                new DrawingRectangle(pictureWidth * ((int)progressCount % pictureCount), 0, pictureWidth, pictureHeight * progress / windowHeigth),
+                new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth, windowHeigth, pictureWidth, progress),
+                new DrawingRectangle(pictureWidth * (((int)progressCount + 1) % pictureCount), 0, pictureWidth, pictureHeight * progress / windowHeigth),
+                new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
+
+            spriteBatch.End();
+            spriteBatch.Begin();
 
             for (int i = 0; i < barLength; i++)
             {
