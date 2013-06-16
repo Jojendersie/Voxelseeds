@@ -29,7 +29,7 @@ namespace VoxelSeeds.Rules
             else if (gen == 1 && res == 10)
             {
                 // Grow Cross and ovveride current generation
-                output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1, 0, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD) / 2);
+                output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 2, 0, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD) / 2);
                 if (neighbourhood[2, 1, 1].Type == VoxelType.EMPTY)
                     output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1, 20);
                 if (neighbourhood[0, 1, 1].Type == VoxelType.EMPTY)
@@ -58,7 +58,7 @@ namespace VoxelSeeds.Rules
                     if (neighbourhood[0, 1, 1].Type == VoxelType.EMPTY)
                         output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1);
                 }
-                output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1, energy, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD) / 4);
+                output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 2, energy, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD) / 4);
             }
             else if (res == 4 && gen < 5)
             {
@@ -70,6 +70,18 @@ namespace VoxelSeeds.Rules
                     output[1, 1, 2] = new VoxelInfo(VoxelType.OAK_WOOD, gen < 4, gen + 1, res);
                 if (neighbourhood[1, 1, 0].Type == VoxelType.EMPTY && neighbourhood[1, 1, 2].Type == VoxelType.OAK_WOOD)
                     output[1, 1, 0] = new VoxelInfo(VoxelType.OAK_WOOD, gen < 4, gen + 1, res);
+
+                /*if (!(gen < 4))
+                {
+                    if (neighbourhood[2, 1, 1].Type == VoxelType.EMPTY && neighbourhood[0, 1, 1].Type == VoxelType.OAK_WOOD)
+                        output[2, 1, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen, res);
+                    if (neighbourhood[0, 1, 1].Type == VoxelType.EMPTY && neighbourhood[2, 1, 1].Type == VoxelType.OAK_WOOD)
+                        output[0, 1, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen, res);
+                    if (neighbourhood[1, 1, 2].Type == VoxelType.EMPTY && neighbourhood[1, 1, 0].Type == VoxelType.OAK_WOOD)
+                        output[1, 1, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen, res);
+                    if (neighbourhood[1, 1, 0].Type == VoxelType.EMPTY && neighbourhood[1, 1, 2].Type == VoxelType.OAK_WOOD)
+                        output[1, 1, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen, res);
+                }*/
             }
             else if (gen < TypeInformation.GetGrowHeight(VoxelType.OAK_WOOD))
             {
@@ -91,7 +103,7 @@ namespace VoxelSeeds.Rules
             else
             {
                 // Grow upwards one last time
-                output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
+                output[1, 2, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE,true);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
             }
             return output;
