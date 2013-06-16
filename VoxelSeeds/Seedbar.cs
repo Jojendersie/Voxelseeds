@@ -127,9 +127,12 @@ namespace VoxelSeeds
         {
             for (int i = 0; i < barLength; i++)
             {
+                if (i == 0 || i == 1)
+                {
                 if (MouseOver(seeds[i]._position, 83, 32) && picking)
                 {
                     _selected = i;
+                }
                 }
             }  
         }
@@ -167,6 +170,8 @@ namespace VoxelSeeds
 
             for (int i = 0; i < barLength; i++)
             {
+                if(i==1||i==0)
+                {
                 //draw frame
                 spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y , 84, 32), Color.Black);
                 spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42), Color.Gray);
@@ -174,7 +179,8 @@ namespace VoxelSeeds
                 spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), Color.White);
                 spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
                 //draw Icons
-                spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);   
+                spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);  
+                }
             }
 
             //draw Resources
@@ -191,6 +197,8 @@ namespace VoxelSeeds
             //draw Tooltip
             for (int i = 0; i < barLength; i++)
             {
+                if (i == 0 || i == 1)
+                {
                 if (MouseOver(seeds[i]._position, 83, 32))
                 {
                     tooltipCounter[i] += gameTime.ElapsedGameTime.Milliseconds;
@@ -202,11 +210,12 @@ namespace VoxelSeeds
 
                         spriteBatch.Draw(pixel, new DrawingRectangle(mousePosition.X + 10 - corrector, mousePosition.Y + 10, 280, 130), new Color(0.5f, 0.5f, 0.5f, 0.5f));
                         spriteBatch.DrawString(font, TypeInformation.GetName(seeds[i]._type), new Vector2(mousePosition.X + 35 - corrector, mousePosition.Y + 15), Color.Black);
-                        spriteBatch.DrawString(font, "+"+TypeInformation.GetStrength(seeds[i]._type)[0] + "\n+" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 15 - corrector, mousePosition.Y + 40), Color.Green);
-                        spriteBatch.DrawString(font, "-"+TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n-" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 15 - corrector, mousePosition.Y + 90), Color.Crimson);
+                        spriteBatch.DrawString(font, "+" + TypeInformation.GetStrength(seeds[i]._type)[0] + "\n+" + TypeInformation.GetStrength(seeds[i]._type)[1], new Vector2(mousePosition.X + 15 - corrector, mousePosition.Y + 40), Color.Green);
+                        spriteBatch.DrawString(font, "-" + TypeInformation.GetWeakness(seeds[i]._type)[0] + "\n-" + TypeInformation.GetWeakness(seeds[i]._type)[1], new Vector2(mousePosition.X + 15 - corrector, mousePosition.Y + 90), Color.Crimson);
                     }
                 }
                 else tooltipCounter[i] = 0;
+                }
             }
             spriteBatch.End();
         }
