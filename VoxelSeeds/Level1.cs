@@ -25,7 +25,7 @@ namespace VoxelSeeds
             int x = GetMap().SizeX / 2;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
-            _automaton.InsertSeed(x,Math.Max(y,0)+1,z,VoxelType.HESPEROPHANES_CINNEREUS);
+            _automaton.InsertSeed(x,Math.Max(y,0)+1,z,VoxelType.WHITEROT_FUNGUS);
         }
     }
 }
