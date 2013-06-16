@@ -130,16 +130,53 @@ namespace VoxelSeeds
         {
             return growHeight[(int)voxeltype];
         }
+
+        public static bool CanFungusGrowOn(VoxelType voxeltype)
+        {
+            return IsBiomass(voxeltype) || voxeltype == VoxelType.GROUND;
+        }
+
+        public static bool IsWood(VoxelType voxeltype)
+        {
+            return (int)voxeltype >= (int)VoxelType.TEAK_WOOD && (int)voxeltype <= (int)VoxelType.REDWOOD;
+        }
+
+        public static bool IsInsect(VoxelType voxeltype)
+        {
+            return (int)voxeltype >= (int)VoxelType.TERMITES && (int)voxeltype <= (int)VoxelType.GRASSHOPPER;
+        }
+
+        public static bool IsGroundOrFungus(VoxelType voxeltype)
+        {
+            return voxeltype == VoxelType.GROUND || voxeltype == VoxelType.WHITEROT_FUNGUS || voxeltype == VoxelType.NOBLEROT_FUNGUS;
+        }
     }
 
     enum Direction
     {
+        SELF,
         LEFT,
         RIGHT,
         FOR,
         BACK,
         UP,
         DOWN,
+        FOR_LEFT,
+        FOR_UP_LEFT,
+        FOR_DOWN_LEFT,
+        FOR_RIGHT,
+        FOR_UP_RIGHT,
+        FOR_DOWN_RIGHT,
+        BACK_LEFT,
+        BACK_UP_LEFT,
+        BACK_DOWN_LEFT,
+        BACK_RIGHT,
+        BACK_UP_RIGHT,
+        BACK_DOWN_RIGHT,
+        DOWN_LEFT,
+        DOWN_RIGHT,
+        UP_LEFT,
+        UP_RIGHT
     };
 
     class VoxelInfo

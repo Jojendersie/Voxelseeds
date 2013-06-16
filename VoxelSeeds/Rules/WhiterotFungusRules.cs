@@ -22,34 +22,46 @@ namespace VoxelSeeds.Rules
             if (gen == 0)
             {
                 int fung = 0;
-                // Grow Cross
-                if (neighbourhood[2, 1, 1].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[2, 0, 1].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[2, 0, 1].Type != VoxelType.EMPTY)
-                    output[2, 1, 1] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
-                else if (neighbourhood[2, 1, 1].Type == VoxelType.WHITEROT_FUNGUS) fung++;
-                if (neighbourhood[0, 1, 1].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[0, 0, 1].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[0, 0, 1].Type != VoxelType.EMPTY)
-                    output[0, 1, 1] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
-                else if (neighbourhood[0, 1, 1].Type == VoxelType.WHITEROT_FUNGUS) fung++;
-                if (neighbourhood[1, 1, 2].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[1, 0, 2].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[1, 0, 2].Type != VoxelType.EMPTY)
-                    output[1, 1, 2] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
-                else if (neighbourhood[1, 1, 2].Type == VoxelType.WHITEROT_FUNGUS) fung++;
-                if (neighbourhood[1, 1, 0].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[1, 0, 0].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[1, 0, 0].Type != VoxelType.EMPTY)
-                    output[1, 1, 0] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
-                else if (neighbourhood[1, 1, 0].Type == VoxelType.WHITEROT_FUNGUS) fung++;
-                if (neighbourhood[1, 2, 1].Type != VoxelType.WHITEROT_FUNGUS && neighbourhood[1, 2, 1].Type != VoxelType.EMPTY && neighbourhood[1, 2, 1].Type != VoxelType.GROUND)
-                {
-                    output[1, 2, 1] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
-                }
-                else if (neighbourhood[1, 2, 1].Type == VoxelType.WHITEROT_FUNGUS)
-                    fung++;
-                if (neighbourhood[1, 0, 1].Type != VoxelType.WHITEROT_FUNGUS /*&& neighbourhood[1, 0, 1].Type != VoxelType.EMPTY*/ && neighbourhood[1, 0, 1].Type != VoxelType.GROUND)
-                {
-                    output[1, 0, 1] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
-                }
-                else fung++;
+                VoxelType voxeltype;
+                // check the neighbourhood
+                for (int t = 0; t < 3; ++t)
+                    for (int h = 0; h < 3; ++h)
+                        for (int b = 0; b < 3; ++b) if (!(t == 1 && h == 1 && b == 1)) // if not the voxel itself
+                            {
+                                voxeltype = neighbourhood[t, h, b].Type;
+                                if ((TypeInformation.IsBiomass(voxeltype) // there is a voxel in which the fungus can grow
+                                    || voxeltype == VoxelType.EMPTY) // or the field is empty
+                                    && !TypeInformation.IsGroundOrFungus(voxeltype))
+                                {
+                                    if (CanFungusGrowOn(t, h, b, neighbourhood)) // there is a voxel in d6 on which the fungus can grow on
+                                        // grow
+                                        output[t, h, b] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, random.Next(min, max));
+                                }
+                            }
+                // check for kill the fungus (if in d6 all places are occupied)
+                if (TypeInformation.IsGroundOrFungus(neighbourhood[2, 1, 1].Type)) fung++;
+                if (TypeInformation.IsGroundOrFungus(neighbourhood[0, 1, 1].Type)) fung++;
+                if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 2, 1].Type)) fung++;
+                if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 0, 1].Type)) fung++;
+                if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 1, 2].Type)) fung++;
+                if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 1, 0].Type)) fung++;
                 if (fung == 6) output[2, 1, 1] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS);
             }
 
             return output;
+        }
+
+        private bool CanFungusGrowOn(int t, int h, int b, VoxelInfo[, ,] neighbourhood)
+        {
+            bool res = false;
+            if (t < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t + 1, h, b].Type);
+            if (t > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t - 1, h, b].Type);
+            if (h < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h + 1, b].Type);
+            if (h > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h - 1, b].Type);
+            if (b < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b + 1].Type);
+            if (b > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b - 1].Type);
+
+            return res;
         }
 
     }
