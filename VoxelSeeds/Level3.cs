@@ -22,12 +22,12 @@ namespace VoxelSeeds
             _currentBiomass = 1;
             _currentParasiteMass = 0;
 
-/*            int x = GetMap().SizeX / 4;
+            int x = GetMap().SizeX / 4;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
             _automaton.InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
             x = GetMap().SizeX - GetMap().SizeX / 4;
-            _automaton.InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.NOBLEROT_FUNGUS); */
+            _automaton.InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.HESPEROPHANES_CINNEREUS);
         }
     }
 }

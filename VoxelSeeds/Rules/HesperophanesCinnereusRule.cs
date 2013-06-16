@@ -34,28 +34,28 @@ namespace VoxelSeeds.Rules
                     output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 1);
                 }
             }
-            if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS) && res == 10)
+            else if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS) && res == 10)
             {
                 Int3 moveTo = DirectionConverter.FromDirection(neighbourhood[1, 1, 1].From);
                 t = moveTo.X;
                 h = moveTo.Y;
                 b = moveTo.Z;
                 output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 0);
-                if (random.Next(0, 11) > 5)
+                if (random.Next(0, 11) > 7)
                     output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(1, 5), 0, TypeInformation.GetGrowingSteps(VoxelType.HESPEROPHANES_CINNEREUS), Direction.SELF);
                 else
                     output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
             }
-            if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS))
+            else if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS))
             {
                 Direction food = FoodInDirection(neighbourhood);
                 if (food != Direction.SELF)
                 {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(0, 3), 10, -10, food);
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(0, 3), 10, 0, food);
                 }
                 else if (IsWalkable(neighbourhood[t, h, b]))
                 {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY); ;
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
                     output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(1, 5));
                 }
                 else
@@ -65,7 +65,7 @@ namespace VoxelSeeds.Rules
             }
             else
             {
-                output[1, 1, 1] = null;
+                output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
             }
 
             return output;
