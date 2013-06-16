@@ -189,6 +189,7 @@ namespace VoxelSeeds
 
         private void LoadTextures(ContentManager contentManager)
         {
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.PINE_NEEDLE)].Texture = contentManager.Load<Texture2D>("needles.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_LEAF)].Texture = contentManager.Load<Texture2D>("leafs.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.ROCK)].Texture = contentManager.Load<Texture2D>("rock.png");

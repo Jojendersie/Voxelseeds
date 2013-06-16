@@ -20,6 +20,8 @@ namespace VoxelSeeds.Rules
             if (gen == 0)
             {
                 output[1, 1, 1] = new VoxelInfo(VoxelType.PINE_NEEDLE);
+                if(TypeInformation.IsNotWoodButBiomass(neighbourhood[1,2,1].Type) || neighbourhood[1,2,1].Type == VoxelType.EMPTY)
+                    output[1, 2, 1] = new VoxelInfo(VoxelType.PINE_NEEDLE);
                 if (CanPlace(2, 1, 1, neighbourhood))
                     output[2, 1, 1] = new VoxelInfo(VoxelType.PINE_NEEDLE, true, 1);
                 if (CanPlace(0, 1, 1, neighbourhood))

@@ -21,9 +21,9 @@ namespace VoxelSeeds
             _finalParasiteMass = 20000;
             _targetBiomass = 50000;
 
-            _automaton.InsertSeed(125, Math.Max(GetMap().GetHeighest(125, 80), 0) + 1, 80, VoxelType.WHITEROT_FUNGUS);
-            _automaton.InsertSeed(61, Math.Max(GetMap().GetHeighest(61, 24), 0) + 1, 24, VoxelType.WHITEROT_FUNGUS);
-            _automaton.InsertSeed(74, Math.Max(GetMap().GetHeighest(74, 109), 0) + 1, 109, VoxelType.WHITEROT_FUNGUS);
+            InsertParasite(125, Math.Max(GetMap().GetHeighest(125, 80), 0) + 1, 80, VoxelType.WHITEROT_FUNGUS);
+            InsertParasite(61, Math.Max(GetMap().GetHeighest(61, 24), 0) + 1, 24, VoxelType.WHITEROT_FUNGUS);
+            InsertParasite(74, Math.Max(GetMap().GetHeighest(74, 109), 0) + 1, 109, VoxelType.WHITEROT_FUNGUS);
         }
     }
 }

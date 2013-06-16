@@ -40,6 +40,11 @@ namespace VoxelSeeds.Rules
                 if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 0, 0].Type) || neighbourhood[1, 0, 0].Type == VoxelType.EMPTY)
                     output[1, 0, 0] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next(1, height), 0, 0, Direction.UP);
             }
+            else if (gen == -1)
+            {
+                output[1, 2, 1] = new VoxelInfo(VoxelType.PINE_NEEDLE, true);
+                output[1, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD);
+            }
             else if (gen < height)
             {
                 if (res > 0 && gen > TypeInformation.GetGrowHeight(VoxelType.PINE_WOOD) / 2)
@@ -67,7 +72,8 @@ namespace VoxelSeeds.Rules
             else
             {
                 // Grow upwards one last time
-                output[1, 2, 1] = new VoxelInfo(VoxelType.PINE_WOOD);
+                if(neighbourhood[1,1,1].From != Direction.UP)
+                    output[1, 2, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, -1, 0, TypeInformation.GetGrowingSteps(VoxelType.PINE_WOOD));
                 output[1, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD);
             }
             return output;
