@@ -16,16 +16,14 @@ namespace VoxelSeeds
         {
             _automaton = new Automaton(200, 60, 200, LevelType.BUBBLE, 3485704, 1.3f);
 
-            _resources = 2000;
+            _resources = 6000;
             _finalParasiteMass = 10000;
             _targetBiomass = 5000;
 
             int x = GetMap().SizeX / 2 + 5;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
-            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
-/*            x = GetMap().SizeX - GetMap().SizeX / 4;
-            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.NOBLEROT_FUNGUS); */
+            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.NOBLEROT_FUNGUS);
         }
     }
 }
