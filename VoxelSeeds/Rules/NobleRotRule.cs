@@ -38,9 +38,9 @@ namespace VoxelSeeds.Rules
                                     {
                                         // grow
                                         growadd = 0;
-                                        if (voxeltype == VoxelType.ROCK || voxeltype == VoxelType.TEAK_WOOD) growadd = -10;
+                                        if (voxeltype == VoxelType.ROCK || voxeltype == VoxelType.TEAK_WOOD) growadd = -30;
                                         if (voxeltype == VoxelType.PINE_WOOD || voxeltype == VoxelType.BEECH_WOOD ||
-                                            voxeltype == VoxelType.REDWOOD) growadd = 3;
+                                            voxeltype == VoxelType.REDWOOD) growadd = 10;
 
                                         output[t, h, b] = new VoxelInfo(VoxelType.NOBLEROT_FUNGUS, true, 0, 0, random.Next(min, max) + growadd);
                                     }
