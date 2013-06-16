@@ -77,9 +77,6 @@
     <Content Include="Content\needles.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\noblerot.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\oak.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -136,6 +133,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Rules\BeechWoodRule.cs" />
     <Compile Include="Rules\HesperophanesCinnereusRule.cs" />
+    <Compile Include="Rules\NobleRotRule.cs" />
     <Compile Include="Rules\OakWoodRule.cs" />
     <Compile Include="Rules\PineNeedleRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
