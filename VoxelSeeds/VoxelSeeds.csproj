@@ -112,6 +112,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audio.cs" />
     <Compile Include="Automaton.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="Camera.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Rules\BeechWoodRule.cs" />
     <Compile Include="Rules\HesperophanesCinnereusRule.cs" />
     <Compile Include="Rules\OakWoodRule.cs" />
+    <Compile Include="Rules\PineNeedleRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
     <Compile Include="Rules\RedWoodRules.cs" />
     <Compile Include="Rules\SpruceWoodRule.cs" />

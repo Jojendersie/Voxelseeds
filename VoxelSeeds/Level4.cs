@@ -15,20 +15,17 @@ namespace VoxelSeeds
 
         override public void Initialize()
         {
-            _automaton = new Automaton(300, 80, 300, LevelType.PLAIN, 51239478, 0.01f);
+            _automaton = new Automaton(150, 80, 150, LevelType.MOUNTAINS, 51239478, 1.3f);
 
-            _resources = 1000;
-            _finalParasiteMass = 1000;
-            _targetBiomass = 1000;
-            _currentBiomass = 1;
-            _currentParasiteMass = 0;
+            _resources = 10000;
+            _finalParasiteMass = 20000;
+            _targetBiomass = 50000;
+            _currentBiomass = 0;
+            _currentParasiteMass = 3;
 
-/*            int x = GetMap().SizeX / 4;
-            int z = GetMap().SizeZ / 2;
-            int y = GetMap().GetHeighest(x, z);
-            _automaton.InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
-            x = GetMap().SizeX - GetMap().SizeX / 4;
-            _automaton.InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.NOBLEROT_FUNGUS); */
+            _automaton.InsertSeed(125, Math.Max(GetMap().GetHeighest(125, 80), 0) + 1, 80, VoxelType.WHITEROT_FUNGUS);
+            _automaton.InsertSeed(61, Math.Max(GetMap().GetHeighest(61, 24), 0) + 1, 24, VoxelType.WHITEROT_FUNGUS);
+            _automaton.InsertSeed(74, Math.Max(GetMap().GetHeighest(74, 109), 0) + 1, 109, VoxelType.WHITEROT_FUNGUS);
         }
     }
 }

@@ -81,6 +81,7 @@ namespace VoxelSeeds
     
         public void LoadContent(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
+
             spriteBatch = new SpriteBatch(graphicsDevice);
             windowHeigth = spriteBatch.GraphicsDevice.BackBuffer.Height;
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;

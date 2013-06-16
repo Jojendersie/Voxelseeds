@@ -12,6 +12,7 @@ namespace VoxelSeeds
     {
         EMPTY = 0,
         GROUND,
+        ROCK,
         TEAK_WOOD,
         PINE_WOOD,
         SPRUCE_WOOD,
@@ -24,13 +25,14 @@ namespace VoxelSeeds
         HOUSE_LONGHORN_BEETLE,
         HESPEROPHANES_CINNEREUS,
         GRASSHOPPER,
-        TEAK_LEAF
+        TEAK_LEAF,
+        PINE_NEEDLE
     };
 
     class TypeInformation
     {   //same order as the VoxelType enum
-        readonly static int[] prices = {0, 0, 120, 90, 152, 68, 116, 956, 0, 0, 0, 0, 0 };
-        readonly static String[,] strength = { { "", "" }, { "-", "-" }, 
+        readonly static int[] prices = {0, 0, 0, 120, 90, 152, 68, 116, 956, 0, 0, 0, 0, 0, 0 };
+        readonly static String[,] strength = { { "", "" }, { "-", "-" }, { "-", "-" }, 
                                              { "White Rot", "Noble Rot" }, 
                                              { "Hesperophanes Cinnereus", "Grasshopper" }, 
                                              { "Hesperophanes Cinnereus", "Grasshopper" }, 
@@ -38,8 +40,8 @@ namespace VoxelSeeds
                                              { "House Longhorn Beetle", "Grasshopper" },
                                              { "Termites", "Grasshopper" },
                                              { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" },
-                                             {"-", "-"}};
-        readonly static String[,] weakness = { { "", "" }, { "-", "-" }, 
+                                             {"-", "-"},{"-", "-"}};
+        readonly static String[,] weakness = { { "", "" }, { "-", "-" }, { "-", "-" }, 
                                              { "Termites", "Hesperophanes Cinnereus" },
                                              { "White Rot", "Noble Rot" },
                                              { "Termites", "House Longhorn Beetle" },
@@ -47,11 +49,11 @@ namespace VoxelSeeds
                                              { "White Rot", "Hesperophanes Cinnereus" },
                                              { "White Rot", "Noble Rot" },
                                              { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" },
-                                             {"-", "-"}};
-        readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper", "Leaf" };
-        readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true, false };
-        readonly static bool[] biomass = { false, false, true, true, true, true, true, true, false, false, false, false, false, false, true };
-        readonly static IVoxelRule[] rules = { null, null,
+                                             {"-", "-"},{"-", "-"}};
+        readonly static String[] name = { "", "Ground", "Rock", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper", "Leaf", "Needle" };
+        readonly static bool[] parasite = { false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false };
+        readonly static bool[] biomass = { false, false, false, true, true, true, true, true, true, false, false, false, false, false, false, true, true };
+        readonly static IVoxelRule[] rules = { null, null, null,
                                                  new TeakWoodRule(),
                                                  new PineWoodRule(),
                                                  new SpruceWoodRule(),
@@ -64,20 +66,21 @@ namespace VoxelSeeds
                                                  new TeakWoodRule(),
                                                  new HesperophanesCinnereusRule(),
                                                  new TeakWoodRule(),
-                                                 new TeakLeafRule()};
+                                                 new TeakLeafRule(),
+                                                 new PineNeedleRule()};
         /// <summary>
         /// The maximum number of voxels of a type which can be simultaneously in the world
         /// </summary>
-        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 512, 512, 512, 512, 131072 };
+        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 512, 512, 512, 512, 131072, 131072 };
         /// <summary>
         /// A scaling factor for voxels it is used to display bugs and beetles smaller
         /// </summary>
-        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f};
+        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f, 1f};
 
-        //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2, 5 };
-        readonly static int[] growingSteps = { 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5 };
+        //readonly static int[] growingSteps = { 0, 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2, 5 };
+        readonly static int[] growingSteps = { 0, 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5, 3 };
 
-        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 200, 1, 5 };
+        readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5, 2 };
 
         public static String GetName(VoxelType voxeltype)
         {

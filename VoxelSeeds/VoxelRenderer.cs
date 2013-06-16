@@ -12,7 +12,7 @@ namespace VoxelSeeds
     // Use this namespace here in case we need to use Direct3D11 namespace as well, as this
     // namespace will override the Direct3D11.
     using SharpDX.Toolkit.Graphics;
-using SharpDX.Toolkit.Content;
+    using SharpDX.Toolkit.Content;
 
     class VoxelRenderer
     {
@@ -169,10 +169,9 @@ using SharpDX.Toolkit.Content;
             _depthStencilStateState = DepthStencilState.New(graphicsDevice, "NormalZBufferUse", depthStencilStateDesc);
             
             var samplerStateDesc = SharpDX.Direct3D11.SamplerStateDescription.Default();
-            samplerStateDesc.AddressV = SharpDX.Direct3D11.TextureAddressMode.Border;
-            samplerStateDesc.AddressU = SharpDX.Direct3D11.TextureAddressMode.Border;
+            samplerStateDesc.AddressV = SharpDX.Direct3D11.TextureAddressMode.Mirror;
+            samplerStateDesc.AddressU = SharpDX.Direct3D11.TextureAddressMode.Mirror;
             samplerStateDesc.Filter = SharpDX.Direct3D11.Filter.MinMagMipPoint;
-            samplerStateDesc.BorderColor = Color4.Black;
             _pointSamplerState = SamplerState.New(graphicsDevice, "PointSampler", samplerStateDesc);
             _voxelEffect.Parameters["PointSampler"].SetResource(_pointSamplerState);
 
@@ -192,6 +191,7 @@ using SharpDX.Toolkit.Content;
         {
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_LEAF)].Texture = contentManager.Load<Texture2D>("leafs.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.ROCK)].Texture = contentManager.Load<Texture2D>("redwood.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.BEECH_WOOD)].Texture = contentManager.Load<Texture2D>("Beech.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.NOBLEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.WHITEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
