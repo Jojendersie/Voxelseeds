@@ -240,6 +240,8 @@ namespace VoxelSeeds
 
                 _spriteBatch.Draw(_pixTexture, new DrawingRectangle((int)System.Math.Min(textPos1.X, textPos2.X) - 25, (int)textPos1.Y - 25,
                 (int)System.Math.Max(stringSize1.X, stringSize2.X) + 50, (int)(stringSize1.Y + stringSize2.Y) + 50), Color.White * 0.6f);
+           //     _spriteBatch.Draw(_pixTexture, new DrawingRectangle(0, (int)textPos1.Y - 25,
+            //        GraphicsDevice.BackBuffer.Width, (int)(stringSize1.Y + stringSize2.Y) + 50), Color.White * 0.6f);
                 _spriteBatch.DrawString(_largeFont, text1, textPos1, color1);
                 _spriteBatch.DrawString(_largeFont, text2, textPos2, color2);
                 _spriteBatch.End();

@@ -31,6 +31,7 @@ namespace VoxelSeeds
 
         private SpriteBatch spriteBatch;
         private SpriteFont font;
+        private SpriteFont largeFont;
         private SeedInfo[] seeds = new SeedInfo[9];
         private Texture2D[] textures = new Texture2D[9];
         private Texture2D helix;
@@ -86,6 +87,7 @@ namespace VoxelSeeds
             windowHeigth = spriteBatch.GraphicsDevice.BackBuffer.Height;
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
+            largeFont = contentManager.Load<SpriteFont>("largefont.tkfnt");
             helix = contentManager.Load<Texture2D>("helix.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
             frame = contentManager.Load<Texture2D>("frame.png");
@@ -150,18 +152,18 @@ namespace VoxelSeeds
             spriteBatch.Begin(SpriteSortMode.Deferred, spriteBatch.GraphicsDevice.BlendStates.NonPremultiplied);
             
             //draw Progress good/evil
-            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 42) * progress)),
+            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * progress)),
                 new DrawingRectangle(progressBarPictureWidth * ((int)progressCount % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * progress)),
                 new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 42) * progress)),
+            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * progress)),
                 new DrawingRectangle(progressBarPictureWidth * (((int)progressCount + 1) % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * progress)),
                 new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
 
-            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 42) * evilProgress)),
+            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * evilProgress)),
                 new DrawingRectangle(progressBarPictureWidth * ((int)progressCount % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * evilProgress)),
                 new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 42) * evilProgress)),
+            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * evilProgress)),
                 new DrawingRectangle(progressBarPictureWidth * (((int)progressCount + 1) % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * evilProgress)),
                 new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
@@ -184,10 +186,10 @@ namespace VoxelSeeds
             }
 
             //draw Resources
-            spriteBatch.Draw(pixel, new DrawingRectangle(9 * windowWidth / 10 + 5, 5, 84, 32), Color.Black);
-            spriteBatch.Draw(frame, new DrawingRectangle(9 * windowWidth / 10, 0, 94, 42), Color.Gray);
-            spriteBatch.Draw(helix, new DrawingRectangle(9 * windowWidth / 10 + 7, 7, 14, 28), Color.White);
-            spriteBatch.DrawString(font, currentlevel.Resources.ToString(), new Vector2(9 * windowWidth / 10 + 22, 10), Color.White);
+            spriteBatch.Draw(pixel, new DrawingRectangle(9 * windowWidth / 10 + 7, 5, progressBarPictureWidth * 2-10, 54), Color.Black);
+            spriteBatch.Draw(frame, new DrawingRectangle(9 * windowWidth / 10 + 2, 0, progressBarPictureWidth * 2, 64), Color.Gray);
+            spriteBatch.Draw(helix, new DrawingRectangle(9 * windowWidth / 10 + 15, 9, 23, 46), Color.White);
+            spriteBatch.DrawString(largeFont, currentlevel.Resources.ToString(), new Vector2(9 * windowWidth / 10 + 36, -6), Color.White);
 
             if (_selected > -1)
             {
