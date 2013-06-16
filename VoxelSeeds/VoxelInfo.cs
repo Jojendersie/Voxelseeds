@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,8 @@ namespace VoxelSeeds
         TERMITES,
         HOUSE_LONGHORN_BEETLE,
         HESPEROPHANES_CINNEREUS,
-        GRASSHOPPER
+        GRASSHOPPER,
+        TEAK_LEAF
     };
 
     class TypeInformation
@@ -35,7 +37,8 @@ namespace VoxelSeeds
                                              { "House Longhorn Beetle", "Grasshopper" }, 
                                              { "House Longhorn Beetle", "Grasshopper" },
                                              { "Termites", "Grasshopper" },
-                                             { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
+                                             { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" },
+                                             {"-", "-"}};
         readonly static String[,] weakness = { { "", "" }, { "-", "-" }, 
                                              { "Termites", "Hesperophanes Cinnereus" },
                                              { "White Rot", "Noble Rot" },
@@ -43,10 +46,11 @@ namespace VoxelSeeds
                                              { "White Rot", "Noble Rot" },
                                              { "White Rot", "Hesperophanes Cinnereus" },
                                              { "White Rot", "Noble Rot" },
-                                             { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" } };
-        readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper" };
-        readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true };
-        readonly static bool[] biomass = { false, false, true, true, true, true, true, true, false, false, false, false, false, false };
+                                             { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" }, { "-", "-" },
+                                             {"-", "-"}};
+        readonly static String[] name = { "", "Ground", "Teak", "Pine", "Spruce", "Beech", "Oak", "Redwood", "White Rot", "Noble Rot", "Termites", "House Longhorn Beetle", "Hesperophanes Cinnereus", "Grasshopper", "Leaf" };
+        readonly static bool[] parasite = { false, false, false, false, false, false, false, false, true, true, true, true, true, true, false };
+        readonly static bool[] biomass = { false, false, true, true, true, true, true, true, false, false, false, false, false, false, true };
         readonly static IVoxelRule[] rules = { null, null,
                                                  new TeakWoodRule(),
                                                  new PineWoodRule(),
@@ -59,20 +63,21 @@ namespace VoxelSeeds
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
-                                                 new TeakWoodRule() };
+                                                 new TeakWoodRule(),
+                                                 new TeakLeafRule()};
         /// <summary>
         /// The maximum number of voxels of a type which can be simultaneously in the world
         /// </summary>
-        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 512, 512, 512, 512 };
+        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 512, 512, 512, 512, 131072 };
         /// <summary>
         /// A scaling factor for voxels it is used to display bugs and beetles smaller
         /// </summary>
-        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f};
+        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f};
 
-        //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2 };
-        readonly static int[] growingSteps = { 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2 };
+        //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2, 5 };
+        readonly static int[] growingSteps = { 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5 };
 
-        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 1, 1 };
+        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 1, 1, 3 };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -150,6 +155,11 @@ namespace VoxelSeeds
         {
             return voxeltype == VoxelType.GROUND || voxeltype == VoxelType.WHITEROT_FUNGUS || voxeltype == VoxelType.NOBLEROT_FUNGUS;
         }
+
+        public static bool IsNotWoodButBiomass(VoxelType voxeltype)
+        {
+            return IsBiomass(voxeltype) && !IsWood(voxeltype);
+        }
     }
 
     enum Direction
@@ -178,6 +188,80 @@ namespace VoxelSeeds
         UP_LEFT,
         UP_RIGHT
     };
+
+    class DirectionConverter
+    {
+        static Int3 FromDirection(Direction direction)
+        {
+            int t = 1;
+            int h = 1;
+            int b = 1;
+
+            switch (direction)
+            {
+                case Direction.BACK: t = 2; break;
+                case Direction.BACK_DOWN_LEFT: t = 2; h = 0; b = 0; break;
+                case Direction.BACK_DOWN_RIGHT: t = 2; h = 0; b = 2; break;
+                case Direction.BACK_LEFT: t = 2; b = 0; break;
+                case Direction.BACK_RIGHT: t = 2; b = 2; break;
+                case Direction.BACK_UP_LEFT: t = 2; h = 2; b = 0; break;
+                case Direction.BACK_UP_RIGHT: t = 2; h = 2; b = 2; break;
+                case Direction.FOR: t = 0; break;
+                case Direction.FOR_DOWN_LEFT: t = 0; h = 0; b = 0; break;
+                case Direction.FOR_DOWN_RIGHT: t = 0; h = 0; b = 2; break;
+                case Direction.FOR_LEFT: t = 0; b = 0; break;
+                case Direction.FOR_RIGHT: t = 0; b = 2; break;
+                case Direction.FOR_UP_LEFT: t = 0; h = 2; b = 0; break;
+                case Direction.FOR_UP_RIGHT: t = 0; h = 2; b = 2; break;
+                case Direction.DOWN: h = 0; break;
+                case Direction.DOWN_LEFT: h = 0; b = 0; break;
+                case Direction.DOWN_RIGHT: h = 0; b = 2; break;
+                case Direction.UP: h = 2; break;
+                case Direction.UP_LEFT: h = 2; b = 0; break;
+                case Direction.UP_RIGHT: h = 2; b = 2; break;
+                case Direction.LEFT: b = 0; break;
+                case Direction.RIGHT: b = 2; break;
+                default: break;
+            }
+
+            return new Int3(t,h,b);
+        }
+
+        static Direction ToOppositeDirection(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.BACK: return Direction.FOR;
+                case Direction.BACK_DOWN_LEFT: return Direction.FOR_UP_RIGHT;
+                case Direction.BACK_DOWN_RIGHT: return Direction.FOR_UP_LEFT;
+                case Direction.BACK_LEFT: return Direction.FOR_RIGHT;
+                case Direction.BACK_RIGHT: return Direction.FOR_LEFT;
+                case Direction.BACK_UP_LEFT: return Direction.FOR_DOWN_RIGHT;
+                case Direction.BACK_UP_RIGHT: return Direction.FOR_DOWN_LEFT;
+                case Direction.FOR: return Direction.BACK;
+                case Direction.FOR_DOWN_LEFT: return Direction.BACK_UP_RIGHT;
+                case Direction.FOR_DOWN_RIGHT: return Direction.BACK_UP_LEFT;
+                case Direction.FOR_LEFT: return Direction.BACK_RIGHT;
+                case Direction.FOR_RIGHT: return Direction.BACK_LEFT;
+                case Direction.FOR_UP_LEFT: return Direction.BACK_DOWN_RIGHT;
+                case Direction.FOR_UP_RIGHT: return Direction.BACK_DOWN_LEFT;
+                case Direction.DOWN: return Direction.UP;
+                case Direction.DOWN_LEFT: return Direction.UP_RIGHT;
+                case Direction.DOWN_RIGHT: return Direction.UP_LEFT;
+                case Direction.UP: return Direction.DOWN;
+                case Direction.UP_LEFT: return Direction.DOWN_RIGHT;
+                case Direction.UP_RIGHT: return Direction.DOWN_LEFT;
+                case Direction.LEFT: return Direction.RIGHT;
+                case Direction.RIGHT: return Direction.LEFT;
+                default: return Direction.SELF;
+            }
+        }
+        /*static Direction ToDirection(int t, int h, int b)
+        {
+            Direction result = Direction.SELF;
+            if(
+        }*/
+    }
 
     class VoxelInfo
     {

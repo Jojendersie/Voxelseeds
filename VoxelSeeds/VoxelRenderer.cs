@@ -190,7 +190,7 @@ using SharpDX.Toolkit.Content;
 
         private void LoadTextures(ContentManager contentManager)
         {
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.WHITEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_LEAF)].Texture = contentManager.Load<Texture2D>("leafs.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.BEECH_WOOD)].Texture = contentManager.Load<Texture2D>("Beech.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.NOBLEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
