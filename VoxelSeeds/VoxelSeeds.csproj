@@ -137,6 +137,7 @@
     <Compile Include="Rules\PineNeedleRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
     <Compile Include="Rules\RedWoodRules.cs" />
+    <Compile Include="Rules\SpruceNeedleRule.cs" />
     <Compile Include="Rules\SpruceWoodRule.cs" />
     <Compile Include="Rules\TeakLeafRule.cs" />
     <Compile Include="Rules\TeakWoodRule.cs" />

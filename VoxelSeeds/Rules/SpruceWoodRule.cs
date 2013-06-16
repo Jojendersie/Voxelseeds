@@ -37,7 +37,8 @@ namespace VoxelSeeds.Rules
             else
             {
                 // Grow upwards one last time
-                output[1, 2, 1] = new VoxelInfo(VoxelType.SPRUCE_WOOD);
+                //output[1, 2, 1] = new VoxelInfo(VoxelType.SPRUCE_WOOD);
+                output[1, 2, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE,true);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.SPRUCE_WOOD);
             }
             return output;
