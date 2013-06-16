@@ -53,15 +53,19 @@ namespace VoxelSeeds.Rules
                 {
                     Int3 foodPos = DirectionConverter.FromDirection(food);
                     int eattime = -10;
-                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.PINE_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.SPRUCE_WOOD) eattime = -20;
-                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.TEAK_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.OAK_WOOD) eattime = -5;
+                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.BEECH_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.OAK_WOOD) eattime = -20;
+                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.SPRUCE_WOOD) eattime = -5;
 
                     output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(0, 3), 10, eattime, food);
                 }
                 else if (IsWalkable(neighbourhood[t, h, b]))
                 {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-                    output[t, h, b] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
+                    if (5 > random.Next(0, 15))
+                    {
+                        output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
+                        output[t, h, b] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
+                    }
+                    else output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
                 }
                 else
                 {
