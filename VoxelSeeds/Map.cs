@@ -12,7 +12,8 @@ namespace VoxelSeeds
     {
         PLAIN,
         BUBBLE,
-        STEP,
+        MOUNTAINS,
+        CANYON,
     };
 
     /// <summary>
@@ -41,8 +42,11 @@ namespace VoxelSeeds
                 case LevelType.BUBBLE:
                     GenerateBubbleLevel(ref rand, heightoffset);
                     break;
-                case LevelType.STEP:
-                    GenerateStepLevel(ref rand, heightoffset);
+                case LevelType.MOUNTAINS:
+                    GenerateMountainsLevel(ref rand, heightoffset);
+                    break;
+                case LevelType.CANYON:
+                    GenerateCanoynsLevel(ref rand, heightoffset);
                     break;
             }
         }
@@ -226,7 +230,7 @@ namespace VoxelSeeds
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             // Fill half to test
             Int32 maxHeight = Math.Min( 8, SizeY-1 );
-            for( int z = 0; z < SizeZ; ++z )
+            Parallel.For( 0, SizeZ, (z) => {
                 for (int x = 0; x < SizeX; ++x)
                 {
                     float radialHeight = 0.02f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
@@ -234,14 +238,7 @@ namespace VoxelSeeds
                     for (int y = 0; y < height; ++y)
                         _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
                 }
-        }
-
-        private void GenerateStepLevel(ref Random rand, float heightOffset = 0.2f)
-        {
-            GeneratePlainLevel(ref rand, heightOffset);
-            GeneratePlainLevel(ref rand, heightOffset * 0.5f);
-            GeneratePlainLevel(ref rand, heightOffset * 2);
-            GeneratePlainLevel(ref rand, heightOffset * 1);
+            });
         }
 
         private void GenerateBubbleLevel(ref Random rand, float heightOffset)
@@ -249,16 +246,75 @@ namespace VoxelSeeds
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             int sizeYscaled = SizeY / 3;
             // Fill half to test
-            for (int z = 0; z < SizeZ; ++z)
+            Parallel.For( 0, SizeZ, (z) => {
+                for (int x = 0; x < SizeX; ++x)
+                    for (int d = 0; d < SizeY; ++d)
+                    {
+                        float radialHeight = 8.0f / SizeX * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
+                        float value = SizeY * (noise.Get(x, z, d) - noise.Get(x, z)) / radialHeight - heightOffset - radialHeight - Math.Max(0, d - sizeYscaled)*2;
+                        // for (int y = 0; y < height; ++y)
+                        if (value > 0)
+                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
+                    }
+            });
+
+            Rockyfy();
+        }
+
+        private void GenerateMountainsLevel(ref Random rand, float heightOffset)
+        {
+            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            int sizeYscaled = SizeY / 3;
+            // Fill half to test
+            Parallel.For( 0, SizeZ, (z) => {
+                for (int x = 0; x < SizeX; ++x)
+                    for (int d = 0; d < SizeY; ++d)
+                    {
+                        float radialHeight = Math.Max(0.0f, (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2)) - SizeX * 3 / 8) * 2.0f;
+                        float value = (noise.Get(x, z, d) * 3 - heightOffset + noise.Get(x / 2, z / 2)) * sizeYscaled - d;
+                        value -= radialHeight;
+                        if (value > 0)
+                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
+                    }
+            });
+        }
+
+        private void GenerateCanoynsLevel(ref Random rand, float heightOffset)
+        {
+            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            int sizeYscaled = SizeY / 3;
+            // Fill half to test
+            Parallel.For( 0, SizeZ, (z) => {
                 for (int x = 0; x < SizeX; ++x)
                     for (int d = 0; d < sizeYscaled; ++d)
                     {
-                        float radialHeight = 0.08f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
-                        float value = SizeY * (noise.Get(x, z, d) - noise.Get(x, z)) / radialHeight - heightOffset - radialHeight;
-                       // for (int y = 0; y < height; ++y)
-                        if(value > 0)
+                        //float radialHeight = 0.08f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
+                        float value = SizeY * (noise.Get(x, z, d) + noise.Get(x, z) - d*3 / sizeYscaled);// -heightOffset;// -radialHeight;
+                        if (value > 0)
                             _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
                     }
+            });
+        }
+
+        private void Rockyfy()
+        {
+            Parallel.For( 0, SizeZ, (z) => {
+                for (int x = 0; x < SizeX; ++x)
+                {
+                    int streak = 0;
+                    for (int d = 0; d < SizeY; ++d)
+                    {
+                        Int32 pos = EncodePosition(x, d, z);
+                        byte value = Sample(pos);
+                        if (value != 0)
+                        {
+                            if (streak > 3) _voxels[pos] = (int)VoxelType.GROUND;
+                            ++streak;
+                        }
+                        else streak = 0;
+                    }
+                }
+            });
         }
     }
 }
