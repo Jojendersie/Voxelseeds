@@ -24,7 +24,7 @@ namespace VoxelSeeds
             _currentParasiteMass = 8;
 
          //   for(int i=15; i<300; i+=36)
-           //     _automaton.InsertSeed(13, Math.Max(GetMap().GetHeighest(13, i), 0) + 1, i, VoxelType.WHITEROT_FUNGUS);
+            //     InsertParasite(13, Math.Max(GetMap().GetHeighest(13, i), 0) + 1, i, VoxelType.WHITEROT_FUNGUS);
         }
     }
 }

@@ -25,13 +25,13 @@ namespace VoxelSeeds
             Random rand = new Random();
             for (int i = 0; i < 100; ++i)
             {
-                _automaton.InsertSeed(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 5, rand.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
+                InsertParasite(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 5, rand.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
             }
 
             int x = GetMap().SizeX / 2;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
-            _automaton.InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
+            InsertParasite(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
         }
     }
 }
