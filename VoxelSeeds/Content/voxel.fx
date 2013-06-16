@@ -10,6 +10,7 @@ matrix ViewProjection;
 float Ambient;
 float ScalingFactor;
 float3 CameraPosition;
+bool SpecularModifier;
 
 static const float3 LightColor = float3(1.0, 0.98, 0.8);
 
@@ -74,9 +75,14 @@ PS_INPUT VS(VS_INPUT input)
 float4 PS(PS_INPUT input) : SV_TARGET
 {
 	float3 textureColor = VoxelTexture.Sample(PointSampler, input.Texcoord).rgb;
-    return float4(textureColor * input.Light * LightColor + 
-					input.Specular * LightColor, Transparency);
+	float specular = input.Specular;
+	if(SpecularModifier)
+		specular *= saturate(1.0f - dot(textureColor, textureColor)) * 7;
+
+	return float4(textureColor * input.Light * LightColor + 
+					specular * LightColor, Transparency);
 }
+
 
 technique basic
 {

@@ -299,6 +299,11 @@ using SharpDX.Toolkit.Content;
             {
                 _voxelEffect.Parameters["ScalingFactor"].SetValue(TypeInformation.GetScalingFactor(_voxelTypeRenderingData[i].Voxel) * 0.5f);
                 _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[i].Texture);
+
+
+                _voxelEffect.Parameters["SpecularModifier"].SetValue(_voxelTypeRenderingData[i].Voxel == VoxelType.NOBLEROT_FUNGUS ||
+                                                                     _voxelTypeRenderingData[i].Voxel == VoxelType.WHITEROT_FUNGUS);
+               
                 _voxelEffect.CurrentTechnique.Passes[0].Apply();
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
                 graphicsDevice.DrawInstanced(PrimitiveType.TriangleList, _cubeVertexBuffer.ElementCount, _voxelTypeRenderingData[i].InstanceDataRAM.Count, 0, 0);

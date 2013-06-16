@@ -122,7 +122,8 @@ namespace VoxelSeeds
 
         protected override void Update(GameTime gameTime)
         {
-   
+            if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Escape))
+                Exit();
 
             // move camera
             _camera.Update(gameTime);
