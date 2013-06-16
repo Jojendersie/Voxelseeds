@@ -15,11 +15,12 @@ namespace VoxelSeeds
 
         override public void Initialize()
         {
-            _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024);
+            _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024, 0.25f);
+            //_automaton = new Automaton(100, 50, 100, LevelType.STEP, 33333333, 0.25f);
 
-            _resources = 10000;
-            _finalParasiteMass = 1000;
-            _targetBiomass = 500;
+            _resources = 6000;
+            _finalParasiteMass = 3500;
+            _targetBiomass = 1000;
             _currentBiomass = 0;
             _currentParasiteMass = 1;
             int x = GetMap().SizeX / 2;

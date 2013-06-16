@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 
 namespace VoxelSeeds
 {
-    class Level2 : Level
+    class Level4 : Level
     {
-        public Level2(VoxelRenderer voxelRenderer) : base(voxelRenderer)
+        public Level4(VoxelRenderer voxelRenderer)
+            : base(voxelRenderer)
         {
         }
 
         override public void Initialize()
         {
-            _automaton = new Automaton(300, 80, 300, LevelType.PLAIN, 52384, 0.8f);
+            _automaton = new Automaton(300, 80, 300, LevelType.PLAIN, 51239478, 0.01f);
 
             _resources = 1000;
             _finalParasiteMass = 1000;
