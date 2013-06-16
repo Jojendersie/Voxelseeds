@@ -35,9 +35,9 @@ namespace VoxelSeeds
             public Direction From;
         };
 
-        public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed)
+        public Automaton(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed, float heightoffset)
         {
-            _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed);
+            _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed, heightoffset);
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
         }
 
@@ -64,6 +64,16 @@ namespace VoxelSeeds
             }
         }
 
+        private void RemoveVoxel(Int32 positionCode)
+        {
+            var pos = _map.DecodePosition(positionCode);
+            if (_map.IsInside(pos.X, pos.Y, pos.Z))
+            {
+                _map.Set(positionCode, VoxelType.EMPTY, false);
+                if (_livingVoxels.ContainsKey(positionCode))  _livingVoxels.Remove(positionCode);
+            }
+        }
+
         private void removeOccludedNeighbours(Int32 positionCode, List<Voxel> deleteList)
         {
             // The map set can cause neighboured voxels to be occluded
@@ -75,6 +85,19 @@ namespace VoxelSeeds
             checkAndRemoveNeighbour(positionCode + _map.SizeX);
             checkAndRemoveNeighbour(positionCode - _map.SizeX * _map.SizeY);
             checkAndRemoveNeighbour(positionCode + _map.SizeX * _map.SizeY);
+        }
+
+        private void reinsertVisibleNeighbours(Int32 positionCode, List<Voxel> insertList)
+        {
+            // The map set can cause neighboured voxels to be occluded
+            // if so delete that from GPU.
+            Action<Int32> checkAndAddNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && !_map.IsOccluded(pos)) insertList.Add(new Voxel(pos, _map.Get(pos))); };
+            checkAndAddNeighbour(positionCode - 1);
+            checkAndAddNeighbour(positionCode + 1);
+            checkAndAddNeighbour(positionCode - _map.SizeX);
+            checkAndAddNeighbour(positionCode + _map.SizeX);
+            checkAndAddNeighbour(positionCode - _map.SizeX * _map.SizeY);
+            checkAndAddNeighbour(positionCode + _map.SizeX * _map.SizeY);
         }
 
         public void InsertSeed(int x, int y, int z, VoxelType type, Direction from = Direction.DOWN)
@@ -138,12 +161,20 @@ namespace VoxelSeeds
                 if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
                 else if (TypeInformation.IsBiomass(vox.Value.Type)) ++newBiomass;
 
-                InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks,vox.Value.From);
+                if (vox.Value.Type == VoxelType.EMPTY)
+                {
+                    RemoveVoxel(vox.Key);
+                    reinsertVisibleNeighbours(vox.Key, insertionList);
+                }
+                else
+                {
+                    InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks, vox.Value.From);
 
-                // Insert to instance data only if visible
-                if( !_map.IsOccluded(vox.Key) )
-                    insertionList.Add(new Voxel( vox.Key, vox.Value.Type ));
-                removeOccludedNeighbours(vox.Key, deleteList);
+                    // Insert to instance data only if visible
+                    if (!_map.IsOccluded(vox.Key))
+                        insertionList.Add(new Voxel(vox.Key, vox.Value.Type));
+                    removeOccludedNeighbours(vox.Key, deleteList);
+                }
             }
             _updateInstanceData(deleteList, insertionList);
         }

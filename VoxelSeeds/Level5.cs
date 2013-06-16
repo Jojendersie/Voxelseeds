@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace VoxelSeeds
 {
-    class Level2 : Level
+    class Level5 : Level
     {
-        public Level2(VoxelRenderer voxelRenderer) : base(voxelRenderer)
+        public Level5(VoxelRenderer voxelRenderer)
+            : base(voxelRenderer)
         {
         }
 

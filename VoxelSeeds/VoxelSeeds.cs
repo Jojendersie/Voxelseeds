@@ -116,10 +116,19 @@ namespace VoxelSeeds
 
         void NextLevel()
         {
-        //    if(_currentLevel.GetType() == typeof(Level1))
-            _currentLevel = new Level2(_voxelRenderer);
+            if(_currentLevel.GetType() == typeof(Level1))
+                _currentLevel = new Level2(_voxelRenderer);
+            else if (_currentLevel.GetType() == typeof(Level2))
+                _currentLevel = new Level3(_voxelRenderer);
+            else if (_currentLevel.GetType() == typeof(Level3))
+                _currentLevel = new Level4(_voxelRenderer);
+            else if (_currentLevel.GetType() == typeof(Level4))
+                _currentLevel = new Level5(_voxelRenderer);
+            else
+                _currentLevel = new Level1(_voxelRenderer);
         }
 
+        bool wasCheatPlusPressed = false;
         protected override void Update(GameTime gameTime)
         {
             if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.Escape))
@@ -151,6 +160,14 @@ namespace VoxelSeeds
                     _gamePaused = true;
                     // TODO: Display message
                 }
+
+                // next/prev level cheat
+                if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.OemPlus) && !wasCheatPlusPressed)
+                {
+                    NextLevel();
+                    wasCheatPlusPressed = true;
+                }
+                wasCheatPlusPressed = !System.Windows.Input.Keyboard.IsKeyUp(System.Windows.Input.Key.OemPlus);
             }
             else
             {
