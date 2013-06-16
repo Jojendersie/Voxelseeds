@@ -195,13 +195,15 @@ namespace VoxelSeeds
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.GROUND)].Texture = contentManager.Load<Texture2D>("ground.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.ROCK)].Texture = contentManager.Load<Texture2D>("rock.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.BEECH_WOOD)].Texture = contentManager.Load<Texture2D>("Beech.png");
-            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.NOBLEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.NOBLEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("noblerot.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.WHITEROT_FUNGUS)].Texture = contentManager.Load<Texture2D>("fungus.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.OAK_WOOD)].Texture = contentManager.Load<Texture2D>("oak.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.PINE_WOOD)].Texture = contentManager.Load<Texture2D>("Pine.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.REDWOOD)].Texture = contentManager.Load<Texture2D>("redwood.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.SPRUCE_WOOD)].Texture = contentManager.Load<Texture2D>("spruce.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.TEAK_WOOD)].Texture = contentManager.Load<Texture2D>("teak.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.HESPEROPHANES_CINNEREUS)].Texture = contentManager.Load<Texture2D>("hesperophanes_cinereus.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.HOUSE_LONGHORN_BEETLE)].Texture = contentManager.Load<Texture2D>("house_longhorn_beetle.png");
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)
@@ -303,8 +305,7 @@ namespace VoxelSeeds
                 _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[i].Texture);
 
 
-                _voxelEffect.Parameters["SpecularModifier"].SetValue(_voxelTypeRenderingData[i].Voxel == VoxelType.NOBLEROT_FUNGUS ||
-                                                                     _voxelTypeRenderingData[i].Voxel == VoxelType.WHITEROT_FUNGUS);
+                _voxelEffect.Parameters["SpecularModifier"].SetValue(TypeInformation.IsParasite( _voxelTypeRenderingData[i].Voxel ));
                
                 _voxelEffect.CurrentTechnique.Passes[0].Apply();
                 graphicsDevice.SetVertexBuffer(1, _voxelTypeRenderingData[i].InstanceBuffer);
