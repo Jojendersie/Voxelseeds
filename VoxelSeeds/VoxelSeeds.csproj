@@ -125,6 +125,7 @@
     <Compile Include="Level1.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Rules\BeechWoodRule.cs" />
+    <Compile Include="Rules\HesperophanesCinnereusRule.cs" />
     <Compile Include="Rules\OakWoodRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
     <Compile Include="Rules\RedWoodRules.cs" />

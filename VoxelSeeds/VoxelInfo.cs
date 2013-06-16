@@ -62,7 +62,7 @@ namespace VoxelSeeds
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
                                                  new TeakWoodRule(),
-                                                 new TeakWoodRule(),
+                                                 new HesperophanesCinnereusRule(),
                                                  new TeakWoodRule(),
                                                  new TeakLeafRule()};
         /// <summary>
@@ -77,7 +77,7 @@ namespace VoxelSeeds
         //readonly static int[] growingSteps = { 0, 0, 18, 30, 32, 48, 46, 16, 6, 6, 2, 2, 2, 2, 5 };
         readonly static int[] growingSteps = { 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5 };
 
-        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 1, 1, 5 };
+        readonly static int[] growHeight = { 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5 };
 
         public static String GetName(VoxelType voxeltype)
         {
@@ -177,12 +177,16 @@ namespace VoxelSeeds
         FOR_RIGHT,
         FOR_UP_RIGHT,
         FOR_DOWN_RIGHT,
+        FOR_UP,
+        FOR_DOWN,
         BACK_LEFT,
         BACK_UP_LEFT,
         BACK_DOWN_LEFT,
         BACK_RIGHT,
         BACK_UP_RIGHT,
         BACK_DOWN_RIGHT,
+        BACK_UP,
+        BACK_DOWN,
         DOWN_LEFT,
         DOWN_RIGHT,
         UP_LEFT,
@@ -206,6 +210,8 @@ namespace VoxelSeeds
                 case Direction.BACK_RIGHT: t = 2; b = 2; break;
                 case Direction.BACK_UP_LEFT: t = 2; h = 2; b = 0; break;
                 case Direction.BACK_UP_RIGHT: t = 2; h = 2; b = 2; break;
+                case Direction.BACK_DOWN: t = 2; h = 0; break;
+                case Direction.BACK_UP: t = 2; h = 2; break;
                 case Direction.FOR: t = 0; break;
                 case Direction.FOR_DOWN_LEFT: t = 0; h = 0; b = 0; break;
                 case Direction.FOR_DOWN_RIGHT: t = 0; h = 0; b = 2; break;
@@ -213,6 +219,8 @@ namespace VoxelSeeds
                 case Direction.FOR_RIGHT: t = 0; b = 2; break;
                 case Direction.FOR_UP_LEFT: t = 0; h = 2; b = 0; break;
                 case Direction.FOR_UP_RIGHT: t = 0; h = 2; b = 2; break;
+                case Direction.FOR_DOWN: t = 0; h = 0; break;
+                case Direction.FOR_UP: t = 0; h = 2; break;
                 case Direction.DOWN: h = 0; break;
                 case Direction.DOWN_LEFT: h = 0; b = 0; break;
                 case Direction.DOWN_RIGHT: h = 0; b = 2; break;
@@ -238,6 +246,8 @@ namespace VoxelSeeds
                 case Direction.BACK_RIGHT: return Direction.FOR_LEFT;
                 case Direction.BACK_UP_LEFT: return Direction.FOR_DOWN_RIGHT;
                 case Direction.BACK_UP_RIGHT: return Direction.FOR_DOWN_LEFT;
+                case Direction.BACK_DOWN: return Direction.FOR_UP;
+                case Direction.BACK_UP: return Direction.FOR_DOWN;
                 case Direction.FOR: return Direction.BACK;
                 case Direction.FOR_DOWN_LEFT: return Direction.BACK_UP_RIGHT;
                 case Direction.FOR_DOWN_RIGHT: return Direction.BACK_UP_LEFT;
@@ -245,6 +255,8 @@ namespace VoxelSeeds
                 case Direction.FOR_RIGHT: return Direction.BACK_LEFT;
                 case Direction.FOR_UP_LEFT: return Direction.BACK_DOWN_RIGHT;
                 case Direction.FOR_UP_RIGHT: return Direction.BACK_DOWN_LEFT;
+                case Direction.FOR_DOWN: return Direction.BACK_UP;
+                case Direction.FOR_UP: return Direction.BACK_DOWN;
                 case Direction.DOWN: return Direction.UP;
                 case Direction.DOWN_LEFT: return Direction.UP_RIGHT;
                 case Direction.DOWN_RIGHT: return Direction.UP_LEFT;
@@ -256,11 +268,74 @@ namespace VoxelSeeds
                 default: return Direction.SELF;
             }
         }
-        /*static Direction ToDirection(int t, int h, int b)
+
+        public static Direction ToDirection(int t, int h, int b)
         {
             Direction result = Direction.SELF;
-            if(
-        }*/
+            if (t == 0)
+            {
+                result = Direction.FOR;
+                if (h == 0)
+                {
+                    result = Direction.FOR_DOWN;
+                    if (b == 0) result = Direction.FOR_DOWN_LEFT;
+                    if (b == 2) result = Direction.FOR_DOWN_RIGHT;
+                }
+                else if (h == 2)
+                {
+                    result = Direction.FOR_UP;
+                    if (b == 0) result = Direction.FOR_UP_LEFT;
+                    if (b == 2) result = Direction.FOR_UP_RIGHT;
+                }
+                else
+                {
+                    if (b == 0) result = Direction.FOR_LEFT;
+                    if (b == 2) result = Direction.FOR_RIGHT;
+                }
+            }
+            else if (t == 2)
+            {
+                result = Direction.BACK;
+                if (h == 0)
+                {
+                    result = Direction.BACK_DOWN;
+                    if (b == 0) result = Direction.BACK_DOWN_LEFT;
+                    if (b == 2) result = Direction.BACK_DOWN_RIGHT;
+                }
+                else if (h == 2)
+                {
+                    result = Direction.BACK_UP;
+                    if (b == 0) result = Direction.BACK_UP_LEFT;
+                    if (b == 2) result = Direction.BACK_UP_RIGHT;
+                }
+                else
+                {
+                    if (b == 0) result = Direction.BACK_LEFT;
+                    if (b == 2) result = Direction.BACK_RIGHT;
+                }
+            }
+            else
+            {
+                if (h == 0)
+                {
+                    result = Direction.DOWN;
+                    if (b == 0) result = Direction.DOWN_LEFT;
+                    if (b == 2) result = Direction.DOWN_RIGHT;
+                }
+                else if (h == 2)
+                {
+                    result = Direction.BACK_UP;
+                    if (b == 0) result = Direction.UP_LEFT;
+                    if (b == 2) result = Direction.UP_RIGHT;
+                }
+                else
+                {
+                    if (b == 0) result = Direction.LEFT;
+                    if (b == 2) result = Direction.RIGHT;
+                }
+            }
+            return result;
+        }
     }
 
     class VoxelInfo
