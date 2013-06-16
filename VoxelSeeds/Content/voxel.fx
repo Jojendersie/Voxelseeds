@@ -52,7 +52,7 @@ PS_INPUT VS(VS_INPUT input)
     
 	// lighting
 	float NDotL = dot(LightDirection, input.Normal);
-	output.Light = saturate(NDotL) + Ambient;
+	output.Light = pow(NDotL*0.5+0.5, 2) + Ambient;
 
 	// specular
 	float3 viewDir = normalize(CameraPosition - worldPos);
