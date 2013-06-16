@@ -19,8 +19,6 @@ namespace VoxelSeeds
             _resources = 2000;
             _finalParasiteMass = 10000;
             _targetBiomass = 5000;
-            _currentBiomass = 0;
-            _currentParasiteMass = 1;
 
             int x = GetMap().SizeX / 2 + 5;
             int z = GetMap().SizeZ / 2;

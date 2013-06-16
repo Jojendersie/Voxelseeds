@@ -19,8 +19,6 @@ namespace VoxelSeeds
             _resources = 1000;
             _finalParasiteMass = 50;
             _targetBiomass = 1000;
-            _currentBiomass = 1;
-            _currentParasiteMass = 0;
 
             Random rand = new Random();
             for (int i = 0; i < 100; ++i)
