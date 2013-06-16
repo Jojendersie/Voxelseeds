@@ -133,10 +133,12 @@
     <Compile Include="Map.cs" />
     <Compile Include="Rules\BeechWoodRule.cs" />
     <Compile Include="Rules\HesperophanesCinnereusRule.cs" />
+    <Compile Include="Rules\NobleRotRule.cs" />
     <Compile Include="Rules\OakWoodRule.cs" />
     <Compile Include="Rules\PineNeedleRule.cs" />
     <Compile Include="Rules\PineWoodRule.cs" />
     <Compile Include="Rules\RedWoodRules.cs" />
+    <Compile Include="Rules\SpruceNeedleRule.cs" />
     <Compile Include="Rules\SpruceWoodRule.cs" />
     <Compile Include="Rules\TeakLeafRule.cs" />
     <Compile Include="Rules\TeakWoodRule.cs" />
