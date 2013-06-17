@@ -9,13 +9,13 @@ namespace VoxelSeeds.Rules
 {
     class PineWoodRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
             if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.PINE_WOOD)) return null;
 
-            int height = random.Next((int)(TypeInformation.GetGrowHeight(VoxelType.PINE_WOOD) * 0.75), (int)(TypeInformation.GetGrowHeight(VoxelType.PINE_WOOD) * 1.25));
+            int height = Random.Next((int)(TypeInformation.GetGrowHeight(VoxelType.PINE_WOOD) * 0.75), (int)(TypeInformation.GetGrowHeight(VoxelType.PINE_WOOD) * 1.25));
 
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
             int gen = neighbourhood[1, 1, 1].Generation;
@@ -30,15 +30,15 @@ namespace VoxelSeeds.Rules
                 output[1, 1, 0] = new VoxelInfo(VoxelType.PINE_WOOD, true, 2, 30);
 
                 if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 0, 1].Type) || neighbourhood[1, 0, 1].Type == VoxelType.EMPTY)
-                    output[1, 0, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next(1,height), 0, 0, Direction.UP);
+                    output[1, 0, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, Random.Next(1,height), 0, 0, Direction.UP);
                 if (TypeInformation.IsNotWoodButBiomass(neighbourhood[2, 0, 1].Type) || neighbourhood[2, 0, 1].Type == VoxelType.EMPTY)
-                    output[2, 0, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next(1, height), 0, 0, Direction.UP);
+                    output[2, 0, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, Random.Next(1, height), 0, 0, Direction.UP);
                 if (TypeInformation.IsNotWoodButBiomass(neighbourhood[0, 0, 1].Type) || neighbourhood[0, 0, 1].Type == VoxelType.EMPTY)
-                    output[0, 0, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next(1, height), 0, 0, Direction.UP);
+                    output[0, 0, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, Random.Next(1, height), 0, 0, Direction.UP);
                 if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 0, 2].Type) || neighbourhood[1, 0, 2].Type == VoxelType.EMPTY)
-                    output[1, 0, 2] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next(1, height), 0, 0, Direction.UP);
+                    output[1, 0, 2] = new VoxelInfo(VoxelType.PINE_WOOD, true, Random.Next(1, height), 0, 0, Direction.UP);
                 if (TypeInformation.IsNotWoodButBiomass(neighbourhood[1, 0, 0].Type) || neighbourhood[1, 0, 0].Type == VoxelType.EMPTY)
-                    output[1, 0, 0] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next(1, height), 0, 0, Direction.UP);
+                    output[1, 0, 0] = new VoxelInfo(VoxelType.PINE_WOOD, true, Random.Next(1, height), 0, 0, Direction.UP);
             }
             else if (gen == -1)
             {
@@ -49,14 +49,14 @@ namespace VoxelSeeds.Rules
             {
                 if (res > 0 && gen > TypeInformation.GetGrowHeight(VoxelType.PINE_WOOD) / 2)
                 {
-                    if (random.Next(0, 11) > 7)
+                    if (Random.Next(0, 11) > 7)
                     {
                         res -= 15;
                         Direction grow = GetBranchDirection(neighbourhood);
                         Int3 temp = DirectionConverter.FromDirection(grow);
                         if (neighbourhood[temp.X, 0, temp.Z].Type == VoxelType.EMPTY || TypeInformation.IsNotWoodButBiomass(neighbourhood[temp.X, 0, temp.Z].Type))
                         {
-                            output[temp.X, temp.Y, temp.Z] = new VoxelInfo(VoxelType.PINE_WOOD, true, random.Next((int)(height * 0.75), height), 0, 0, DirectionConverter.ToOppositeDirection(grow));
+                            output[temp.X, temp.Y, temp.Z] = new VoxelInfo(VoxelType.PINE_WOOD, true, Random.Next((int)(height * 0.75), height), 0, 0, DirectionConverter.ToOppositeDirection(grow));
                         }
                     }
                 }

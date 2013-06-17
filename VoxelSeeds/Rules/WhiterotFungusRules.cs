@@ -8,7 +8,7 @@ namespace VoxelSeeds.Rules
 {
     class WhiterotFungusRules : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
@@ -41,7 +41,7 @@ namespace VoxelSeeds.Rules
                                         if (voxeltype == VoxelType.ROCK || voxeltype == VoxelType.TEAK_WOOD) growadd = -30;
                                         if (voxeltype == VoxelType.PINE_WOOD || voxeltype == VoxelType.BEECH_WOOD ||
                                             voxeltype == VoxelType.OAK_WOOD || voxeltype == VoxelType.REDWOOD) growadd = 10;
-                                        output[t, h, b] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, (int)(random.Next(min, max) + growadd));
+                                        output[t, h, b] = new VoxelInfo(VoxelType.WHITEROT_FUNGUS, true, 0, 0, (int)(Random.Next(min, max) + growadd));
                                     }
                                 }
                             }

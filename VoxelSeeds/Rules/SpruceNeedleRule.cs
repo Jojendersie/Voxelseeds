@@ -8,7 +8,7 @@ namespace VoxelSeeds.Rules
 {
     class SpruceNeedleRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
@@ -44,21 +44,21 @@ namespace VoxelSeeds.Rules
                 //output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE);
                 if (CanPlace(2, 0, 2, neighbourhood))
-                    output[2, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[2, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(1, 0, 2, neighbourhood))
-                    output[1, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(0, 0, 2, neighbourhood))
-                    output[0, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[0, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(0, 0, 1, neighbourhood))
-                    output[0, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[0, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(1, 0, 1, neighbourhood))
-                    output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(2, 0, 1, neighbourhood))
-                    output[2, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[2, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(1, 0, 0, neighbourhood))
-                    output[1, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(2, 0, 0, neighbourhood))
-                    output[2, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[2, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
             }
             else if (gen < TypeInformation.GetGrowHeight(VoxelType.SPRUCE_NEEDLE))
             {
@@ -67,21 +67,21 @@ namespace VoxelSeeds.Rules
                 //output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE);
                 if (CanPlace(1, 0, 1, neighbourhood))
-                    output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 /*if (CanPlace(1, 0, 2, neighbourhood))
-                    output[1, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(0, 0, 2, neighbourhood))
-                    output[0, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[0, 0, 2] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(0, 0, 1, neighbourhood))
-                    output[0, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[0, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(1, 0, 1, neighbourhood))
-                    output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(2, 0, 1, neighbourhood))
-                    output[2, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[2, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(1, 0, 0, neighbourhood))
-                    output[1, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                    output[1, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(2, 0, 0, neighbourhood))
-                    output[2, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + random.Next(1, 3), 0, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));*/
+                    output[2, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));*/
             }
             else
             {

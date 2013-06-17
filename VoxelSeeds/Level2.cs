@@ -20,10 +20,9 @@ namespace VoxelSeeds
             _finalParasiteMass = 5000;
             _targetBiomass = 1000;
 
-            Random rand = new Random();
             for (int i = 0; i < 50; ++i)
             {
-                InsertSeed(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 5, rand.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
+                InsertSeed(Random.Next(GetMap().SizeX), Random.Next(GetMap().SizeY / 4) + 5, Random.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
             }
 
            /* int x = GetMap().SizeX / 2;

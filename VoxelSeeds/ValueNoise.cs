@@ -14,7 +14,7 @@ namespace VoxelSeeds
         int lowOctave;
         int hightOctave;
 
-        public ValueNoise(ref Random rand, int low, int height)
+        public ValueNoise(ref System.Random rand, int low, int height)
         {
             whiteNoise = new float[WHITE_NOISE_SIZE_XZ, WHITE_NOISE_SIZE_XZ, WHITE_NOISE_SIZE_Z];
             for (int y = 0; y < WHITE_NOISE_SIZE_XZ; ++y)
@@ -69,7 +69,7 @@ namespace VoxelSeeds
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <returns>A random height in [0,1]</returns>
+        /// <returns>A Random height in [0,1]</returns>
         public float Get(int x, int y)
         {
             const float PERSISTENCE = 0.5f;

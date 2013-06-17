@@ -8,7 +8,7 @@ namespace VoxelSeeds.Rules
 {
     class OakWoodRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
@@ -88,7 +88,7 @@ namespace VoxelSeeds.Rules
                 // Grow upwards
                 output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen + 1, res);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
-                if (res == 3 && gen > TypeInformation.GetGrowHeight(VoxelType.OAK_WOOD) / 2 && random.Next(0, 11) > 6)
+                if (res == 3 && gen > TypeInformation.GetGrowHeight(VoxelType.OAK_WOOD) / 2 && Random.Next(0, 11) > 6)
                 {
                     if (neighbourhood[2, 1, 1].Type == VoxelType.EMPTY)
                         output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1, 4);

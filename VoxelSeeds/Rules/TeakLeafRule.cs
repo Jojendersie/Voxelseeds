@@ -8,7 +8,7 @@ namespace VoxelSeeds.Rules
 {
     class TeakLeafRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
@@ -36,13 +36,13 @@ namespace VoxelSeeds.Rules
                 //output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF);
                 if (CanPlace(2, 1, 1, neighbourhood))
-                    output[2, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + random.Next(0, 3), res += 10, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[2, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
                 if (CanPlace(0, 1, 1, neighbourhood))
-                    output[0, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + random.Next(0, 3), res += 10, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[0, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
                 if (CanPlace(1, 1, 2, neighbourhood))
-                    output[1, 1, 2] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + random.Next(0, 3), res += 10, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[1, 1, 2] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
                 if (CanPlace(1, 1, 0, neighbourhood))
-                    output[1, 1, 0] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + random.Next(0, 3), res += 10, random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[1, 1, 0] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
             }
             else
             {

@@ -9,13 +9,13 @@ namespace VoxelSeeds.Rules
 {
     class TeakWoodRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
             if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.TEAK_WOOD)) return null;
 
-            int height = random.Next((int)(TypeInformation.GetGrowHeight(VoxelType.TEAK_WOOD) *0.75), (int)(TypeInformation.GetGrowHeight(VoxelType.TEAK_WOOD) * 1.25));
+            int height = Random.Next((int)(TypeInformation.GetGrowHeight(VoxelType.TEAK_WOOD) *0.75), (int)(TypeInformation.GetGrowHeight(VoxelType.TEAK_WOOD) * 1.25));
 
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
             int gen = neighbourhood[1, 1, 1].Generation;

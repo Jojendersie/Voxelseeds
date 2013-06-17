@@ -25,10 +25,9 @@ namespace VoxelSeeds
             InsertSeed(61, Math.Max(GetMap().GetHeighest(61, 24), 0) + 1, 24, VoxelType.NOBLEROT_FUNGUS);
             InsertSeed(74, Math.Max(GetMap().GetHeighest(74, 209), 0) + 1, 209, VoxelType.WHITEROT_FUNGUS);
 
-            Random rand = new Random();
             for (int i = 0; i < 100; ++i)
             {
-                InsertSeed(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 28, rand.Next(GetMap().SizeZ), VoxelType.HOUSE_LONGHORN_BEETLE);
+                InsertSeed(Random.Next(GetMap().SizeX), Random.Next(GetMap().SizeY / 4) + 28, Random.Next(GetMap().SizeZ), VoxelType.HOUSE_LONGHORN_BEETLE);
             }
         }
     }

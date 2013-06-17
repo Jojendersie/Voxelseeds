@@ -9,7 +9,7 @@ namespace VoxelSeeds.Rules
 {
     class HouseLonghornBeetleRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.HOUSE_LONGHORN_BEETLE)) return null;
@@ -18,9 +18,9 @@ namespace VoxelSeeds.Rules
             int gen = neighbourhood[1, 1, 1].Generation;
             int res = neighbourhood[1, 1, 1].Resources;
 
-            int t = random.Next(0, 3);
-            int h = random.Next(0, 3);
-            int b = random.Next(0, 3);
+            int t = Random.Next(0, 3);
+            int h = Random.Next(0, 3);
+            int b = Random.Next(0, 3);
 
             if (gen == 0)
             {
@@ -41,8 +41,8 @@ namespace VoxelSeeds.Rules
                 h = moveTo.Y;
                 b = moveTo.Z;
                 output[t, h, b] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, 0);
-                if (random.Next(0, 11) > 7)
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5), 0, TypeInformation.GetGrowingSteps(VoxelType.HOUSE_LONGHORN_BEETLE), Direction.SELF);
+                if (Random.Next(0, 11) > 7)
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + Random.Next(1, 5), 0, TypeInformation.GetGrowingSteps(VoxelType.HOUSE_LONGHORN_BEETLE), Direction.SELF);
                 else
                     output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
             }
@@ -56,20 +56,20 @@ namespace VoxelSeeds.Rules
                     if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.BEECH_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.OAK_WOOD) eattime = -20;
                     if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.SPRUCE_WOOD) eattime = -5;
 
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(0, 3), 10, eattime, food);
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + Random.Next(0, 3), 10, eattime, food);
                 }
                 else if (IsWalkable(neighbourhood[t, h, b]))
                 {
-                    if (5 > random.Next(0, 15))
+                    if (5 > Random.Next(0, 15))
                     {
                         output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-                        output[t, h, b] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
+                        output[t, h, b] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + Random.Next(1, 5));
                     }
-                    else output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
+                    else output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + Random.Next(1, 5));
                 }
                 else
                 {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + random.Next(1, 5));
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.HOUSE_LONGHORN_BEETLE, true, gen + Random.Next(1, 5));
                 }
             }
            /* else

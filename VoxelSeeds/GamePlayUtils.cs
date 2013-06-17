@@ -15,16 +15,16 @@ namespace VoxelSeeds
             return a;
         }
 
-        static public bool GetEmptyTarget(ref Random random, VoxelInfo[, ,] neighbourhood, out int t, out int h, out int b)
+        static public bool GetEmptyTarget(VoxelInfo[, ,] neighbourhood, out int t, out int h, out int b)
         {
             t = -1; h = -1; b = -1;
-            // Search twice (first count than choose with random index
+            // Search twice (first count than choose with Random index
             int emptyCount = 0;
             for (int z = 0; z < 3; ++z) for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x)
                 if (neighbourhood[z, y, x].Type == VoxelType.EMPTY)
                     ++emptyCount;
             if (emptyCount == 0) return false;
-            emptyCount = random.Next(emptyCount);
+            emptyCount = Random.Next(emptyCount);
             for (int z = 0; z < 3; ++z) for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x)
             {
                 if (neighbourhood[z, y, x].Type == VoxelType.EMPTY)
@@ -37,19 +37,18 @@ namespace VoxelSeeds
 
         /// <summary>
         /// If there is someting a species of type type can eat it will be chosen.
-        /// If there is more than one the choice is random.
-        /// If there is nothing a random position is reported too.
+        /// If there is more than one the choice is Random.
+        /// If there is nothing a Random position is reported too.
         /// </summary>
-        /// <param name="random"></param>
         /// <param name="type"></param>
         /// <param name="neighbourhood"></param>
         /// <param name="t"></param>
         /// <param name="h"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        static public VoxelType GetEatableTarget(ref Random random, VoxelType type, VoxelInfo[, ,] neighbourhood, out int t, out int h, out int b)
+        static public VoxelType GetEatableTarget(VoxelType type, VoxelInfo[, ,] neighbourhood, out int t, out int h, out int b)
         {
-            // Search twice (first count than choose with random index
+            // Search twice (first count than choose with Random index
             int eatableCount = 0;
             for (int z = 0; z < 3; ++z) for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x)
                 if (!TypeInformation.IsResistent(neighbourhood[z, y, x].Type, type))
@@ -57,12 +56,12 @@ namespace VoxelSeeds
             if (eatableCount == 0)
             {
                 // Random fall back target
-                t = random.Next(0, 3);
-                h = random.Next(0, 3);
-                b = random.Next(0, 3);
+                t = Random.Next(0, 3);
+                h = Random.Next(0, 3);
+                b = Random.Next(0, 3);
                 return neighbourhood[t, h, b].Type;
             }
-            eatableCount = random.Next(eatableCount);
+            eatableCount = Random.Next(eatableCount);
             for (int z = 0; z < 3; ++z) for (int y = 0; y < 3; ++y) for (int x = 0; x < 3; ++x)
             {
                 if (!TypeInformation.IsResistent(neighbourhood[z, y, x].Type, type))

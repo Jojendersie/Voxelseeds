@@ -8,7 +8,7 @@ namespace VoxelSeeds.Rules
 {
     class NobleRotRule : IVoxelRule
     {
-        Random random = new Random();
+        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn
@@ -42,7 +42,7 @@ namespace VoxelSeeds.Rules
                                         if (voxeltype == VoxelType.PINE_WOOD || voxeltype == VoxelType.BEECH_WOOD ||
                                             voxeltype == VoxelType.REDWOOD) growadd = 10;
 
-                                        output[t, h, b] = new VoxelInfo(VoxelType.NOBLEROT_FUNGUS, true, 0, 0, random.Next(min, max) + growadd);
+                                        output[t, h, b] = new VoxelInfo(VoxelType.NOBLEROT_FUNGUS, true, 0, 0, Random.Next(min, max) + growadd);
                                     }
                                 }
                             }
@@ -69,7 +69,7 @@ namespace VoxelSeeds.Rules
             if (b < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b + 1].Type);
             if (b > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b - 1].Type);
 
-            if(res) res = 5 < random.Next(0, 15);
+            if(res) res = 5 < Random.Next(0, 15);
 
             return res;
         }

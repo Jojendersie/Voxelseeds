@@ -47,6 +47,7 @@ namespace VoxelSeeds
         /// </summary>
         public VoxelSeeds()
         {
+            Random.InitRandom((uint)System.DateTime.Today.Ticks);
 
             _audio = new Audio("ergon.wav");
             _audio.startSound();

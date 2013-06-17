@@ -35,7 +35,7 @@ namespace VoxelSeeds
             _sizeZ = sizeZ;
 
             // Create the ground
-            Random rand = new Random(seed);
+            System.Random rand = new System.Random(seed);
             switch (lvlType)
             {
                 case LevelType.PLAIN:
@@ -220,7 +220,7 @@ namespace VoxelSeeds
         /// Create a relatively flat ground.
         /// </summary>
         /// <param name="rand"></param>
-        private void GeneratePlainLevel(ref Random rand, float heightOffset = 0.2f)
+        private void GeneratePlainLevel(ref System.Random rand, float heightOffset = 0.2f)
         {
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             // Fill half to test
@@ -236,7 +236,7 @@ namespace VoxelSeeds
             });
         }
 
-        private void GenerateBubbleLevel(ref Random rand, float heightOffset)
+        private void GenerateBubbleLevel(ref System.Random rand, float heightOffset)
         {
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             int sizeYscaled = SizeY / 3;
@@ -256,7 +256,7 @@ namespace VoxelSeeds
             Rockyfy();
         }
 
-        private void GenerateMountainsLevel(ref Random rand, float heightOffset)
+        private void GenerateMountainsLevel(ref System.Random rand, float heightOffset)
         {
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             int sizeYscaled = SizeY / 3;
@@ -276,7 +276,7 @@ namespace VoxelSeeds
             Rockyfy();
         }
 
-        private void GenerateCanoynsLevel(ref Random rand, float heightOffset)
+        private void GenerateCanoynsLevel(ref System.Random rand, float heightOffset)
         {
             ValueNoise noise = new ValueNoise(ref rand, 3, 8);
             int sizeYscaled = SizeY / 3;
