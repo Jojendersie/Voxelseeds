@@ -315,11 +315,11 @@ namespace VoxelSeeds
             graphicsDevice.SetVertexBuffer<int>(1, (Buffer<int>)null);
         }
 
-        public void DrawGhost(Camera camera, GraphicsDevice graphicsDevice, VoxelType voxel, Int32 levelPositionCode)
+        public void DrawGhost(Camera camera, GraphicsDevice graphicsDevice, VoxelType voxel, Int32 levelPositionCode, float transparancy)
         {
             _voxelEffect.Parameters["ViewProjection"].SetValue(camera.ViewMatrix * camera.ProjectionMatrix);
             _voxelEffect.Parameters["VoxelTexture"].SetResource(_voxelTypeRenderingData[GetRenderingDataIndex(voxel)].Texture);
-            _voxelEffect.Parameters["Transparency"].SetValue(0.7f);
+            _voxelEffect.Parameters["Transparency"].SetValue(transparancy);
             _voxelEffect.Parameters["Ambient"].SetValue(2.0f);
             _voxelEffect.Parameters["ScalingFactor"].SetValue(TypeInformation.GetScalingFactor(voxel) * 0.5f);
 

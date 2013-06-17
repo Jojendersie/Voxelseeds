@@ -37,6 +37,7 @@ namespace VoxelSeeds
         /// true if there is a valid _pickedPos
         /// </summary>
         bool _pickPosAvailable;
+        bool _pickPosSeedable;
 
 
         bool _gamePaused = false;
@@ -89,8 +90,7 @@ namespace VoxelSeeds
                     mainThreadDispatcher.BeginInvoke(new Action(() =>
                         {
                             if (_pickPosAvailable &&
-                                _seedbar.GetSelected() >= 0 &&
-                                _currentLevel.GetMap().IsInside(_pickedPos.X, _pickedPos.Y, _pickedPos.Z) &&
+                                _pickPosSeedable &&
                                 TypeInformation.GetPrice(_seedbar.GetSeedInfo()._type) <= _currentLevel.Resources)
                             {
                                 _currentLevel.Resources -= TypeInformation.GetPrice(_seedbar.GetSeedInfo()._type);
@@ -155,8 +155,7 @@ namespace VoxelSeeds
                 _seedbar.Update();
 
                 // the permanent picking
-                var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
-                _pickPosAvailable = this._currentLevel.GetMap().PickPosition(ray, out _pickedPos);
+                Pick();
 
                 // stop game?
                 if (_currentLevel.IsVictory() || _currentLevel.IsLost())
@@ -197,8 +196,20 @@ namespace VoxelSeeds
             // rendererererererererer
             _voxelRenderer.Draw(_camera, GraphicsDevice);
 
-            if (_pickPosAvailable && _seedbar.GetSelected() != -1 && _currentLevel.GetMap().IsInside(_pickedPos.X,_pickedPos.Y, _pickedPos.Z))
-                _voxelRenderer.DrawGhost(_camera, GraphicsDevice, _seedbar.GetSeedInfo()._type, _currentLevel.GetMap().EncodePosition(_pickedPos));
+            // Draw a gost circle with the size of the reauired space
+            if (_pickPosAvailable)
+            {
+                float transparency = _pickPosSeedable ? 0.75f : 0.25f;
+                int radius = TypeInformation.GetRequiredSpace(_seedbar.GetSeedInfo()._type);
+                int radiusSquare = radius * radius;
+                for (int w = -radius; w <= radius; ++w)
+                    for (int u = -radius; u <= radius; ++u)
+                    {
+                        Int32 pos = _currentLevel.GetMap().EncodePosition(_pickedPos.X + u, _pickedPos.Y, _pickedPos.Z + w);
+                        if (((u * u + w * w) <= radiusSquare) && _currentLevel.GetMap().IsEmpty(pos))
+                            _voxelRenderer.DrawGhost(_camera, GraphicsDevice, _seedbar.GetSeedInfo()._type, pos, transparency);
+                    }
+            }
 
             // Handle base.Draw
             base.Draw(gameTime);
@@ -245,6 +256,22 @@ namespace VoxelSeeds
                 _spriteBatch.DrawString(_largeFont, text2, textPos2, color2);
                 _spriteBatch.End();
             }
+        }
+
+        private void Pick()
+        {
+            var ray = _camera.GetPickingRay(GraphicsDevice.BackBuffer.Width, GraphicsDevice.BackBuffer.Height);
+            _pickPosAvailable = this._currentLevel.GetMap().PickPosition(ray, out _pickedPos);
+
+            // Disable if it is not possible to seed at the picked position
+            if (_currentLevel.GetMap().IsInside(_pickedPos.X, _pickedPos.Y, _pickedPos.Z))
+            {
+                _pickPosAvailable &= _seedbar.GetSelected() != -1;
+                _pickPosAvailable &= _currentLevel.GetMap().Get(new Int3(_pickedPos.X, _pickedPos.Y - 1, _pickedPos.Z)) == VoxelType.GROUND;
+                if (_pickPosAvailable)
+                    _pickPosSeedable = GamePlayUtils.IsThereEnoughSpaceFor(_currentLevel.GetMap(), _seedbar.GetSeedInfo()._type, _pickedPos.X, _pickedPos.Y, _pickedPos.Z);
+            }
+            else _pickPosAvailable = false;
         }
     }
 }

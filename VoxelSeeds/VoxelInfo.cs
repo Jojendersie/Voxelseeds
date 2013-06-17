@@ -105,6 +105,12 @@ namespace VoxelSeeds
 
         readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5, 2, 7 };
 
+        /// <summary>
+        /// How much space is required to allow seeding.
+        /// </summary>
+        readonly static int[] requiredSpace = { 0, 0, 0, 3, 4, 5, 5, 6, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+        public static int GetRequiredSpace(VoxelType voxeltype) { return requiredSpace[(int)voxeltype]; }
+
         public static String GetName(VoxelType voxeltype)
         {
             return name[(int)voxeltype];

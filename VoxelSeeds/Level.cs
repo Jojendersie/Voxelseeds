@@ -53,6 +53,8 @@ namespace VoxelSeeds
         public void Tick()
         {
             _automaton.Tick();
+
+            _resources += 3;
         }
 
         protected Automaton _automaton;

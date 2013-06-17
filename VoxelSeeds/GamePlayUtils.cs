@@ -90,5 +90,32 @@ namespace VoxelSeeds
                         }
             return null;
         }*/
+
+        /// <summary>
+        /// Enough space is defined as:
+        /// A circle of a spezified size must be empty on the y-level where the
+        /// seed should be set. And the level-1 has to contain at least 30% Ground.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        static public bool IsThereEnoughSpaceFor(Map map, VoxelType type, int x, int y, int z)
+        {
+            int num = 0;
+            int numAvailable = 0;
+            int numGroundBelow = 0;
+            int radius = TypeInformation.GetRequiredSpace(type);
+            for (int w = -radius; w <= radius; ++w)
+                for (int u = -radius; u <= radius; ++u) if(u*u+w*w <= radius*radius)
+                {
+                    ++num;
+                    if (map.IsEmpty(map.EncodePosition(x + u, y, z + w)))
+                        ++numAvailable;
+                    if (map.Get(map.EncodePosition(x + u, y - 1, z + w)) == VoxelType.GROUND)
+                        ++numGroundBelow;
+                }
+
+            return numAvailable == num
+                && ((numGroundBelow/(float)num) >= 0.3f);
+        }
     }
 }
