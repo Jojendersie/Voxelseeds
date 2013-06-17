@@ -46,6 +46,10 @@ namespace VoxelSeeds
         int _numLivingBiomass;
         int _numLivingParasites;
 
+        // Buffer for changes which are not uploaded to the GPU.
+        List<Voxel> _deleteList;
+        List<Voxel> _insertionList;
+
         public int NumLivingParasites { get { return _numLivingParasites; } }
         public int NumLivingBiomass { get { return _numLivingBiomass; } }
 
@@ -56,6 +60,10 @@ namespace VoxelSeeds
         {
             _map = new Map(sizeX, sizeY, sizeZ, lvlType, seed, heightoffset);
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
+            _simTask = null;
+
+            _deleteList = new List<Voxel>();
+            _insertionList = new List<Voxel>();
         }
 
         /// <param name="updateInstanceData">A function which takes an incremental
@@ -63,6 +71,16 @@ namespace VoxelSeeds
         public void SetInstanceUpdateMethod( ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData )
         {
             _updateInstanceData = updateInstanceData;
+        }
+
+        public void Upload()
+        {
+            if (_updateInstanceData != null )
+            {
+                _updateInstanceData(_deleteList, _insertionList);
+                _deleteList.Clear();
+                _insertionList.Clear();
+            }
         }
 
         /// <summary>
@@ -73,16 +91,21 @@ namespace VoxelSeeds
             var pos = _map.DecodePosition(positionCode);
             if (_map.IsInside(pos.X, pos.Y, pos.Z))
             {
+                if (_map.Get(positionCode) != VoxelType.EMPTY)
+                    RemoveVoxel(positionCode);
+
                 _map.Set(positionCode, type, living);
+                if(type != VoxelType.EMPTY)
+                {
+                    // Insert to instance data only if visible
+                    if (!_map.IsOccluded(positionCode))
+                        _insertionList.Add(new Voxel(positionCode, type));
+                    RemoveOccludedNeighbours(positionCode);
+                }
                 if (living)
                 {
-                    if (_livingVoxels.ContainsKey(positionCode))
-                    {
-                        Debug.Assert(false);
-                        _livingVoxels[positionCode] = new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from);
-                    }
-                    else
-                        _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from));
+                    Debug.Assert(!_livingVoxels.ContainsKey(positionCode));
+                    _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from));
                     if (TypeInformation.IsBiomass(type)) ++_numLivingBiomass;
                     else if (TypeInformation.IsParasite(type)) ++_numLivingParasites;
                 }
@@ -95,24 +118,32 @@ namespace VoxelSeeds
         /// <param name="positionCode"></param>
         private void RemoveVoxel(Int32 positionCode)
         {
+            // Static part
             var pos = _map.DecodePosition(positionCode);
-            VoxelType type = _map.Get(positionCode);
+            VoxelType old = _map.Get(positionCode);
+
             _map.Set(positionCode, VoxelType.EMPTY, false);
+
+            // Grafic part
+            ReinsertVisibleNeighbours(positionCode);
+            _deleteList.Add(new Voxel(positionCode, old));
+
+            // Dynamic part
             if (_livingVoxels.ContainsKey(positionCode))
             {
                 _livingVoxels.Remove(positionCode);
-                if (TypeInformation.IsBiomass(type)) --_numLivingBiomass;
-                else if (TypeInformation.IsParasite(type)) --_numLivingParasites;
+                if (TypeInformation.IsBiomass(old)) --_numLivingBiomass;
+                else if (TypeInformation.IsParasite(old)) --_numLivingParasites;
                 Debug.Assert(_numLivingBiomass >= 0);
                 Debug.Assert(_numLivingParasites >= 0);
             }
         }
 
-        private void removeOccludedNeighbours(Int32 positionCode, List<Voxel> deleteList)
+        private void RemoveOccludedNeighbours(Int32 positionCode)
         {
             // The map set can cause neighboured voxels to be occluded
             // if so delete that from GPU.
-            Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) deleteList.Add(new Voxel(pos, _map.Get(pos))); };
+            Action<Int32> checkAndRemoveNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) _deleteList.Add(new Voxel(pos, _map.Get(pos))); };
             checkAndRemoveNeighbour(positionCode - 1);
             checkAndRemoveNeighbour(positionCode + 1);
             checkAndRemoveNeighbour(positionCode - _map.SizeX);
@@ -121,11 +152,11 @@ namespace VoxelSeeds
             checkAndRemoveNeighbour(positionCode + _map.SizeX * _map.SizeY);
         }
 
-        private void reinsertVisibleNeighbours(Int32 positionCode, List<Voxel> insertList)
+        private void ReinsertVisibleNeighbours(Int32 positionCode)
         {
-            // The map set can cause neighboured voxels to be occluded
-            // if so delete that from GPU.
-            Action<Int32> checkAndAddNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && !_map.IsOccluded(pos)) insertList.Add(new Voxel(pos, _map.Get(pos))); };
+            // If a voxel should be deleted insert all currently invisible
+            // neighbours first. They are visible afterwards
+            Action<Int32> checkAndAddNeighbour = (Int32 pos) => { if (!_map.IsEmpty(pos) && _map.IsOccluded(pos)) _insertionList.Add(new Voxel(pos, _map.Get(pos))); };
             checkAndAddNeighbour(positionCode - 1);
             checkAndAddNeighbour(positionCode + 1);
             checkAndAddNeighbour(positionCode - _map.SizeX);
@@ -134,28 +165,17 @@ namespace VoxelSeeds
             checkAndAddNeighbour(positionCode + _map.SizeX * _map.SizeY);
         }
 
+        /// <summary>
+        /// Inserts a new voxel and updates the instance buffers.
+        /// </summary>
         public void InsertSeed(int x, int y, int z, VoxelType type, Direction from = Direction.DOWN)
         {
             Int32 pos = _map.EncodePosition(x, y, z);
-
             VoxelType old = _map.Get(pos);
-            if (old != VoxelType.EMPTY)
-                RemoveVoxel(pos);
 
             InsertVoxel(pos, type, 0, true, 0, 0, from);
-
-            if( _updateInstanceData != null )
-            {
-                List<Voxel> deleteList = new List<Voxel>();
-                List<Voxel> insertionList = new List<Voxel>();
-
-                if (old != VoxelType.EMPTY)
-                    deleteList.Add(new Voxel(pos, old));
-
-                insertionList.Add(new Voxel(pos, type));
-                removeOccludedNeighbours(pos, deleteList);
-                _updateInstanceData(deleteList, insertionList);
-            }
+            // Immediate upload (assuming ~1 seed per frame)
+            Upload();
         }
 
 
@@ -170,36 +190,44 @@ namespace VoxelSeeds
 
         private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results)
         {
-            List<Voxel> deleteList = new List<Voxel>();
-            List<Voxel> insertionList = new List<Voxel>();
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
             {
                 var po = _map.DecodePosition(vox.Key);
                 Debug.Assert( _map.IsInside(po.X, po.Y, po.Z) );
-                VoxelType old = _map.Get(vox.Key);
-                if (old != VoxelType.EMPTY)
-                {
-                    RemoveVoxel(vox.Key);
-
-                    // Delete the old one and create a new one (outside branch).
-                    deleteList.Add(new Voxel(vox.Key, old));
-                }
-
-                if (vox.Value.Type == VoxelType.EMPTY)
-                {
-                    reinsertVisibleNeighbours(vox.Key, insertionList);
-                }
-                else
-                {
-                    InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks, vox.Value.From);
-
-                    // Insert to instance data only if visible
-                    if (!_map.IsOccluded(vox.Key))
-                        insertionList.Add(new Voxel(vox.Key, vox.Value.Type));
-                    removeOccludedNeighbours(vox.Key, deleteList);
-                }
+                
+                InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks, vox.Value.From);
             }
-            _updateInstanceData(deleteList, insertionList);
+            Upload();
+        }
+
+        /// <summary>
+        /// The core of the simulation. This function applies all rules to all
+        /// living voxels.
+        /// </summary>
+        /// <returns>Every change which have to be made to apply the latest changes.</returns>
+        private ConcurrentDictionary<Int32, VoxelInfo> SimulateAsync()
+        {
+            // There is just one map but nobody should write before all have
+            // seen the current state -> collect all results first.
+            ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
+
+            return results;
+        }
+
+        Task<ConcurrentDictionary<Int32, VoxelInfo>> _simTask;
+
+        public void Tick2()
+        {
+            if (_simTask != null)
+            {
+                _simTask.Wait();
+                ConcurrentDictionary<Int32, VoxelInfo> results = _simTask.Result;
+                // Do a synchronus update
+                update(ref results);
+            } else
+                _simTask = new Task<ConcurrentDictionary<int, VoxelInfo>>(() => SimulateAsync());
+            // Start next turn
+            _simTask.Start();
         }
 
 
