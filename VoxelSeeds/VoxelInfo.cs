@@ -72,6 +72,26 @@ namespace VoxelSeeds
                                                  new TeakLeafRule(),
                                                  new PineNeedleRule(),
                                                  new SpruceNeedleRule()};
+        readonly static int[,] resistences = {// empt grnd rock teaw pinw spuw beew oakw redw whif nobf term holb heci hopp teal pinn spun
+                                /*Empty*/       { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+                                /*Ground*/      { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+                                /*Rock*/        { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+                                /*Teakwood*/    { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,  33,  66,  33,  66, 100, 100, 100},
+                                /*Pinewood*/    { 100, 100, 100, 100, 100, 100, 100, 100, 100,  33,  33,  66,  66, 100, 100, 100, 100, 100},
+                                /*Sprucewood*/  { 100, 100, 100, 100, 100, 100, 100, 100, 100,  66,  66,  33,  33, 100, 100, 100, 100, 100},
+                                /*Beechwood*/   { 100, 100, 100, 100, 100, 100, 100, 100, 100,  33,  33,  66, 100,  66, 100, 100, 100, 100},
+                                /*Oakwood*/     { 100, 100, 100, 100, 100, 100, 100, 100, 100,  33,  66,  66, 100,  33, 100, 100, 100, 100},
+                                /*Redwood*/     { 100, 100, 100, 100, 100, 100, 100, 100, 100,  33,  33, 100,  66,  66, 100, 100, 100, 100},
+                                /*Whiterot*/    { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,  90,  25, 100, 100,  80, 100, 100, 100},
+                                /*Noblerot*/    { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,  90,  25, 100, 100,  80, 100, 100, 100},
+                                /*Termites*/    { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,  50,  50,  50, 100, 100, 100},
+                                /*HouseLong*/   { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+                                /*HespCinnerus*/{ 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+                                /*Grasshopper*/ { 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100},
+                                /*Teak leaves*/ { 100, 100, 100, 100, 100, 100, 100, 100, 100,  75,  75,  11,  22,  11,  22, 100, 100, 100},
+                                /*Pine leaves*/ { 100, 100, 100, 100, 100, 100, 100, 100, 100,  11,  11,  22,  22,  75,  75, 100, 100, 100},
+                                /*Spruce leave*/{ 100, 100, 100, 100, 100, 100, 100, 100, 100,  22,  22,  11,  11,  75,  75, 100, 100, 100},
+                                              };
         /// <summary>
         /// The maximum number of voxels of a type which can be simultaneously in the world
         /// </summary>
@@ -81,8 +101,7 @@ namespace VoxelSeeds
         /// </summary>
         readonly static float[] scalingFactor = { 1.0f, 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f, 1f, 1f};
 
-        //readonly static int[] growingSteps = { 0, 0, 0, 18, 30, 32, 48, 46, 16, 20, 20, 2, 2, 2, 2, 5 };
-        readonly static int[] growingSteps = { 0, 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5, 3, 6 };
+        readonly static int[] growingSteps = { 0, 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 1, 3, 2, 5, 3, 6 };
 
         readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5, 2, 7 };
 
@@ -169,6 +188,9 @@ namespace VoxelSeeds
         }
 
         public static int GetNumTypes() { return Enum.GetValues(typeof(VoxelType)).Length - 1; }
+
+        public static bool IsResistent(VoxelType voxelType, VoxelType against) { return resistences[(int)voxelType, (int)against] == 100; }
+        public static int GetResistence(VoxelType voxelType, VoxelType against) { return resistences[(int)voxelType, (int)against]; }
     }
 
     enum Direction

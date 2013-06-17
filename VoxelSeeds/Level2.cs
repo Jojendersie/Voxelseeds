@@ -26,10 +26,10 @@ namespace VoxelSeeds
                 InsertSeed(rand.Next(GetMap().SizeX), rand.Next(GetMap().SizeY / 4) + 5, rand.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
             }
 
-            int x = GetMap().SizeX / 2;
+           /* int x = GetMap().SizeX / 2;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);
-            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);
+            InsertSeed(x, Math.Max(y, 0) + 1, z, VoxelType.WHITEROT_FUNGUS);*/
         }
     }
 }

@@ -7,90 +7,65 @@ using System.Threading.Tasks;
 
 namespace VoxelSeeds.Rules
 {
+
+    /// <summary>
+    /// Random flowing beetle.
+    /// 
+    /// Actions:
+    ///     * Spawn if possible (no eat and move)
+    ///     * Eat if possible (no move)
+    ///     * Move if nothing to see.
+    /// Eats: +Teak+, +Oak+, Beech, Redwood and there leaves.
+    /// Spawns: #1 - If Resources > GetGrowingSteps.
+    /// Dies: ---
+    /// 
+    /// Interpretions of values:
+    ///     * Resources: How many ticks of successfull eating
+    /// </summary>
     class HesperophanesCinnereusRule: IVoxelRule
     {
         Random random = new Random();
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
-            if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.HESPEROPHANES_CINNEREUS)) return null;
-
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
-            int gen = neighbourhood[1, 1, 1].Generation;
             int res = neighbourhood[1, 1, 1].Resources;
 
-            int t = random.Next(0, 3);
-            int h = random.Next(0, 3);
-            int b = random.Next(0, 3);
+            int t, h, b;
+            VoxelType typeOfTarget = GamePlayUtils.GetEatableTarget(ref random, VoxelType.HESPEROPHANES_CINNEREUS, neighbourhood, out t, out h, out b);
 
-            if (gen == 0)
+            if (res >= TypeInformation.GetGrowingSteps(VoxelType.HESPEROPHANES_CINNEREUS))
             {
-                if (IsWalkable(neighbourhood[t, h, b]))
+                // Spawn
+                if (GamePlayUtils.GetEmptyTarget(ref random, neighbourhood, out t, out h, out b))
+                {
+                    output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true);
+                    res -= TypeInformation.GetGrowingSteps(VoxelType.HESPEROPHANES_CINNEREUS);
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 0, res);
+                }
+                else return null;
+            }
+            else if (!TypeInformation.IsResistent(typeOfTarget, VoxelType.HESPEROPHANES_CINNEREUS))
+            {
+                // Try to eat
+                if (random.Next(101) > TypeInformation.GetResistence(typeOfTarget, VoxelType.HESPEROPHANES_CINNEREUS))
+                {
+                    output[t, h, b] = new VoxelInfo(VoxelType.EMPTY);
+                    // If food is consumed completely growth.
+                    ++res;
+                }
+                output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 0, res);
+            }
+            else
+            {
+                // Move
+                if (typeOfTarget == VoxelType.EMPTY)
                 {
                     output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-                    output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 1);
+                    output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 0, res);
                 }
-                else
-                {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 1);
-                }
+                else return null;
             }
-            else if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS) && res == 10)
-            {
-                Int3 moveTo = DirectionConverter.FromDirection(neighbourhood[1, 1, 1].From);
-                t = moveTo.X;
-                h = moveTo.Y;
-                b = moveTo.Z;
-                output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 0);
-                if (random.Next(0, 11) > 7)
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(1, 5), 0, TypeInformation.GetGrowingSteps(VoxelType.HESPEROPHANES_CINNEREUS), Direction.SELF);
-                else
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-            }
-            else// if (gen < TypeInformation.GetGrowHeight(VoxelType.HESPEROPHANES_CINNEREUS))
-            {
-                Direction food = FoodInDirection(neighbourhood);
-                if (food != Direction.SELF)
-                {
-                    Int3 foodPos = DirectionConverter.FromDirection(food);
-                    int eattime = -10;
-                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.PINE_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.SPRUCE_WOOD) eattime = -20;
-                    if (neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.TEAK_WOOD || neighbourhood[foodPos.X, foodPos.Y, foodPos.Z].Type == VoxelType.OAK_WOOD) eattime = -5;
-
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(0, 3), 10, eattime, food);
-                }
-                else if (IsWalkable(neighbourhood[t, h, b]))
-                {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-                    output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(1, 5));
-                }
-                else
-                {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, gen + random.Next(1, 5));
-                }
-            }
-           /* else
-            {
-                output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
-            }*/
-
             return output;
-        }
-
-        private bool IsWalkable(VoxelInfo voxelInfo)
-        {
-            return voxelInfo.Type == VoxelType.EMPTY;
-        }
-
-        private Direction FoodInDirection(VoxelInfo[, ,] neighbourhood)
-        {
-            for (int t = 0; t < 3; ++t)
-                    for (int h = 0; h < 3; ++h)
-                        for (int b = 0; b < 3; ++b) if (!(t == 1 && h == 1 && b == 1)) // if not the voxel itself
-                            {
-                                if (TypeInformation.IsBiomass(neighbourhood[t, h, b].Type))
-                                    return DirectionConverter.ToDirection(t, h, b);
-                            }
-            return Direction.SELF;
         }
     }
 }
