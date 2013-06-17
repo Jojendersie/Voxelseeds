@@ -11,8 +11,7 @@ namespace VoxelSeeds
     using System.Collections.Generic;
 
     /// <summary>
-    /// Simple MiniCube application using SharpDX.Toolkit.
-    /// The purpose of this application is to show a rotating cube using <see cref="BasicEffect"/>.
+    /// A simulation game based on voxels.
     /// </summary>
     class VoxelSeeds : Game
     {
@@ -72,7 +71,7 @@ namespace VoxelSeeds
 
         protected override void Initialize()
         {
-            Window.Title = "MiniCube demo";
+            Window.Title = "Voxel Seeds";
 
             base.Initialize();
 

@@ -142,7 +142,7 @@ namespace VoxelSeeds
         public void Draw(Level currentlevel, GameTime gameTime)
         {
             float progress = (float)currentlevel.CurrentBiomass / (float)currentlevel.TargetBiomass;
-            float evilProgress = (float)currentlevel.ParasiteBiomass / (float)currentlevel.FinalParasiteBiomass;
+            float evilProgress = (float)currentlevel.CurrentParasiteMass / (float)currentlevel.FinalParasiteBiomass;
 
 
             progressCount = (float)gameTime.TotalGameTime.TotalSeconds / 2;

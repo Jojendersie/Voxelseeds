@@ -58,6 +58,8 @@ namespace VoxelSeeds
             _livingVoxels = new Dictionary<Int32,LivingVoxel>();
         }
 
+        /// <param name="updateInstanceData">A function which takes an incremental
+        /// update for all changed voxels. The first param </param>
         public void SetInstanceUpdateMethod( ref Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData )
         {
             _updateInstanceData = updateInstanceData;
@@ -166,11 +168,8 @@ namespace VoxelSeeds
                         func(x, y, z);
         }
 
-        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results, out int newBiomass, out int newParasites)
+        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results)
         {
-            newBiomass = 0;
-            newParasites = 0;
-
             List<Voxel> deleteList = new List<Voxel>();
             List<Voxel> insertionList = new List<Voxel>();
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
@@ -182,13 +181,9 @@ namespace VoxelSeeds
                 {
                     RemoveVoxel(vox.Key);
 
-                    if (TypeInformation.IsParasite(old)) --newParasites;
-                    else if(TypeInformation.IsBiomass(old)) --newBiomass;
                     // Delete the old one and create a new one (outside branch).
                     deleteList.Add(new Voxel(vox.Key, old));
                 }
-                if (TypeInformation.IsParasite(vox.Value.Type)) ++newParasites;
-                else if (TypeInformation.IsBiomass(vox.Value.Type)) ++newBiomass;
 
                 if (vox.Value.Type == VoxelType.EMPTY)
                 {
@@ -211,9 +206,7 @@ namespace VoxelSeeds
         /// <summary>
         /// Simulates one step of the automaton.
         /// </summary>
-        /// <param name="updateInstanceData">A function which takes an incremental
-        /// update for all changed voxels. The first param </param>
-        public void Tick(out int newBiomass, out int newParasites)
+        public void Tick()
         {
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
@@ -258,7 +251,7 @@ namespace VoxelSeeds
                     }
                 }
             );
-            update(ref results, out newBiomass, out newParasites);
+            update(ref results);
         }
     }
 }

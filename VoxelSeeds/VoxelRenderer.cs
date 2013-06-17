@@ -138,7 +138,7 @@ namespace VoxelSeeds
                 VertexBufferLayout.New(1, new VertexElement[]{new VertexElement("POSITION_INSTANCE", SharpDX.DXGI.Format.R32_SInt)}, 1));
                 
             // Create instance buffer for every VoxelInfo
-            _voxelTypeRenderingData = new VoxelTypeInstanceData[Enum.GetValues(typeof(VoxelType)).Length-1];
+            _voxelTypeRenderingData = new VoxelTypeInstanceData[TypeInformation.GetNumTypes()-1];
             for (int i = 0; i < _voxelTypeRenderingData.Length; ++i)
                 _voxelTypeRenderingData[i] = new VoxelTypeInstanceData(graphicsDevice, (VoxelType)(i+1));
             LoadTextures(contentManager);

@@ -18,8 +18,8 @@ namespace VoxelSeeds
     abstract class Level
     {
         public int TargetBiomass { get { return _targetBiomass; } protected set { _targetBiomass = value; } }
-        public int CurrentBiomass { get { return _currentBiomass; } protected set { _currentBiomass = value; } }
-        public int ParasiteBiomass { get { return _currentParasiteMass; } protected set { _currentParasiteMass = value; } }
+        public int CurrentBiomass { get { int mass = 0; for (VoxelType t = VoxelType.EMPTY; t < VoxelType.ENUM_END; ++t) if (TypeInformation.IsBiomass(t)) mass+=GetMap().GetNumVoxels(t); return mass; } }
+        public int CurrentParasiteMass { get { int mass = 0; for (VoxelType t = VoxelType.EMPTY; t < VoxelType.ENUM_END; ++t) if (TypeInformation.IsParasite(t)) mass += GetMap().GetNumVoxels(t); return mass; } }
         public int FinalParasiteBiomass { get { return _finalParasiteMass; } protected set { _finalParasiteMass = value; } }
         public int Resources { get { return _resources; } set { _resources = value; } }
 
@@ -29,8 +29,6 @@ namespace VoxelSeeds
         public Level(VoxelRenderer voxelRenderer)
         {
             Initialize();
-            _currentBiomass = _automaton.NumLivingBiomass;
-            _currentParasiteMass = _automaton.NumLivingParasites;
 
             lightDirection.Normalize();
             voxelRenderer.Reset(GetMap(), lightDirection);
@@ -44,30 +42,21 @@ namespace VoxelSeeds
         /// </summary>
         public abstract void Initialize();
 
-        public bool IsVictory()    { return _currentBiomass >= _targetBiomass; }
-        public bool IsLost() { return (_currentParasiteMass >= _finalParasiteMass) || (_resources < 68 && _automaton.NumLivingBiomass==0); }
+        public bool IsVictory()    { return CurrentBiomass >= _targetBiomass; }
+        public bool IsLost() { return (CurrentParasiteMass >= _finalParasiteMass) || (_resources < 68 && _automaton.NumLivingBiomass==0); }
 
         public Map GetMap() { return _automaton.Map; }
-        public void InsertSeed(int x, int y, int z, VoxelType type) { if (TypeInformation.IsBiomass(type)) ++_currentBiomass; else if (TypeInformation.IsParasite(type)) ++_currentParasiteMass; _automaton.InsertSeed(x, y, z, type); }
+        public void InsertSeed(int x, int y, int z, VoxelType type) { _automaton.InsertSeed(x, y, z, type); }
         void SetInstanceUpdateMethod(Action<IEnumerable<Voxel>, IEnumerable<Voxel>> updateInstanceData) { _automaton.SetInstanceUpdateMethod(ref updateInstanceData); }
 
 
         public void Tick()
         {
-            int newBiomass;
-            int newParasites;
-            _automaton.Tick(out newBiomass, out newParasites);
-            _currentBiomass += newBiomass;
-            _currentParasiteMass += newParasites;
-
-            Debug.Assert( _currentBiomass >= 0 );
-            Debug.Assert( _currentParasiteMass >= 0 );
+            _automaton.Tick();
         }
 
         protected Automaton _automaton;
         protected int _targetBiomass;
-        protected int _currentBiomass;
-        protected int _currentParasiteMass;
         protected int _finalParasiteMass;
         protected int _resources;
     }

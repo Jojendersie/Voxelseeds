@@ -27,7 +27,9 @@ namespace VoxelSeeds
         GRASSHOPPER,
         TEAK_LEAF,
         PINE_NEEDLE,
-        SPRUCE_NEEDLE
+        SPRUCE_NEEDLE,
+
+        ENUM_END
     };
 
     class TypeInformation
@@ -79,8 +81,8 @@ namespace VoxelSeeds
         /// </summary>
         readonly static float[] scalingFactor = { 1.0f, 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f, 1f, 1f};
 
-        readonly static int[] growingSteps = { 0, 0, 0, 18, 30, 32, 48, 46, 16, 20, 20, 2, 2, 2, 2, 5 };
-        //readonly static int[] growingSteps = { 0, 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5, 3, 6 };
+        //readonly static int[] growingSteps = { 0, 0, 0, 18, 30, 32, 48, 46, 16, 20, 20, 2, 2, 2, 2, 5 };
+        readonly static int[] growingSteps = { 0, 0, 0, 2, 4, 8, 2, 2, 2, 16, 2, 2, 2, 2, 2, 5, 3, 6 };
 
         readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5, 2, 7 };
 
@@ -165,6 +167,8 @@ namespace VoxelSeeds
         {
             return IsBiomass(voxeltype) && !IsWood(voxeltype);
         }
+
+        public static int GetNumTypes() { return Enum.GetValues(typeof(VoxelType)).Length - 1; }
     }
 
     enum Direction

@@ -28,6 +28,8 @@ namespace VoxelSeeds
         public Map(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed, float heightoffset)
         {
             _voxels = new byte[sizeX*sizeY*sizeZ];
+            _numVoxelsOfType = new int[TypeInformation.GetNumTypes()];
+            _numVoxelsOfType[0] = sizeX * sizeY * sizeZ;
             _sizeX = sizeX;
             _sizeY = sizeY;
             _sizeZ = sizeZ;
@@ -60,6 +62,8 @@ namespace VoxelSeeds
         readonly Int32 _sizeX;
         readonly Int32 _sizeY;
         readonly Int32 _sizeZ;
+
+        int[] _numVoxelsOfType;
 
         /// <summary>
         /// Returns a unique number for each position.
@@ -95,17 +99,6 @@ namespace VoxelSeeds
                 positionCode / (SizeX * SizeY));
         }
 
-        public byte Sample(int x, int y, int z)
-        {
-            return _voxels[EncodePosition(x, y, z)];
-        }
-
-
-        public byte Sample(Int32 positionCode)
-        {
-            return _voxels[positionCode];
-        }
-
         public VoxelType Get(Int32 positionCode)
         {
             return (VoxelType)(_voxels[positionCode] & 0x7f);
@@ -120,7 +113,9 @@ namespace VoxelSeeds
         {
             Int3 p;
             p = DecodePosition(positionCode);
+            --_numVoxelsOfType[_voxels[positionCode] & 0x7f];
             _voxels[positionCode] = (byte)((living ? 0x80 : 0) | (int)type);
+            ++_numVoxelsOfType[(int)type];
         }
 
         /// <summary>
@@ -236,7 +231,7 @@ namespace VoxelSeeds
                     float radialHeight = 0.02f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
                     int height = (int)(maxHeight * (noise.Get(x, z) - radialHeight + heightOffset));
                     for (int y = 0; y < height; ++y)
-                        _voxels[EncodePosition(x, y, z)] = (int)VoxelType.GROUND;
+                        Set(EncodePosition(x, y, z), VoxelType.GROUND, false);
                 }
             });
         }
@@ -254,7 +249,7 @@ namespace VoxelSeeds
                         float value = SizeY * (noise.Get(x, z, d) - noise.Get(x, z)) / radialHeight - heightOffset - radialHeight - Math.Max(0, d - sizeYscaled)*2;
                         // for (int y = 0; y < height; ++y)
                         if (value > 0)
-                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
+                            Set(EncodePosition(x, d, z), VoxelType.GROUND, false);
                     }
             });
 
@@ -274,7 +269,7 @@ namespace VoxelSeeds
                         float value = (noise.Get(x, z, d) * 3 - heightOffset + noise.Get(x / 2, z / 2)) * sizeYscaled - d;
                         value -= radialHeight;
                         if (value > 0)
-                            _voxels[EncodePosition(x, d, z)] = (int)VoxelType.GROUND;
+                            Set(EncodePosition(x, d, z), VoxelType.GROUND, false);
                     }
             });
 
@@ -289,20 +284,28 @@ namespace VoxelSeeds
             Parallel.For( 0, SizeZ, (z) => {
                 for (int x = 0; x < SizeX; ++x)
                 {
-                    _voxels[EncodePosition(x, 0, z)] = (byte)VoxelType.GROUND;
+                    Set(EncodePosition(x, 0, z), VoxelType.ROCK, false);
                     for (int d = 1; d < sizeYscaled; ++d)
                     {
-                        //float radialHeight = 0.08f * (float)Math.Sqrt((x - SizeX / 2) * (x - SizeX / 2) + (z - SizeZ / 2) * (z - SizeZ / 2));
-                        //float value = SizeY * (noise.Get(x, z, d) + noise.Get(x, z) - d*3 / sizeYscaled);// -heightOffset;// -radialHeight;
                         float value = noise.Get(x / 2, z / 2, d / 5) - 0.5f;
                         if (value > 0)
-                            _voxels[EncodePosition(x, d, z)] = (byte)VoxelType.ROCK;
+                            Set(EncodePosition(x, d, z), VoxelType.ROCK, false);
                     }
                     for (int d = sizeYscaled; d < sizeYscaled+5; ++d)
                     {
                         float value = noise.Get(x / 2, z / 2, d / 5) - 0.6f;
                         if (value > 0)
-                            _voxels[EncodePosition(x, d, z)] = (byte)VoxelType.ROCK;
+                            Set(EncodePosition(x, d, z), VoxelType.ROCK, false);
+                    }
+                    // Ground on top
+                    for (int d = SizeY-1; d >= 0; --d)
+                    {
+                        Int32 pos = EncodePosition(x, d, z);
+                        if( _voxels[pos] != 0 )
+                        {
+                            Set(pos, VoxelType.GROUND, false);
+                            break;
+                        }
                     }
                 }
             });
@@ -317,10 +320,10 @@ namespace VoxelSeeds
                     for (int d = SizeY-1; d >= 0; --d)
                     {
                         Int32 pos = EncodePosition(x, d, z);
-                        byte value = Sample(pos);
+                        byte value = _voxels[pos];
                         if (value != 0)
                         {
-                            if (streak > 1) _voxels[pos] = (int)VoxelType.ROCK;
+                            if (streak > 1) Set(pos, VoxelType.ROCK, false);
                             ++streak;
                         }
                         else streak = 0;
@@ -328,5 +331,7 @@ namespace VoxelSeeds
                 }
             });
         }
+
+        public int GetNumVoxels(VoxelType type) { return _numVoxelsOfType[(int)type]; }
     }
 }
