@@ -210,13 +210,57 @@ namespace VoxelSeeds
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
+            Parallel.ForEach(_livingVoxels, currentVoxel =>
+            //foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
+            {
+                ++currentVoxel.Value.Ticks;
+                // Create a local window for the rule algorithms
+                VoxelInfo[, ,] localFrame = new VoxelInfo[3, 3, 3];
+                IterateNeighbours((x, y, z) =>
+                {
+                    Int32 pos = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
+                    VoxelType voxel = _map.Get(pos);
+                    // Living?
+                    if (_map.IsLiving(pos))
+                    {
+                        // Yes: query more information from the dictinary
+                        LivingVoxel voxelInfo = _livingVoxels[pos];
+                        localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks, voxelInfo.From);
+                    }
+                    else
+                    {
+                        // No uses directly
+                        localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel);
+                    }
+                });
+                // Apply the rule for currentVoxel
+                VoxelInfo[, ,] ruleResult = TypeInformation.GetRule(localFrame[1, 1, 1].Type).ApplyRule(localFrame);
+                if (ruleResult != null)
+                {
+                    currentVoxel.Value.Ticks = 0;
+                    // Add changes to the change collection
+                    IterateNeighbours((x, y, z) =>
+                    {
+                        if (ruleResult[z, y, x] != null && _map.IsInside(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1))
+                        {
+                            Int32 positionCode = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
+                            // Two rules tried to grow at the same location. Use decision function
+                            results.AddOrUpdate(positionCode, ruleResult[z, y, x], (key, old) => GamePlayUtils.GetStrongerVoxel(ref old, ref ruleResult[z, y, x]));
+                        }
+                    });
+                }
+            });
 
             return results;
         }
 
         Task<ConcurrentDictionary<Int32, VoxelInfo>> _simTask;
 
-        public void Tick2()
+        /// <summary>
+        /// Simulates on step of automaton in parallel.
+        /// The results from the last tick are uploaded now.
+        /// </summary>
+        public void Tick()
         {
             if (_simTask != null)
             {
@@ -224,62 +268,10 @@ namespace VoxelSeeds
                 ConcurrentDictionary<Int32, VoxelInfo> results = _simTask.Result;
                 // Do a synchronus update
                 update(ref results);
-            } else
-                _simTask = new Task<ConcurrentDictionary<int, VoxelInfo>>(() => SimulateAsync());
+            }
+            _simTask = new Task<ConcurrentDictionary<int, VoxelInfo>>(() => SimulateAsync());
             // Start next turn
             _simTask.Start();
-        }
-
-
-        /// <summary>
-        /// Simulates one step of the automaton.
-        /// </summary>
-        public void Tick()
-        {
-            // There is just one map but nobody should write before all have
-            // seen the current state -> collect all results first.
-            ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
-            Parallel.ForEach(_livingVoxels, currentVoxel =>
-            //foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
-                {
-                    ++currentVoxel.Value.Ticks;
-                    // Create a local window for the rule algorithms
-                    VoxelInfo[,,] localFrame = new VoxelInfo[3, 3, 3];
-                    IterateNeighbours( (x, y, z) =>
-                    {
-                        Int32 pos = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
-                        VoxelType voxel = _map.Get(pos);
-                        // Living?
-                        if (_map.IsLiving(pos))
-                        {
-                            // Yes: query more information from the dictinary
-                            LivingVoxel voxelInfo = _livingVoxels[pos];
-                            localFrame[z, y, x] = new VoxelInfo(voxel, true, voxelInfo.Generation, voxelInfo.Resources, voxelInfo.Ticks, voxelInfo.From);
-                        } else
-                        {
-                            // No uses directly
-                            localFrame[z, y, x] = new VoxelInfo((VoxelType)voxel);
-                        }
-                    });
-                    // Apply the rule for currentVoxel
-                    VoxelInfo[, ,] ruleResult = TypeInformation.GetRule(localFrame[1,1,1].Type).ApplyRule(localFrame);
-                    if (ruleResult != null)
-                    {
-                        currentVoxel.Value.Ticks = 0;
-                        // Add changes to the change collection
-                        IterateNeighbours((x, y, z) =>
-                        {
-                            if (ruleResult[z, y, x] != null && _map.IsInside(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1))
-                            {
-                                Int32 positionCode = _map.EncodePosition(currentVoxel.Value.X + x - 1, currentVoxel.Value.Y + y - 1, currentVoxel.Value.Z + z - 1);
-                                // Two rules tried to grow at the same location. Use decision function
-                                results.AddOrUpdate(positionCode, ruleResult[z, y, x], (key, old) => GamePlayUtils.GetStrongerVoxel(ref old, ref ruleResult[z, y, x]));
-                            }
-                        });
-                    }
-                }
-            );
-            update(ref results);
         }
     }
 }

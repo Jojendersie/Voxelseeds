@@ -17,7 +17,7 @@ namespace VoxelSeeds
             _automaton = new Automaton(150, 40, 150, LevelType.PLAIN, 52384, 0.8f);
 
             _resources = 3000;
-            _finalParasiteMass = 500;
+            _finalParasiteMass = 5000;
             _targetBiomass = 1000;
 
             Random rand = new Random();

@@ -26,7 +26,7 @@ namespace VoxelSeeds.Rules
             {
                 if (IsWalkable(neighbourhood[t, h, b]))
                 {
-                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY); ;
+                    output[1, 1, 1] = new VoxelInfo(VoxelType.EMPTY);
                     output[t, h, b] = new VoxelInfo(VoxelType.HESPEROPHANES_CINNEREUS, true, 1);
                 }
                 else
