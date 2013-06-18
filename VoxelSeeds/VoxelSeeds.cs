@@ -162,7 +162,6 @@ namespace VoxelSeeds
                 if (_currentLevel.IsVictory() || _currentLevel.IsLost())
                 {
                     _gamePaused = true;
-                    // TODO: Display message
                 }
 
                 // next/prev level cheat
@@ -239,7 +238,7 @@ namespace VoxelSeeds
                 }
                 else// if (_currentLevel.IsVictory())
                 {
-                    text1 = "Your seeds prevailed against the Rotteness!";
+                    text1 = "Your seeds prevailed against the Rottenness!";
                     stringSize1 = _largeFont.MeasureString(text1);
                     text2 = "Press Enter to continue to the next level";
                     stringSize2 = _largeFont.MeasureString(text2);

@@ -39,10 +39,11 @@ namespace VoxelSeeds
         private Texture2D frame;
         private Texture2D progressBar;
         private Texture2D evilProgressBar;
+        private Texture2D _clock;
         private int _selected = -1;
         private bool picking;
         private System.Drawing.Point mousePosition;
-        private int windowHeigth;
+        private int windowHeight;
         private int windowWidth;
         private float[] tooltipCounter = new float[9];
         private float progressCount;
@@ -84,7 +85,7 @@ namespace VoxelSeeds
         {
 
             spriteBatch = new SpriteBatch(graphicsDevice);
-            windowHeigth = spriteBatch.GraphicsDevice.BackBuffer.Height;
+            windowHeight = spriteBatch.GraphicsDevice.BackBuffer.Height;
             windowWidth = spriteBatch.GraphicsDevice.BackBuffer.Width;
             font = contentManager.Load<SpriteFont>("Arial16.tkfnt");
             largeFont = contentManager.Load<SpriteFont>("largefont.tkfnt");
@@ -93,6 +94,7 @@ namespace VoxelSeeds
             frame = contentManager.Load<Texture2D>("frame.png");
             progressBar = contentManager.Load<Texture2D>("Dummy.png");
             evilProgressBar = contentManager.Load<Texture2D>("parasiteprogress.png");
+            _clock = contentManager.Load<Texture2D>("clock.png");
 
             for (int i = 0; i < barLength; i++)
             {
@@ -139,6 +141,12 @@ namespace VoxelSeeds
             }  
         }
 
+        private void DrawFramedQuad(int left, int top, int width, int height, float transparency = 1.0f)
+        {
+            spriteBatch.Draw(frame, new DrawingRectangle(left, top, width, height), new Color(0.3f, 0.4f, 0.3f, transparency));
+            spriteBatch.Draw(pixel, new DrawingRectangle(left + 5, top + 5, width - 10, height - 10), new Color(0f, 0.1f, 0f, transparency));
+        }
+
         public void Draw(Level currentlevel, GameTime gameTime)
         {
             float progress = (float)currentlevel.CurrentBiomass / (float)currentlevel.TargetBiomass;
@@ -152,18 +160,18 @@ namespace VoxelSeeds
             spriteBatch.Begin(SpriteSortMode.Deferred, spriteBatch.GraphicsDevice.BlendStates.NonPremultiplied);
             
             //draw Progress good/evil
-            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * progress)),
+            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * progress)),
                 new DrawingRectangle(progressBarPictureWidth * ((int)progressCount % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * progress)),
                 new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * progress)),
+            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * progress)),
                 new DrawingRectangle(progressBarPictureWidth * (((int)progressCount + 1) % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * progress)),
                 new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
 
-            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * evilProgress)),
+            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * evilProgress)),
                 new DrawingRectangle(progressBarPictureWidth * ((int)progressCount % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * evilProgress)),
                 new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeigth, progressBarPictureWidth, (int)((windowHeigth - 68) * evilProgress)),
+            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * evilProgress)),
                 new DrawingRectangle(progressBarPictureWidth * (((int)progressCount + 1) % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * evilProgress)),
                 new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
@@ -174,22 +182,30 @@ namespace VoxelSeeds
             {
                 if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
                 {
-                //draw frame
-                spriteBatch.Draw(pixel, new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y , 84, 32), Color.Black);
-                spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42), Color.Gray);
-                //draw price
-                spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), Color.White);
-                spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
-                //draw Icons
-                spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);  
+                    // Draw frame
+                    DrawFramedQuad((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42);
+                    // Draw price
+                    spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), Color.White);
+                    spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
+                    // Draw Icons
+                    spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);  
                 }
             }
 
-            //draw Resources
-            spriteBatch.Draw(pixel, new DrawingRectangle(9 * windowWidth / 10 + 7, 5, progressBarPictureWidth * 2-10, 54), Color.Black);
-            spriteBatch.Draw(frame, new DrawingRectangle(9 * windowWidth / 10 + 2, 0, progressBarPictureWidth * 2, 64), Color.Gray);
-            spriteBatch.Draw(helix, new DrawingRectangle(9 * windowWidth / 10 + 15, 9, 23, 46), Color.White);
-            spriteBatch.DrawString(largeFont, currentlevel.Resources.ToString(), new Vector2(9 * windowWidth / 10 + 36, -6), Color.White);
+            // Draw Resources
+            const int BIG_INFO_FIELD_WIDTH = 200;
+            const int BIG_INFO_FIELD_HEIGHT = 64;
+            DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH, 0, BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT);
+            spriteBatch.Draw(helix, new DrawingRectangle(windowWidth - BIG_INFO_FIELD_WIDTH + 10, 9, 23, 46), Color.White);
+            spriteBatch.DrawString(largeFont, currentlevel.Resources.ToString(), new Vector2(windowWidth - BIG_INFO_FIELD_WIDTH + 33, -6), Color.White);
+
+            // Draw timer
+            DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH, windowHeight + 5 - 2 * BIG_INFO_FIELD_HEIGHT, BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT);
+            spriteBatch.Draw(_clock, new DrawingRectangle(windowWidth - BIG_INFO_FIELD_WIDTH + 8, windowHeight + 13 - 2 * BIG_INFO_FIELD_HEIGHT, 39, 48), Color.White);
+            spriteBatch.DrawString(largeFont, currentlevel.CountDown, new Vector2(windowWidth - BIG_INFO_FIELD_WIDTH + 50, windowHeight - 2 * BIG_INFO_FIELD_HEIGHT), Color.White);
+
+            // Draw biomass counter
+            DrawFramedQuad(windowWidth - 350, windowHeight - BIG_INFO_FIELD_HEIGHT, 350, BIG_INFO_FIELD_HEIGHT);
 
             if (_selected > -1)
             {

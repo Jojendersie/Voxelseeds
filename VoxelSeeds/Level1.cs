@@ -18,9 +18,11 @@ namespace VoxelSeeds
             _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024, 0.25f);
             //_automaton = new Automaton(100, 50, 100, LevelType.STEP, 33333333, 0.25f);
 
-            _resources = 6000;
+            _resources = 100;
             _finalParasiteMass = 3500;
             _targetBiomass = 1000;
+            _countDown = 1.0f;
+
             int x = GetMap().SizeX / 2;
             int z = GetMap().SizeZ / 2;
             int y = GetMap().GetHeighest(x, z);

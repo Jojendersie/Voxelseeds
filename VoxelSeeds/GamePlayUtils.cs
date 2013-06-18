@@ -74,23 +74,6 @@ namespace VoxelSeeds
         }
 
         /// <summary>
-        /// If there is something allergic in any direction report that
-        /// </summary>
-        /// <param name="neighbourhood"></param>
-        /// <returns></returns>
-     /*   static public Int3 FoodInDirection(VoxelInfo[, ,] neighbourhood)
-        {
-            for (int t = 0; t < 3; ++t)
-                for (int h = 0; h < 3; ++h)
-                    for (int b = 0; b < 3; ++b) if (!(t == 1 && h == 1 && b == 1)) // if not the voxel itself
-                        {
-                            if (TypeInformation.IsBiomass(neighbourhood[t, h, b].Type) && !TypeInformation.IsResistent(neighbourhood[t, h, b].Type, neighbourhood[1, 1, 1].Type))
-                                return new Int3(t, h, b);
-                        }
-            return null;
-        }*/
-
-        /// <summary>
         /// Enough space is defined as:
         /// A circle of a spezified size must be empty on the y-level where the
         /// seed should be set. And the level-1 has to contain at least 30% Ground.
