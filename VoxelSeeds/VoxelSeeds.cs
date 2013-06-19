@@ -22,6 +22,7 @@ namespace VoxelSeeds
         Camera _camera;
         Seedbar _seedbar;
         Level _currentLevel;
+        int _resourcesFromLastLevel;
         Background _background;
         double _cumulatedFrameTime;
 
@@ -106,6 +107,7 @@ namespace VoxelSeeds
         {
             _voxelRenderer = new VoxelRenderer(GraphicsDevice, Content);
             _currentLevel = new Level1(_voxelRenderer);
+            _resourcesFromLastLevel = _currentLevel.Resources;
             
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
@@ -121,6 +123,8 @@ namespace VoxelSeeds
 
         void NextLevel()
         {
+            // Take resources from last level to the next one
+            _resourcesFromLastLevel = _currentLevel.Resources;
             if(_currentLevel.GetType() == typeof(Level1))
                 _currentLevel = new Level2(_voxelRenderer);
             else if (_currentLevel.GetType() == typeof(Level2))
@@ -131,6 +135,7 @@ namespace VoxelSeeds
                 _currentLevel = new Level5(_voxelRenderer);
             else
                 _currentLevel = new Level1(_voxelRenderer);
+            _currentLevel.Resources = _resourcesFromLastLevel;
         }
 
         bool wasCheatPlusPressed = false;
@@ -179,7 +184,10 @@ namespace VoxelSeeds
                     if (_currentLevel.IsVictory())
                         NextLevel();
                     else if (_currentLevel.IsLost())
-                        _currentLevel = (Level)_currentLevel.GetType().GetConstructor(new[] { typeof(VoxelRenderer) }).Invoke(new object[] { (object)_voxelRenderer} );
+                    {
+                        _currentLevel = (Level)_currentLevel.GetType().GetConstructor(new[] { typeof(VoxelRenderer) }).Invoke(new object[] { (object)_voxelRenderer });
+                        _currentLevel.Resources = _resourcesFromLastLevel;
+                    }
                     _gamePaused = false;
                 }
             }

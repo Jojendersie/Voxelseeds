@@ -192,13 +192,14 @@ namespace VoxelSeeds
             {
                 if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
                 {
+                    float transparency = TypeInformation.GetPrice(seeds[i]._type) > currentlevel.Resources ? 0.5f : 1.0f;
                     // Draw frame
-                    DrawFramedQuad((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42, TypeInformation.GetPrice(seeds[i]._type) > currentlevel.Resources ? 0.5f : 1.0f);
+                    DrawFramedQuad((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42, transparency);
                     // Draw price
-                    spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), Color.White);
-                    spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y+5), Color.White); 
+                    spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), new Color(1f,1f,1f,transparency));
+                    spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y + 5), new Color(1f, 1f, 1f, transparency)); 
                     // Draw Icons
-                    spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), Color.White);  
+                    spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), new Color(1f, 1f, 1f, transparency));  
                 }
             }
 

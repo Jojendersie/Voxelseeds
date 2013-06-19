@@ -14,14 +14,14 @@ namespace VoxelSeeds
         int lowOctave;
         int hightOctave;
 
-        public ValueNoise(ref System.Random rand, int low, int height)
+        public ValueNoise(int low, int height)
         {
             whiteNoise = new float[WHITE_NOISE_SIZE_XZ, WHITE_NOISE_SIZE_XZ, WHITE_NOISE_SIZE_Z];
             for (int y = 0; y < WHITE_NOISE_SIZE_XZ; ++y)
                 for (int x = 0; x < WHITE_NOISE_SIZE_XZ; ++x)
                     for (int z = 0; z < WHITE_NOISE_SIZE_Z; ++z)
                     {
-                        whiteNoise[y, x, z] = rand.Next(1000)/1000.0f;
+                        whiteNoise[y, x, z] = Random.Next(1001)/1000.0f;
                     }
 
             lowOctave = low;

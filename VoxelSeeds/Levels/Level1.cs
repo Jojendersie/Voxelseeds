@@ -15,8 +15,7 @@ namespace VoxelSeeds
 
         override public void Initialize()
         {
-            _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857024, 0.25f);
-            //_automaton = new Automaton(100, 50, 100, LevelType.STEP, 33333333, 0.25f);
+            _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857026, 0.25f);
 
             _resources = 100;
             _finalParasiteMass = 3500;

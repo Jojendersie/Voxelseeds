@@ -42,7 +42,7 @@ namespace VoxelSeeds
         readonly static int[] averageBiomass = { 0, 0, 0, 90, 130, 393, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
         //readonly static int[] prices = {0, 0, 0, 120, 90, 152, 68, 116, 956, 0, 0, 0, 0, 0, 0, 0 };
-        readonly static int[] prices = { 0, 0, 0, 81, 119, 355, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        readonly static int[] prices = { 0, 0, 0, 81, 114, 325, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         readonly static String[,] strength = { { "", "" }, { "-", "-" }, { "-", "-" }, 
                                              { "White Rot", "Noble Rot" }, 
                                              { "Hesperophanes Cinnereus", "Grasshopper" }, 
@@ -103,7 +103,7 @@ namespace VoxelSeeds
         /// <summary>
         /// The maximum number of voxels of a type which can be simultaneously in the world
         /// </summary>
-        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 131072, 512, 512, 512, 512, 131072, 131072, 131072 };
+        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 65536, 65536, 65536, 65536, 65536, 65536, 131072, 131072, 4096, 4096, 4096, 4096, 131072, 131072, 131072 };
         /// <summary>
         /// A scaling factor for voxels it is used to display bugs and beetles smaller
         /// </summary>
@@ -203,7 +203,7 @@ namespace VoxelSeeds
 
         public static int GetNumTypes() { return Enum.GetValues(typeof(VoxelType)).Length - 1; }
 
-        public static bool IsResistent(VoxelType voxelType, VoxelType against) { return resistances[(int)voxelType, (int)against] == 100; }
+        public static bool IsResistent(VoxelType voxelType, VoxelType against) { return voxelType == VoxelType.EMPTY || resistances[(int)voxelType, (int)against] == 100; }
         public static int GetResistance(VoxelType voxelType, VoxelType against) { return resistances[(int)voxelType, (int)against]; }
     }
 

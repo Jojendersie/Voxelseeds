@@ -27,7 +27,9 @@ namespace VoxelSeeds
     {
         public Map(int sizeX, int sizeY, int sizeZ, LevelType lvlType, int seed, float heightoffset)
         {
-            _voxels = new byte[sizeX*sizeY*sizeZ];
+            Random.InitRandom((uint)seed);
+
+            _voxels = new byte[sizeX * sizeY * sizeZ];
             _numVoxelsOfType = new int[TypeInformation.GetNumTypes()];
             _numVoxelsOfType[0] = sizeX * sizeY * sizeZ;
             _sizeX = sizeX;
@@ -35,20 +37,19 @@ namespace VoxelSeeds
             _sizeZ = sizeZ;
 
             // Create the ground
-            System.Random rand = new System.Random(seed);
             switch (lvlType)
             {
                 case LevelType.PLAIN:
-                    GeneratePlainLevel(ref rand, heightoffset);
+                    GeneratePlainLevel(heightoffset);
                     break;
                 case LevelType.BUBBLE:
-                    GenerateBubbleLevel(ref rand, heightoffset);
+                    GenerateBubbleLevel(heightoffset);
                     break;
                 case LevelType.MOUNTAINS:
-                    GenerateMountainsLevel(ref rand, heightoffset);
+                    GenerateMountainsLevel(heightoffset);
                     break;
                 case LevelType.CANYON:
-                    GenerateCanoynsLevel(ref rand, heightoffset);
+                    GenerateCanoynsLevel(heightoffset);
                     break;
             }
         }
@@ -220,9 +221,9 @@ namespace VoxelSeeds
         /// Create a relatively flat ground.
         /// </summary>
         /// <param name="rand"></param>
-        private void GeneratePlainLevel(ref System.Random rand, float heightOffset = 0.2f)
+        private void GeneratePlainLevel(float heightOffset = 0.2f)
         {
-            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            ValueNoise noise = new ValueNoise(3, 8);
             // Fill half to test
             Int32 maxHeight = Math.Min( 8, SizeY-1 );
             Parallel.For( 0, SizeZ, (z) => {
@@ -236,9 +237,9 @@ namespace VoxelSeeds
             });
         }
 
-        private void GenerateBubbleLevel(ref System.Random rand, float heightOffset)
+        private void GenerateBubbleLevel(float heightOffset)
         {
-            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            ValueNoise noise = new ValueNoise(3, 8);
             int sizeYscaled = SizeY / 3;
             // Fill half to test
             Parallel.For( 0, SizeZ, (z) => {
@@ -256,9 +257,9 @@ namespace VoxelSeeds
             Rockyfy();
         }
 
-        private void GenerateMountainsLevel(ref System.Random rand, float heightOffset)
+        private void GenerateMountainsLevel(float heightOffset)
         {
-            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            ValueNoise noise = new ValueNoise(3, 8);
             int sizeYscaled = SizeY / 3;
             // Fill half to test
             Parallel.For( 0, SizeZ, (z) => {
@@ -276,9 +277,9 @@ namespace VoxelSeeds
             Rockyfy();
         }
 
-        private void GenerateCanoynsLevel(ref System.Random rand, float heightOffset)
+        private void GenerateCanoynsLevel(float heightOffset)
         {
-            ValueNoise noise = new ValueNoise(ref rand, 3, 8);
+            ValueNoise noise = new ValueNoise(3, 8);
             int sizeYscaled = SizeY / 3;
             // Fill half to test
             Parallel.For( 0, SizeZ, (z) => {
