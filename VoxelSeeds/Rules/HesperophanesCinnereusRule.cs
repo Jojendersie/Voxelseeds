@@ -46,7 +46,7 @@ namespace VoxelSeeds.Rules
             else if (!TypeInformation.IsResistent(typeOfTarget, VoxelType.HESPEROPHANES_CINNEREUS))
             {
                 // Try to eat
-                if (Random.Next(101) > TypeInformation.GetResistence(typeOfTarget, VoxelType.HESPEROPHANES_CINNEREUS))
+                if (Random.Next(101) > TypeInformation.GetResistance(typeOfTarget, VoxelType.HESPEROPHANES_CINNEREUS))
                 {
                     output[t, h, b] = new VoxelInfo(VoxelType.EMPTY);
                     // If food is consumed completely growth.

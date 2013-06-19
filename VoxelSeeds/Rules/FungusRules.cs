@@ -6,18 +6,23 @@ using System.Threading.Tasks;
 
 namespace VoxelSeeds.Rules
 {
-    class NobleRotRule : IVoxelRule
+    class FungusRules : IVoxelRule
     {
+        private VoxelType _thisType;
+        public FungusRules(VoxelType fungusType)
+        {
+            _thisType = fungusType;
+        }
         
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
-            // Apply each 18-th turn
-            if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.NOBLEROT_FUNGUS)) return null;
+            // Apply each x-th turn
+            if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(_thisType)) return null;
 
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
             int gen = neighbourhood[1, 1, 1].Generation;
-            int min = 0;// TypeInformation.GetGrowingSteps(VoxelType.NOBLEROT_FUNGUS) / 2;
-            int max = TypeInformation.GetGrowingSteps(VoxelType.NOBLEROT_FUNGUS) / 2;
+            int min = 0;// TypeInformation.GetGrowingSteps(_thisType) / 2;
+            int max = TypeInformation.GetGrowingSteps(_thisType) - 2;
             int growadd;
 
             if (gen == 0)
@@ -30,19 +35,18 @@ namespace VoxelSeeds.Rules
                         for (int b = 0; b < 3; ++b) if (!(t == 1 && h == 1 && b == 1)) // if not the voxel itself
                             {
                                 voxeltype = neighbourhood[t, h, b].Type;
-                                if ((TypeInformation.IsBiomass(voxeltype) // there is a voxel in which the fungus can grow
-                                    || voxeltype == VoxelType.EMPTY) // or the field is empty
-                                    && !TypeInformation.IsGroundOrFungus(voxeltype))
+                                if (voxeltype == VoxelType.EMPTY || //
+                                    (TypeInformation.GetResistance(voxeltype, _thisType) < Random.Next(101)) // or there is a voxel in which the fungus can grow
+                                   )
                                 {
                                     if (CanFungusGrowOn(t, h, b, neighbourhood)) // there is a voxel in d6 on which the fungus can grow on
                                     {
                                         // grow
-                                        growadd = 0;
-                                        if (voxeltype == VoxelType.ROCK || voxeltype == VoxelType.TEAK_WOOD) growadd = -30;
+                                        growadd = Random.Next(min, max) - (TypeInformation.GetResistance(voxeltype, _thisType) / 4);
+                                      /*  if (voxeltype == VoxelType.ROCK || voxeltype == VoxelType.TEAK_WOOD) growadd = -30;
                                         if (voxeltype == VoxelType.PINE_WOOD || voxeltype == VoxelType.BEECH_WOOD ||
-                                            voxeltype == VoxelType.REDWOOD) growadd = 10;
-
-                                        output[t, h, b] = new VoxelInfo(VoxelType.NOBLEROT_FUNGUS, true, 0, 0, Random.Next(min, max) + growadd);
+                                            voxeltype == VoxelType.OAK_WOOD || voxeltype == VoxelType.REDWOOD) growadd = 10;*/
+                                        output[t, h, b] = new VoxelInfo(_thisType, true, 0, 0, growadd);
                                     }
                                 }
                             }
@@ -53,7 +57,7 @@ namespace VoxelSeeds.Rules
                 if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 0, 1].Type)) fung++;
                 if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 1, 2].Type)) fung++;
                 if (TypeInformation.IsGroundOrFungus(neighbourhood[1, 1, 0].Type)) fung++;
-                if (fung == 6) output[2, 1, 1] = new VoxelInfo(VoxelType.NOBLEROT_FUNGUS);
+                if (fung == 6) output[2, 1, 1] = new VoxelInfo(_thisType);
             }
 
             return output;
@@ -62,16 +66,17 @@ namespace VoxelSeeds.Rules
         private bool CanFungusGrowOn(int t, int h, int b, VoxelInfo[, ,] neighbourhood)
         {
             bool res = false;
-            if (t < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t + 1, h, b].Type);
-            if (t > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t - 1, h, b].Type);
-            if (h < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h + 1, b].Type);
-            if (h > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h - 1, b].Type);
-            if (b < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b + 1].Type);
-            if (b > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b - 1].Type);
+            if (t < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t + 1, h, b].Type, _thisType);
+            if (t > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t - 1, h, b].Type, _thisType);
+            if (h < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h + 1, b].Type, _thisType);
+            if (h > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h - 1, b].Type, _thisType);
+            if (b < 2) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b + 1].Type, _thisType);
+            if (b > 0) res = res || TypeInformation.CanFungusGrowOn(neighbourhood[t, h, b - 1].Type, _thisType);
 
-            if(res) res = 5 < Random.Next(0, 15);
+//            if (res) res = 5 < Random.Next(0, 15);
 
             return res;
         }
+
     }
 }
