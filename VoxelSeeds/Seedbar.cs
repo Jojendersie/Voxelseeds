@@ -26,8 +26,12 @@ namespace VoxelSeeds
         }
 
         const int progressBarPictureCount = 3;
-        const int progressBarPictureWidth = 91;
+        const int PARASITE_PROGRESSBAR_SLICE_WIDTH = 91;
+        const int BIOMASS_PROGRESSBAR_SLICE_WIDTH = 100;
         const int progressBarPictureHeight = 1007;
+        const int BIG_INFO_FIELD_WIDTH = 200;
+        const int BIG_INFO_FIELD_HEIGHT = 64;
+        const int PROGRESS_WIDTH = BIG_INFO_FIELD_WIDTH / 2 - 10;
 
         private SpriteBatch spriteBatch;
         private SpriteFont font;
@@ -92,7 +96,7 @@ namespace VoxelSeeds
             helix = contentManager.Load<Texture2D>("helix.png");
             pixel = contentManager.Load<Texture2D>("pixel.png");
             frame = contentManager.Load<Texture2D>("frame.png");
-            progressBar = contentManager.Load<Texture2D>("Dummy.png");
+            progressBar = contentManager.Load<Texture2D>("biomass.png");
             evilProgressBar = contentManager.Load<Texture2D>("parasiteprogress.png");
             _clock = contentManager.Load<Texture2D>("clock.png");
 
@@ -143,36 +147,42 @@ namespace VoxelSeeds
 
         private void DrawFramedQuad(int left, int top, int width, int height, float transparency = 1.0f)
         {
-            spriteBatch.Draw(frame, new DrawingRectangle(left, top, width, height), new Color(0.3f, 0.4f, 0.3f, transparency));
+            spriteBatch.Draw(pixel, new DrawingRectangle(left, top, width, height), new Color(0.3f, 0.4f, 0.3f, transparency));
             spriteBatch.Draw(pixel, new DrawingRectangle(left + 5, top + 5, width - 10, height - 10), new Color(0f, 0.1f, 0f, transparency));
         }
 
         public void Draw(Level currentlevel, GameTime gameTime)
         {
-            float progress = (float)currentlevel.CurrentBiomass / (float)currentlevel.TargetBiomass;
-            float evilProgress = (float)currentlevel.CurrentParasiteMass / (float)currentlevel.FinalParasiteBiomass;
+            float progress = Math.Min(1f,(float)currentlevel.CurrentBiomass / (float)currentlevel.TargetBiomass);
+            float evilProgress = Math.Min(1f,(float)currentlevel.CurrentParasiteMass / (float)currentlevel.FinalParasiteBiomass);
 
 
             progressCount = (float)gameTime.TotalGameTime.TotalSeconds / 2;
 
+            // Factor to blend between different textures for the same object
             alpha = progressCount - (float)Math.Floor(progressCount);
 
             spriteBatch.Begin(SpriteSortMode.Deferred, spriteBatch.GraphicsDevice.BlendStates.NonPremultiplied);
             
-            //draw Progress good/evil
-            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * progress)),
-                new DrawingRectangle(progressBarPictureWidth * ((int)progressCount % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * progress)),
+            // Draw Progress good/evil
+            int progressBarHeight = windowHeight - BIG_INFO_FIELD_HEIGHT * 2 - 10;
+            DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT * 2, BIG_INFO_FIELD_WIDTH / 2, windowHeight - BIG_INFO_FIELD_HEIGHT * 2);
+            DrawingRectangle progressRect = new DrawingRectangle(windowWidth - 5 - BIG_INFO_FIELD_WIDTH / 2, windowHeight - 5, PROGRESS_WIDTH, (int)(progressBarHeight * progress));
+            spriteBatch.Draw(progressBar, progressRect,
+                new DrawingRectangle(BIOMASS_PROGRESSBAR_SLICE_WIDTH * ((int)progressCount % progressBarPictureCount), 0, BIOMASS_PROGRESSBAR_SLICE_WIDTH, (int)(progressBarHeight * progress)),
                 new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(progressBar, new DrawingRectangle(windowWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * progress)),
-                new DrawingRectangle(progressBarPictureWidth * (((int)progressCount + 1) % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * progress)),
+            spriteBatch.Draw(progressBar, progressRect,
+                new DrawingRectangle(BIOMASS_PROGRESSBAR_SLICE_WIDTH * (((int)progressCount + 1) % progressBarPictureCount), 0, BIOMASS_PROGRESSBAR_SLICE_WIDTH, (int)(progressBarHeight * progress)),
                 new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
 
-            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * evilProgress)),
-                new DrawingRectangle(progressBarPictureWidth * ((int)progressCount % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * evilProgress)),
+            DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH / 2, BIG_INFO_FIELD_HEIGHT * 2, BIG_INFO_FIELD_WIDTH / 2, progressBarHeight + 10);
+            progressRect = new DrawingRectangle(windowWidth - 5, windowHeight - 5, PROGRESS_WIDTH, (int)(progressBarHeight * evilProgress));
+            spriteBatch.Draw(evilProgressBar, progressRect,
+                new DrawingRectangle(PARASITE_PROGRESSBAR_SLICE_WIDTH * ((int)progressCount % progressBarPictureCount), 0, PARASITE_PROGRESSBAR_SLICE_WIDTH, (int)(progressBarHeight * evilProgress)),
                 new Color(1f,1f,1f, 1f - alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
-            spriteBatch.Draw(evilProgressBar, new DrawingRectangle(windowWidth - progressBarPictureWidth, windowHeight, progressBarPictureWidth, (int)((windowHeight - 68) * evilProgress)),
-                new DrawingRectangle(progressBarPictureWidth * (((int)progressCount + 1) % progressBarPictureCount), 0, progressBarPictureWidth, (int)(progressBarPictureHeight * evilProgress)),
+            spriteBatch.Draw(evilProgressBar, progressRect,
+                new DrawingRectangle(PARASITE_PROGRESSBAR_SLICE_WIDTH * (((int)progressCount + 1) % progressBarPictureCount), 0, PARASITE_PROGRESSBAR_SLICE_WIDTH, (int)(progressBarHeight * evilProgress)),
                 new Color(1f, 1f, 1f, alpha), (float)Math.PI, new Vector2(0, 0), SpriteEffects.None, 0);
 
             spriteBatch.End();
@@ -193,19 +203,14 @@ namespace VoxelSeeds
             }
 
             // Draw Resources
-            const int BIG_INFO_FIELD_WIDTH = 200;
-            const int BIG_INFO_FIELD_HEIGHT = 64;
             DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH, 0, BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT);
             spriteBatch.Draw(helix, new DrawingRectangle(windowWidth - BIG_INFO_FIELD_WIDTH + 10, 9, 23, 46), Color.White);
-            spriteBatch.DrawString(largeFont, currentlevel.Resources.ToString(), new Vector2(windowWidth - BIG_INFO_FIELD_WIDTH + 33, -6), Color.White);
+            spriteBatch.DrawString(largeFont, currentlevel.Resources.ToString(), new Vector2(windowWidth - BIG_INFO_FIELD_WIDTH + 45, -6), Color.White);
 
             // Draw timer
-            DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH, windowHeight + 5 - 2 * BIG_INFO_FIELD_HEIGHT, BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT);
-            spriteBatch.Draw(_clock, new DrawingRectangle(windowWidth - BIG_INFO_FIELD_WIDTH + 8, windowHeight + 13 - 2 * BIG_INFO_FIELD_HEIGHT, 39, 48), Color.White);
-            spriteBatch.DrawString(largeFont, currentlevel.CountDown, new Vector2(windowWidth - BIG_INFO_FIELD_WIDTH + 50, windowHeight - 2 * BIG_INFO_FIELD_HEIGHT), Color.White);
-
-            // Draw biomass counter
-            DrawFramedQuad(windowWidth - 350, windowHeight - BIG_INFO_FIELD_HEIGHT, 350, BIG_INFO_FIELD_HEIGHT);
+            DrawFramedQuad(windowWidth - BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT, BIG_INFO_FIELD_WIDTH, BIG_INFO_FIELD_HEIGHT);
+            spriteBatch.Draw(_clock, new DrawingRectangle(windowWidth - BIG_INFO_FIELD_WIDTH + 8, BIG_INFO_FIELD_HEIGHT+8, 39, 48), Color.White);
+            spriteBatch.DrawString(largeFont, currentlevel.CountDown, new Vector2(windowWidth - BIG_INFO_FIELD_WIDTH + 45, BIG_INFO_FIELD_HEIGHT - 5), currentlevel.TheClockIsTicking() ? Color.White : Color.DarkGray);
 
             if (_selected > -1)
             {

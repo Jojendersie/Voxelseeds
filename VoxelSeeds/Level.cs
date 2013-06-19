@@ -29,6 +29,7 @@ namespace VoxelSeeds
 
         public Level(VoxelRenderer voxelRenderer)
         {
+            _countDown = 1.0f;
             Initialize();
 
             lightDirection.Normalize();
@@ -45,6 +46,7 @@ namespace VoxelSeeds
 
         public bool IsVictory() { return _countDown <= 0.0f; }
         public bool IsLost() { return (CurrentParasiteMass >= _finalParasiteMass) || (_resources < 68 && _automaton.NumLivingBiomass==0); }
+        public bool TheClockIsTicking() { return CurrentBiomass > _targetBiomass; }
 
         public Map GetMap() { return _automaton.Map; }
         public void InsertSeed(int x, int y, int z, VoxelType type) { _automaton.InsertSeed(x, y, z, type); }
@@ -57,7 +59,7 @@ namespace VoxelSeeds
             _automaton.Tick();
             _resources += Math.Max(0, CurrentBiomass - oldBiomass);
 
-            if (CurrentBiomass > _targetBiomass)
+            if (TheClockIsTicking())
                 _countDown = Math.Max(0.0f, _countDown - 0.25f / 60.0f);
         }
 

@@ -75,29 +75,35 @@ namespace VoxelSeeds
 
         /// <summary>
         /// Enough space is defined as:
-        /// A circle of a spezified size must be empty on the y-level where the
-        /// seed should be set. And the level-1 has to contain at least 30% Ground.
+        /// The weighted area sum of a circle of a spezified size must be at
+        /// least 90% on the y-level where the seed should be set and the level - 1
+        /// has to contain at least 50% Ground (again weighted).
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
         static public bool IsThereEnoughSpaceFor(Map map, VoxelType type, int x, int y, int z)
         {
-            int num = 0;
-            int numAvailable = 0;
-            int numGroundBelow = 0;
+            float num = 0f;
+            float numAvailable = 0f;
+            float numGroundBelow = 0f;
             int radius = TypeInformation.GetRequiredSpace(type);
             for (int w = -radius; w <= radius; ++w)
-                for (int u = -radius; u <= radius; ++u) if(u*u+w*w <= radius*radius)
+                for (int u = -radius; u <= radius; ++u)
                 {
-                    ++num;
-                    if (map.IsEmpty(map.EncodePosition(x + u, y, z + w)))
-                        ++numAvailable;
-                    if (map.Get(map.EncodePosition(x + u, y - 1, z + w)) == VoxelType.GROUND)
-                        ++numGroundBelow;
+                    // The center gets the largest weight. Decreasing to zero at edges
+                    float fWeight = (float)(radius-Math.Sqrt(u * u + w * w));
+                    if (fWeight >= 0)
+                    {
+                        num += fWeight;
+                        if (map.IsEmpty(map.EncodePosition(x + u, y, z + w)))
+                            numAvailable += fWeight;
+                        if (map.Get(map.EncodePosition(x + u, y - 1, z + w)) == VoxelType.GROUND)
+                            numGroundBelow += fWeight;
+                    }
                 }
 
-            return numAvailable == num
-                && ((numGroundBelow/(float)num) >= 0.3f);
+            return ((numAvailable/num) >= 0.90f)
+                && ((numGroundBelow/num) >= 0.5f);
         }
     }
 }
