@@ -16,7 +16,7 @@ namespace VoxelSeeds
         {
             _automaton = new Automaton(150, 40, 150, LevelType.PLAIN, 52384, 0.8f);
 
-            _finalParasiteMass = 20000;
+            _finalParasiteMass = 8000;
             _targetBiomass = 1500;
             _countDown = 1.3333333f;
 
