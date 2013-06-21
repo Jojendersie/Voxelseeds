@@ -124,7 +124,7 @@ namespace VoxelSeeds
         void NextLevel()
         {
             // Take resources from last level to the next one
-            _resourcesFromLastLevel = _currentLevel.Resources;
+            _resourcesFromLastLevel = _currentLevel.Resources + 100;
             if(_currentLevel.GetType() == typeof(Level1))
                 _currentLevel = new Level2(_voxelRenderer);
             else if (_currentLevel.GetType() == typeof(Level2))
@@ -207,7 +207,9 @@ namespace VoxelSeeds
             // Draw a gost circle with the size of the reauired space
             if (_pickPosAvailable)
             {
-                float transparency = _pickPosSeedable ? 0.75f : 0.25f;
+                // Increase transparency if no correct seeding position or not enough resources
+                bool bTooExpensive = TypeInformation.GetPrice(_seedbar.GetSeedInfo()._type) > _currentLevel.Resources;
+                float transparency = (_pickPosSeedable) ? 0.75f : 0.25f;
                 int radius = TypeInformation.GetRequiredSpace(_seedbar.GetSeedInfo()._type);
                 int radiusSquare = radius * radius;
                 for (int w = -radius; w <= radius; ++w)
@@ -215,7 +217,8 @@ namespace VoxelSeeds
                     {
                         Int32 pos = _currentLevel.GetMap().EncodePosition(_pickedPos.X + u, _pickedPos.Y, _pickedPos.Z + w);
                         if (((u * u + w * w) <= radiusSquare) && _currentLevel.GetMap().IsEmpty(pos))
-                            _voxelRenderer.DrawGhost(_camera, GraphicsDevice, _seedbar.GetSeedInfo()._type, pos, transparency);
+                            // Use different types to show the reason for seeding problems
+                            _voxelRenderer.DrawGhost(_camera, GraphicsDevice, bTooExpensive ? VoxelType.OAK_WOOD : VoxelType.TEAK_WOOD, pos, transparency);
                     }
             }
 
