@@ -22,7 +22,7 @@ namespace VoxelSeeds.Rules
             int res = neighbourhood[1, 1, 1].Resources;
             if (gen == 0)
             {
-                // Grow Cross and ovveride current generation
+                // Grow Cross and override current generation
                 output[1, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 1, 0, TypeInformation.GetGrowingSteps(VoxelType.PINE_WOOD) / 2);
                 output[2, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 2, 30);
                 output[0, 1, 1] = new VoxelInfo(VoxelType.PINE_WOOD, true, 2, 30);

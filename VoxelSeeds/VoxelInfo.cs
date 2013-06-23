@@ -42,7 +42,7 @@ namespace VoxelSeeds
         //readonly static int[] averageBiomass = { 0, 0, 0, 90, 130, 393, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
         //readonly static int[] prices = {0, 0, 0, 120, 90, 152, 68, 116, 956, 0, 0, 0, 0, 0, 0, 0 };
-        readonly static int[] prices = { 0, 0, 0, 96, 148, 325, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        readonly static int[] prices = { 0, 0, 0, 96, 148, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         readonly static String[,] strength = { { "", "" }, { "-", "-" }, { "-", "-" }, 
                                              { "White Rot", "Noble Rot" }, 
                                              { "Hesperophanes Cinnereus", "Grasshopper" }, 
@@ -111,7 +111,7 @@ namespace VoxelSeeds
 
         readonly static int[] growingSteps =   { 0, 0, 0, 4, 6, 9, 11, 10, 12, 26, 24, 2, 1, 3, 2, 5, 3, 6 };
 
-        readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5, 2, 7 };
+        readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 6, 8, 19, 1, 1, 1, 1, 50, 1, 5, 2, 6 };
 
         /// <summary>
         /// How much space is required to allow seeding.

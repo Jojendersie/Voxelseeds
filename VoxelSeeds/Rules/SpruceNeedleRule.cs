@@ -55,6 +55,8 @@ namespace VoxelSeeds.Rules
                     output[1, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(2, 0, 1, neighbourhood))
                     output[2, 0, 1] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
+                if (CanPlace(0, 0, 0, neighbourhood))
+                    output[0, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(1, 0, 0, neighbourhood))
                     output[1, 0, 0] = new VoxelInfo(VoxelType.SPRUCE_NEEDLE, true, gen + 1, 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.PINE_NEEDLE)));
                 if (CanPlace(2, 0, 0, neighbourhood))
