@@ -14,6 +14,8 @@ namespace VoxelSeeds
 
         public static void InitRandom(UInt32 seed)
         {
+            c = 362436;
+
             UInt32 i;
 			Q[0] = seed;
 			Q[1] = seed + PHI;

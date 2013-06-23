@@ -17,10 +17,10 @@ namespace VoxelSeeds
         {
             _automaton = new Automaton(100, 50, 100, LevelType.PLAIN, 34857026, 0.25f);
 
-            _resources = 100;
+            _resources = 200;
             _finalParasiteMass = 2900;
             _targetBiomass = 1000;
-            _countDown = 1.0f;
+            _countDown = 0.5f;
 
             int x = GetMap().SizeX / 2;
             int z = GetMap().SizeZ / 2;

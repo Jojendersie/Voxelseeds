@@ -190,16 +190,19 @@ namespace VoxelSeeds
                         func(x, y, z);
         }
 
-        private void update(ref ConcurrentDictionary<Int32, VoxelInfo> results)
+        private int[] update(ref ConcurrentDictionary<Int32, VoxelInfo> results)
         {
+            int[] numWrittenVoxels = new int[TypeInformation.GetNumTypes()];
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
             {
                 var po = _map.DecodePosition(vox.Key);
                 Debug.Assert( _map.IsInside(po.X, po.Y, po.Z) );
                 
                 InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks, vox.Value.From);
+                ++numWrittenVoxels[(int)vox.Value.Type];
             }
             Upload();
+            return numWrittenVoxels;
         }
 
         /// <summary>
@@ -262,18 +265,22 @@ namespace VoxelSeeds
         /// Simulates on step of automaton in parallel.
         /// The results from the last tick are uploaded now.
         /// </summary>
-        public void Tick()
+        /// <returns>Number of new written voxels. This is not necessarily the
+        /// amount of new mass because they could have overwritten some old.</returns>
+        public int[] Tick()
         {
+            int[] numWrittenVoxels = null;
             if (_simTask != null)
             {
                 _simTask.Wait();
                 ConcurrentDictionary<Int32, VoxelInfo> results = _simTask.Result;
                 // Do a synchronus update
-                update(ref results);
+                numWrittenVoxels = update(ref results);
             }
             _simTask = new Task<ConcurrentDictionary<int, VoxelInfo>>(() => SimulateAsync());
             // Start next turn
             _simTask.Start();
+            return numWrittenVoxels;
         }
     }
 }

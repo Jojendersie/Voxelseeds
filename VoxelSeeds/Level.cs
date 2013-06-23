@@ -21,7 +21,7 @@ namespace VoxelSeeds
         public int CurrentBiomass { get { int mass = 0; for (VoxelType t = VoxelType.EMPTY; t < VoxelType.ENUM_END; ++t) if (TypeInformation.IsBiomass(t)) mass+=GetMap().GetNumVoxels(t); return mass; } }
         public int CurrentParasiteMass { get { int mass = 0; for (VoxelType t = VoxelType.EMPTY; t < VoxelType.ENUM_END; ++t) if (TypeInformation.IsParasite(t)) mass += GetMap().GetNumVoxels(t); return mass; } }
         public int FinalParasiteBiomass { get { return _finalParasiteMass; } protected set { _finalParasiteMass = value; } }
-        public int Resources { get { return _resources; } set { _resources = value; } }
+        public int Resources { get { return (int)_resources; } set { _resources = value; } }
         public string CountDown { get { return Math.Floor(_countDown).ToString("00") + ':' + Math.Ceiling(60.0f * (_countDown - Math.Floor(_countDown))).ToString("00"); } }
 
         public Vector3 LightDirection { get { return lightDirection; } protected set { lightDirection = value; } }
@@ -45,7 +45,7 @@ namespace VoxelSeeds
         public abstract void Initialize();
 
         public bool IsVictory() { return _countDown <= 0.0f; }
-        public bool IsLost() { return (CurrentParasiteMass >= _finalParasiteMass) || (_resources < 68 && _automaton.NumLivingBiomass==0); }
+        public bool IsLost() { return (CurrentParasiteMass >= _finalParasiteMass) || (_resources < 81 && _automaton.NumLivingBiomass==0); }
         public bool TheClockIsTicking() { return CurrentBiomass > _targetBiomass; }
 
         public Map GetMap() { return _automaton.Map; }
@@ -55,9 +55,14 @@ namespace VoxelSeeds
 
         public void Tick()
         {
-            int oldBiomass = CurrentBiomass;
-            _automaton.Tick();
-            _resources += Math.Max(0, CurrentBiomass - oldBiomass);
+            int[] newWrittenVoxels = _automaton.Tick();
+
+            if( newWrittenVoxels != null )
+            for (VoxelType t = VoxelType.EMPTY; t < VoxelType.ENUM_END; ++t)
+            {
+                if (TypeInformation.IsWood(t))          _resources += newWrittenVoxels[(int)t] * 1.3f;
+                else if (TypeInformation.IsBiomass(t))  _resources += newWrittenVoxels[(int)t] / 3.0f;
+            }
 
             if (TheClockIsTicking())
                 _countDown = Math.Max(0.0f, _countDown - 0.25f / 60.0f);
@@ -66,7 +71,7 @@ namespace VoxelSeeds
         protected Automaton _automaton;
         protected int _targetBiomass;
         protected int _finalParasiteMass;
-        protected int _resources;
+        protected float _resources;
 
         // Timespan the player must hold the _targetBiomass level in minutes.
         protected float _countDown;

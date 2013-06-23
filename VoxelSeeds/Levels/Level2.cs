@@ -14,11 +14,11 @@ namespace VoxelSeeds
 
         override public void Initialize()
         {
-            _automaton = new Automaton(150, 40, 150, LevelType.PLAIN, 52384, 0.8f);
+            _automaton = new Automaton(150, 40, 150, LevelType.PLAIN, 52386, 0.8f);
 
             _finalParasiteMass = 8000;
             _targetBiomass = 1500;
-            _countDown = 1.3333333f;
+            _countDown = 0.75f;
 
             for (int i = 0; i < 80; ++i)
             {
@@ -26,7 +26,7 @@ namespace VoxelSeeds
             }
 
             
-            InsertSeed(26, Math.Max(GetMap().GetHeighest(26, 38), 0) + 1, 38, VoxelType.WHITEROT_FUNGUS);
+            InsertSeed(137, Math.Max(GetMap().GetHeighest(137, 101), 0) + 1, 101, VoxelType.WHITEROT_FUNGUS);
         }
     }
 }
