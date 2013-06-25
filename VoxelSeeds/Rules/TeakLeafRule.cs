@@ -36,18 +36,17 @@ namespace VoxelSeeds.Rules
                 //output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
                 output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF);
                 if (CanPlace(2, 1, 1, neighbourhood))
-                    output[2, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[2, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
                 if (CanPlace(0, 1, 1, neighbourhood))
-                    output[0, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[0, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
                 if (CanPlace(1, 1, 2, neighbourhood))
-                    output[1, 1, 2] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[1, 1, 2] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
                 if (CanPlace(1, 1, 0, neighbourhood))
-                    output[1, 1, 0] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(0, 3), res += 10, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
+                    output[1, 1, 0] = new VoxelInfo(VoxelType.TEAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.TEAK_LEAF)));
             }
             else
             {
-                // Grow upwards one last time
-                //output[1, 2, 1] = new VoxelInfo(VoxelType.TEAK_WOOD);
+                // Stop growing
                 output[1, 1, 1] = new VoxelInfo(VoxelType.TEAK_LEAF);
             }
             return output;
@@ -56,9 +55,9 @@ namespace VoxelSeeds.Rules
         bool CanPlace(int t, int h, int b, VoxelInfo[, ,] neighbourhood)
         {
             bool res = neighbourhood[t, h, b].Type == VoxelType.EMPTY;
-            if (h < 2) res = res && neighbourhood[t, h + 1, b].Type != VoxelType.TEAK_LEAF;
-            if (h > 0) res = res && neighbourhood[t, h - 1, b].Type != VoxelType.TEAK_LEAF;
-            return res && neighbourhood[1, 1, 1].Resources < 51;
+            if (h < 2) res &= neighbourhood[t, h + 1, b].Type != VoxelType.TEAK_LEAF;
+            if (h > 0) res &= neighbourhood[t, h - 1, b].Type != VoxelType.TEAK_LEAF;
+            return res;
         }
     }
 }

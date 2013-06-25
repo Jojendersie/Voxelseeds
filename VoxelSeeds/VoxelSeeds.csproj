@@ -41,6 +41,9 @@
     <Content Include="Content\Beech.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\beechleaf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\biomass.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -87,6 +90,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\oak.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\oakleaf.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\parasiteprogress.png">
@@ -145,6 +151,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="Rules\BeechWoodRule.cs" />
+    <Compile Include="Rules\BeechLeafRule.cs" />
     <Compile Include="Rules\HesperophanesCinnereusRule.cs" />
     <Compile Include="Rules\HouseLonghornBeetleRule.cs" />
     <Compile Include="Rules\OakWoodRule.cs" />
