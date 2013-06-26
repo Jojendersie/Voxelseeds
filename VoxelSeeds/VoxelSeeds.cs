@@ -213,7 +213,7 @@ namespace VoxelSeeds
                 int radius = TypeInformation.GetRequiredSpace(_seedbar.GetSeedInfo()._type);
                 int radiusSquare = radius * radius;
                 for (int w = -radius; w <= radius; ++w)
-                    for (int u = -radius; u <= radius; ++u)
+                    for (int u = -radius; u <= radius; ++u) if(_currentLevel.GetMap().IsInside(_pickedPos.X + u, _pickedPos.Y, _pickedPos.Z + w))
                     {
                         Int32 pos = _currentLevel.GetMap().EncodePosition(_pickedPos.X + u, _pickedPos.Y, _pickedPos.Z + w);
                         if (((u * u + w * w) <= radiusSquare) && _currentLevel.GetMap().IsEmpty(pos))

@@ -8,7 +8,11 @@ namespace VoxelSeeds.Rules
 {
     /// <summary>
     /// A trunc of a beech with large branches.
-    /// 
+    /// Basic shapes: ( w-dead oak wood, or branch 1000+)
+    ///     w w  w
+    /// 0   w 0+ w
+    ///     w w  w
+    ///     
     /// Actions:
     ///     * Grow upward and increase resources
     ///     * Spawn branch if enough resources
@@ -80,6 +84,7 @@ namespace VoxelSeeds.Rules
                 }
                 else
                 {
+                    // Top level - kill wood and spanw leaves
                     if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.BEECH_LEAF, true);
                     if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.BEECH_LEAF, true);
                     if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(VoxelType.BEECH_LEAF, true);

@@ -95,10 +95,13 @@ namespace VoxelSeeds
                     if (fWeight >= 0)
                     {
                         num += fWeight;
-                        if (map.IsEmpty(map.EncodePosition(x + u, y, z + w)))
-                            numAvailable += fWeight;
-                        if (map.Get(map.EncodePosition(x + u, y - 1, z + w)) == VoxelType.GROUND)
-                            numGroundBelow += fWeight;
+                        if (map.IsInside(x + u, y, z + w))
+                        {
+                            if (map.IsEmpty(map.EncodePosition(x + u, y, z + w)))
+                                numAvailable += fWeight;
+                            if (map.Get(map.EncodePosition(x + u, y - 1, z + w)) == VoxelType.GROUND)
+                                numGroundBelow += fWeight;
+                        }
                     }
                 }
 

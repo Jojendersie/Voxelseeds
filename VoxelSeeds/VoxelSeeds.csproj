@@ -152,6 +152,7 @@
     <Compile Include="Random.cs" />
     <Compile Include="Rules\BeechWoodRule.cs" />
     <Compile Include="Rules\BeechLeafRule.cs" />
+    <Compile Include="Rules\OakLeafRule.cs" />
     <Compile Include="Rules\HesperophanesCinnereusRule.cs" />
     <Compile Include="Rules\HouseLonghornBeetleRule.cs" />
     <Compile Include="Rules\OakWoodRule.cs" />
