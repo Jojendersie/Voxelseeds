@@ -44,7 +44,7 @@ namespace VoxelSeeds
         //readonly static int[] averageBiomass = { 0, 0, 0, 90, 130, 393, 450, 1100, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
         //readonly static int[] prices = {0, 0, 0, 120, 90, 152, 68, 116, 956, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        readonly static int[] prices = { 0, 0, 0, 96, 148, 255, 349, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        readonly static int[] prices = { 0, 0, 0, 96, 148, 255, 339, 715, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         readonly static String[,] strength = { { "", "" }, { "-", "-" }, { "-", "-" }, 
                                              { "White Rot", "Noble Rot" }, 
                                              { "Hesperophanes Cinnereus", "Grasshopper" }, 

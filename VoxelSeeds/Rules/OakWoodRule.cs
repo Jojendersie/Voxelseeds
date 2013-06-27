@@ -16,6 +16,7 @@ namespace VoxelSeeds.Rules
     /// 
     /// Actions:
     ///     * Grow upward and increase resources
+    ///     * Grow dwonward and increase resources
     ///     * Spawn branch if enough resources
     ///     * Spawn leaves at brach ends
     /// Grows in: Empty and Leaves.
@@ -47,45 +48,57 @@ namespace VoxelSeeds.Rules
             }
             else if (gen < 1000)
             {
-                // Grow upward and to the sides
                 if (gen < TypeInformation.GetGrowHeight(VoxelType.OAK_WOOD))
                 {
-                    if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(VoxelType.OAK_WOOD);
-                    if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
-                    if (CanPlace(1, 1, 1, neighbourhood)) output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
-                    if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
-                    if (CanPlace(1, 1, 2, neighbourhood)) output[1, 1, 2] = new VoxelInfo(VoxelType.OAK_WOOD);
-
-                    // Exchange one of them randomly if new branch should spawn
-                    if (res >= 4)
+                    if (neighbourhood[1, 1, 1].From == Direction.DOWN)
                     {
-                        int rndx = 1, rndz = 1;
-                        while (rndx * rndz == 1)
+                        if (CanPlace(1, 1, 1, neighbourhood)) output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
+
+                        // Grow to the sides
+                        if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen, 0, 0, Direction.RIGHT);
+                        if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen, 0, 0, Direction.BACK);
+                        if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen, 0, 0, Direction.FOR);
+                        if (CanPlace(1, 1, 2, neighbourhood)) output[1, 1, 2] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen, 0, 0, Direction.LEFT);
+
+                        // Grow upward
+                        if (CanPlace(1, 2, 1, neighbourhood))
+                            output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen + (Random.Next(6) == 1 ? 0 : 1), res + (Random.Next(5) == 1 ? 2 : 1));
+
+                        // Exchange one of them randomly if new branch should spawn
+                        if (res >= 4)
                         {
-                            rndx = Random.Next(0, 3);
-                            rndz = Random.Next(0, 3);
-                        }
-                        if (CanPlace(rndz, 1, rndx, neighbourhood))
-                        {
-                            int tx = (rndx - 1) * 4 + Random.Next(-1, 2);
-                            int ty = Random.Next(-2, 4);
-                            int tz = (rndz - 1) * 4 + Random.Next(-1, 2);
-                            output[rndz, 1, rndx] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1000 + Random.Next(3, 5), (100 * (tz + 50) + ty + 50) * 100 + tx + 50, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD)));
-                            res -= 4;
+                            int rndx = 1, rndz = 1;
+                            while (rndx * rndz == 1)
+                            {
+                                rndx = Random.Next(0, 3);
+                                rndz = Random.Next(0, 3);
+                            }
+                            if (CanPlace(rndz, 1, rndx, neighbourhood))
+                            {
+                                int tx = (rndx - 1) * 4 + Random.Next(-1, 2);
+                                int ty = Random.Next(-2, 4);
+                                int tz = (rndz - 1) * 4 + Random.Next(-1, 2);
+                                output[rndz, 1, rndx] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1000 + Random.Next(3, 5), (100 * (tz + 50) + ty + 50) * 100 + tx + 50, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD)));
+                                res -= 4;
+                            }
                         }
                     }
 
-                    if (CanPlace(1, 2, 1, neighbourhood))
-                        output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen + (Random.Next(6) == 1 ? 0 : 1), res + (Random.Next(5) == 1 ? 2 : 1));
+                    // Grow downward
+                    if (CanPlace(1, 0, 1, neighbourhood))
+                        output[1, 0, 1] = new VoxelInfo(VoxelType.OAK_WOOD, true, gen + Random.Next(4), 0, 0, Direction.UP);
                 }
                 else
                 {
-                    // Top level - kill wood and spanw leaves
-                    if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true);
-                    if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true);
-                    if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(VoxelType.OAK_LEAF, true);
-                    if (CanPlace(1, 1, 2, neighbourhood)) output[1, 1, 2] = new VoxelInfo(VoxelType.OAK_LEAF, true);
-                    if (CanPlace(1, 2, 1, neighbourhood)) output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true);
+                    // Top level - kill wood and spawn leaves
+                    if (neighbourhood[1, 1, 1].From == Direction.DOWN)
+                    {
+                        if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true);
+                        if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true);
+                        if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(VoxelType.OAK_LEAF, true);
+                        if (CanPlace(1, 1, 2, neighbourhood)) output[1, 1, 2] = new VoxelInfo(VoxelType.OAK_LEAF, true);
+                        if (CanPlace(1, 2, 1, neighbourhood)) output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true);
+                    }
                     output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_WOOD);
                 }
             }

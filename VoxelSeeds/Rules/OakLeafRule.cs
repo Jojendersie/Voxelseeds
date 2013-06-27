@@ -23,7 +23,7 @@ namespace VoxelSeeds.Rules
 
             if (gen < TypeInformation.GetGrowHeight(VoxelType.BEECH_LEAF))
             {
-                // Grow to the all directions
+                // Grow to all directions
                 output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF);
                 if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
                 if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
