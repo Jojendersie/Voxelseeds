@@ -9,33 +9,38 @@ namespace VoxelSeeds.Rules
     /// <summary>
     /// This is building spherical leaf balls
     /// </summary>
-    class OakLeafRule : IVoxelRule
+    class SphericalLeafRule : IVoxelRule
     {
+        VoxelType _type;
+
+        public SphericalLeafRule(VoxelType type) {
+            _type = type;
+        }     
         
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each n-th turn
-            if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)) return null;
+            if (neighbourhood[1, 1, 1].Ticks < TypeInformation.GetGrowingSteps(_type)) return null;
 
             VoxelInfo[, ,] output = new VoxelInfo[3, 3, 3];
             int gen = neighbourhood[1, 1, 1].Generation;
             int res = neighbourhood[1, 1, 1].Resources;
 
-            if (gen < TypeInformation.GetGrowHeight(VoxelType.BEECH_LEAF))
+            if (gen < TypeInformation.GetGrowHeight(_type))
             {
                 // Grow to all directions
-                output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF);
-                if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
-                if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
-                if (CanPlace(1, 1, 2, neighbourhood)) output[1, 1, 2] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
-                if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
-                if (CanPlace(1, 2, 1, neighbourhood)) output[1, 2, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
-                if (CanPlace(1, 0, 1, neighbourhood)) output[1, 0, 1] = new VoxelInfo(VoxelType.OAK_LEAF, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_LEAF)));
+                output[1, 1, 1] = new VoxelInfo(_type);
+                if (CanPlace(2, 1, 1, neighbourhood)) output[2, 1, 1] = new VoxelInfo(_type, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(_type)));
+                if (CanPlace(0, 1, 1, neighbourhood)) output[0, 1, 1] = new VoxelInfo(_type, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(_type)));
+                if (CanPlace(1, 1, 2, neighbourhood)) output[1, 1, 2] = new VoxelInfo(_type, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(_type)));
+                if (CanPlace(1, 1, 0, neighbourhood)) output[1, 1, 0] = new VoxelInfo(_type, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(_type)));
+                if (CanPlace(1, 2, 1, neighbourhood)) output[1, 2, 1] = new VoxelInfo(_type, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(_type)));
+                if (CanPlace(1, 0, 1, neighbourhood)) output[1, 0, 1] = new VoxelInfo(_type, true, gen + Random.Next(1, 3), 0, Random.Next(0, TypeInformation.GetGrowingSteps(_type)));
             }
             else
             {
                 // Stop growing
-                output[1, 1, 1] = new VoxelInfo(VoxelType.OAK_LEAF);
+                output[1, 1, 1] = new VoxelInfo(_type);
             }
             return output;
         }

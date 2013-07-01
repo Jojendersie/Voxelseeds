@@ -33,11 +33,13 @@ namespace VoxelSeeds
         const int BIG_INFO_FIELD_HEIGHT = 64;
         const int PROGRESS_WIDTH = BIG_INFO_FIELD_WIDTH / 2 - 10;
 
+        private static readonly VoxelType[] AVAILABLE_SEEDS = { VoxelType.TEAK_WOOD, VoxelType.PINE_WOOD, VoxelType.SPRUCE_WOOD, VoxelType.BEECH_WOOD, VoxelType.OAK_WOOD, VoxelType.REDWOOD };
+
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private SpriteFont largeFont;
-        private SeedInfo[] seeds = new SeedInfo[9];
-        private Texture2D[] textures = new Texture2D[9];
+        private SeedInfo[] seeds = new SeedInfo[AVAILABLE_SEEDS.Length];
+        private Texture2D[] textures = new Texture2D[AVAILABLE_SEEDS.Length];
         private Texture2D helix;
         private Texture2D pixel;
         private Texture2D frame;
@@ -53,7 +55,6 @@ namespace VoxelSeeds
         private float progressCount;
         private float alpha;
 
-        private const int barLength = 9;
 
         public SeedInfo GetSeedInfo()
         {
@@ -100,30 +101,20 @@ namespace VoxelSeeds
             evilProgressBar = contentManager.Load<Texture2D>("parasiteprogress.png");
             _clock = contentManager.Load<Texture2D>("clock.png");
 
-            for (int i = 0; i < barLength; i++)
+            for (int i = 0; i < AVAILABLE_SEEDS.Length; i++)
             {
                 seeds[i] = new SeedInfo();
-                seeds[i]._position = new Vector2(i * (windowWidth) / 10 + 5, 5);   
+                seeds[i]._position = new Vector2(i * (windowWidth) / 10 + 5, 5);
+                seeds[i]._type = AVAILABLE_SEEDS[i];
             }
 
-            seeds[0]._type = VoxelType.TEAK_WOOD;
+
             textures[0] = contentManager.Load<Texture2D>("teak.png");
-            seeds[1]._type = VoxelType.PINE_WOOD;
             textures[1] = contentManager.Load<Texture2D>("Pine.png");
-            seeds[2]._type = VoxelType.SPRUCE_WOOD;
             textures[2] = contentManager.Load<Texture2D>("spruce.png");
-            seeds[3]._type = VoxelType.BEECH_WOOD;
             textures[3] = contentManager.Load<Texture2D>("Beech.png");
-            seeds[4]._type = VoxelType.OAK_WOOD;
             textures[4] = contentManager.Load<Texture2D>("oak.png");
-            seeds[5]._type = VoxelType.REDWOOD;
             textures[5] = contentManager.Load<Texture2D>("redwood.png");
-            seeds[6]._type = VoxelType.TEAK_WOOD;
-            textures[6] = contentManager.Load<Texture2D>("teak.png");
-            seeds[7]._type = VoxelType.TEAK_WOOD;
-            textures[7] = contentManager.Load<Texture2D>("teak.png");
-            seeds[8]._type = VoxelType.TEAK_WOOD;
-            textures[8] = contentManager.Load<Texture2D>("teak.png");
         }
 
         private bool MouseOver(Vector2 pos, double width, double heigth)
@@ -133,14 +124,11 @@ namespace VoxelSeeds
 
         public void Update()
         {
-            for (int i = 0; i < barLength; i++)
+            for (int i = 0; i < AVAILABLE_SEEDS.Length; i++)
             {
-                if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
-                {
                 if (MouseOver(seeds[i]._position, 83, 32) && picking)
                 {
                     _selected = i;
-                }
                 }
             }  
         }
@@ -188,19 +176,16 @@ namespace VoxelSeeds
             spriteBatch.End();
             spriteBatch.Begin();
 
-            for (int i = 0; i < barLength; i++)
+            for (int i = 0; i < AVAILABLE_SEEDS.Length; i++)
             {
-                if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
-                {
-                    float transparency = TypeInformation.GetPrice(seeds[i]._type) > currentlevel.Resources ? 0.5f : 1.0f;
-                    // Draw frame
-                    DrawFramedQuad((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42, transparency);
-                    // Draw price
-                    spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), new Color(1f,1f,1f,transparency));
-                    spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y + 5), new Color(1f, 1f, 1f, transparency)); 
-                    // Draw Icons
-                    spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), new Color(1f, 1f, 1f, transparency));  
-                }
+                float transparency = TypeInformation.GetPrice(seeds[i]._type) > currentlevel.Resources ? 0.5f : 1.0f;
+                // Draw frame
+                DrawFramedQuad((int)seeds[i]._position.X - 5, (int)seeds[i]._position.Y - 5, 94, 42, transparency);
+                // Draw price
+                spriteBatch.Draw(helix, new DrawingRectangle((int)seeds[i]._position.X + 35, (int)seeds[i]._position.Y + 5, 10, 20), new Color(1f,1f,1f,transparency));
+                spriteBatch.DrawString(font, TypeInformation.GetPrice(seeds[i]._type).ToString(), new Vector2(seeds[i]._position.X + 43, seeds[i]._position.Y + 5), new Color(1f, 1f, 1f, transparency)); 
+                // Draw Icons
+                spriteBatch.Draw(textures[i], new DrawingRectangle((int)seeds[i]._position.X, (int)seeds[i]._position.Y, 32, 32), new Color(1f, 1f, 1f, transparency));  
             }
 
             // Draw Resources
@@ -218,11 +203,9 @@ namespace VoxelSeeds
                 spriteBatch.Draw(frame, new DrawingRectangle((int)seeds[_selected]._position.X - 5, (int)seeds[_selected]._position.Y - 5, 94, 42), Color.Yellow);
             }
 
-            //draw Tooltip
-            for (int i = 0; i < barLength; i++)
+            // Draw Tooltip
+            for (int i = 0; i < AVAILABLE_SEEDS.Length; i++)
             {
-                if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4)
-                {
                 if (MouseOver(seeds[i]._position, 83, 32))
                 {
                     tooltipCounter[i] += gameTime.ElapsedGameTime.Milliseconds;
@@ -239,7 +222,6 @@ namespace VoxelSeeds
                     }
                 }
                 else tooltipCounter[i] = 0;
-                }
             }
             spriteBatch.End();
         }

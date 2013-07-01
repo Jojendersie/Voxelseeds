@@ -78,7 +78,9 @@ namespace VoxelSeeds.Rules
                                 int tx = (rndx - 1) * 4 + Random.Next(-1, 2);
                                 int ty = Random.Next(-2, 4);
                                 int tz = (rndz - 1) * 4 + Random.Next(-1, 2);
-                                output[rndz, 1, rndx] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1000 + Random.Next(3, 5), (100 * (tz + 50) + ty + 50) * 100 + tx + 50, Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD)));
+                                output[rndz, 1, rndx] = new VoxelInfo(VoxelType.OAK_WOOD, true, 1000 + Random.Next(3, 5),
+                                    GamePlayUtils.EncodeRelativeTarget(tx, ty, tz),
+                                    Random.Next(0, TypeInformation.GetGrowingSteps(VoxelType.OAK_WOOD)));
                                 res -= 4;
                             }
                         }
@@ -114,9 +116,8 @@ namespace VoxelSeeds.Rules
             else
             {
                 // Inside branch go to the cell which is nearest to the target.
-                int tx = res % 100 - 50;
-                int ty = (res / 100) % 100 - 50;
-                int tz = res / 10000 - 50;
+                int tx, ty, tz;
+                GamePlayUtils.DecodeRelativeTarget(res, out tx, out ty, out tz);
 
                 // Random step (more or less) in the given direction
                 int x = Math.Sign(tx) * (Random.Next(0, 6) < Math.Abs(tx) ? 1 : 0) + 1;

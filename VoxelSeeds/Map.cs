@@ -239,7 +239,7 @@ namespace VoxelSeeds
 
         private void GenerateBubbleLevel(float heightOffset)
         {
-            ValueNoise noise = new ValueNoise(3, 8);
+            ValueNoise noise = new ValueNoise(3, 7);
             int sizeYscaled = SizeY / 3;
             // Fill half to test
             Parallel.For( 0, SizeZ, (z) => {
@@ -254,6 +254,7 @@ namespace VoxelSeeds
                     }
             });
 
+            Smooth();
             Rockyfy();
         }
 
@@ -328,6 +329,32 @@ namespace VoxelSeeds
                             ++streak;
                         }
                         else streak = 0;
+                    }
+                }
+            });
+        }
+
+        private void Smooth()
+        {
+            int zOff = SizeX * SizeY;
+            Parallel.For(1, SizeY-1, (y) =>
+            {
+                for (int z = 1; z < SizeZ-1; ++z)
+                for (int x = 1; x < SizeX-1; ++x)
+                {
+                    Int32 pos = EncodePosition(x, y, z);
+                    if (!IsEmpty(pos))
+                    {
+                        int numEmptyN = IsEmpty(pos - 1) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos + 1) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos - zOff) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos + zOff) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos - zOff - 1) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos - zOff + 1) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos + zOff - 1) ? 1 : 0;
+                        numEmptyN += IsEmpty(pos + zOff + 1) ? 1 : 0;
+                        if (numEmptyN >= 6)
+                            _voxels[pos] = 0;
                     }
                 }
             });

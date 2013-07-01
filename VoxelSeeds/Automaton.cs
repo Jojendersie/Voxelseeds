@@ -269,6 +269,12 @@ namespace VoxelSeeds
         /// amount of new mass because they could have overwritten some old.</returns>
         public int[] Tick()
         {
+            /* synchronous
+            int[] numWrittenVoxels = null;
+            ConcurrentDictionary<Int32, VoxelInfo> results = SimulateAsync();
+            numWrittenVoxels = update(ref results);
+            */
+
             int[] numWrittenVoxels = null;
             if (_simTask != null)
             {

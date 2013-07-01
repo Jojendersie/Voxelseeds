@@ -22,7 +22,7 @@ namespace VoxelSeeds
 
             for (int i = 0; i < 80; ++i)
             {
-                InsertSeed(Random.Next(GetMap().SizeX), Random.Next(GetMap().SizeY / 4) + 5, Random.Next(GetMap().SizeZ), VoxelType.HESPEROPHANES_CINNEREUS);
+                InsertSeed(Random.Next(GetMap().SizeX - 6) + 3, Random.Next(GetMap().SizeY / 4) + 5, Random.Next(GetMap().SizeZ - 6) + 3, VoxelType.HESPEROPHANES_CINNEREUS);
             }
 
             

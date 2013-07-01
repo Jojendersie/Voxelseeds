@@ -206,6 +206,7 @@ namespace VoxelSeeds
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.HOUSE_LONGHORN_BEETLE)].Texture = contentManager.Load<Texture2D>("house_longhorn_beetle.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.BEECH_LEAF)].Texture = contentManager.Load<Texture2D>("beechleaf.png");
             _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.OAK_LEAF)].Texture = contentManager.Load<Texture2D>("oakleaf.png");
+            _voxelTypeRenderingData[GetRenderingDataIndex(VoxelType.REDWOOD_NEEDLE)].Texture = contentManager.Load<Texture2D>("redwoodneedles.png");
         }
 
         private static int GetRenderingDataIndex(VoxelType voxel)

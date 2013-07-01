@@ -108,5 +108,23 @@ namespace VoxelSeeds
             return ((numAvailable/num) >= 0.90f)
                 && ((numGroundBelow/num) >= 0.5f);
         }
+
+        /// <summary>
+        /// Allows to store a vector [-512,511]^3 in a single int
+        /// </summary>
+        /// <returns>A value which uniquely defines the vector. If one or more
+        /// input components are outside the interval the decoding will give an
+        /// other position.</returns>
+        static public int EncodeRelativeTarget(int tx, int ty, int tz)
+        {
+            return ((tz + 512) * 1024 + ty + 512) * 1024 + tx + 512;
+        }
+
+        static public void DecodeRelativeTarget(int v, out int tx, out int ty, out int tz)
+        {
+            tx = v % 1024 - 512;
+            ty = (v / 1024) % 1024 - 512;
+            tz = v / 1048576 - 512;
+        }
     }
 }

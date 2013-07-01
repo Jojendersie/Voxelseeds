@@ -69,6 +69,8 @@ namespace VoxelSeeds
         /// <returns></returns>
         public static int Next(int min, int max)
         {
+            // Security fallback to avoid %0
+            if (min == max) return min;
             return Math.Abs((int)Next()) % (max - min) + min;
         }
 
