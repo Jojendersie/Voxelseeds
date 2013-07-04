@@ -12,7 +12,7 @@ namespace VoxelSeeds
     {
         class LivingVoxel
         {
-            public LivingVoxel(int x, int y, int z, int generation, int resources, int ticks, Direction from)
+            public LivingVoxel(VoxelType type, int x, int y, int z, int generation, int resources, int ticks, Direction from)
             {
                 X = x;
                 Y = y;
@@ -21,12 +21,14 @@ namespace VoxelSeeds
                 Resources = resources;
                 Ticks = ticks;
                 From = from;
+                Type = type;
             }
 
             public int X;
             public int Y;
             public int Z;
 
+            public VoxelType Type;  // Duplicate information to make some things easier
             public int Generation;
             public int Resources;
 
@@ -46,6 +48,9 @@ namespace VoxelSeeds
         int _numLivingBiomass;
         int _numLivingParasites;
 
+        // Voxelbuffer for things added with InsertSeed (asynchronous tasks)
+        System.Collections.Queue _pendingVoxels;
+
         // Buffer for changes which are not uploaded to the GPU.
         HashSet<Voxel> _deleteList;
         HashSet<Voxel> _insertionList;
@@ -64,6 +69,8 @@ namespace VoxelSeeds
 
             _deleteList = new HashSet<Voxel>();
             _insertionList = new HashSet<Voxel>();
+
+            _pendingVoxels = new System.Collections.Queue();
         }
 
         /// <param name="updateInstanceData">A function which takes an incremental
@@ -86,28 +93,28 @@ namespace VoxelSeeds
         /// <summary>
         /// Add to map and to living list. Does nothing if tries to set outside.
         /// </summary>
-        private void InsertVoxel(Int32 positionCode, VoxelType type, int generation, bool living, int resources, int ticks, Direction from)
+        private void InsertVoxel(LivingVoxel voxel, bool living)
         {
-            var pos = _map.DecodePosition(positionCode);
-            if (_map.IsInside(pos.X, pos.Y, pos.Z))
+            int pos = _map.EncodePosition(voxel.X, voxel.Y, voxel.Z);
+            if (_map.IsInside(voxel.X, voxel.Y, voxel.Z))
             {
-                if (_map.Get(positionCode) != VoxelType.EMPTY)
-                    RemoveVoxel(positionCode);
+                if (_map.Get(pos) != VoxelType.EMPTY)
+                    RemoveVoxel(pos);
 
-                _map.Set(positionCode, type, living);
-                if(type != VoxelType.EMPTY)
+                _map.Set(pos, voxel.Type, living);
+                if (voxel.Type != VoxelType.EMPTY)
                 {
                     // Insert to instance data only if visible
-                    if (!_map.IsOccluded(positionCode))
-                        _insertionList.Add(new Voxel(positionCode, type));
-                    RemoveOccludedNeighbours(positionCode);
+                    if (!_map.IsOccluded(pos))
+                        _insertionList.Add(new Voxel(pos, voxel.Type));
+                    RemoveOccludedNeighbours(pos);
                 }
                 if (living)
                 {
-                    Debug.Assert(!_livingVoxels.ContainsKey(positionCode));
-                    _livingVoxels.Add(positionCode, new LivingVoxel(pos.X, pos.Y, pos.Z, generation, resources, ticks, from));
-                    if (TypeInformation.IsBiomass(type)) ++_numLivingBiomass;
-                    else if (TypeInformation.IsParasite(type)) ++_numLivingParasites;
+                    Debug.Assert(!_livingVoxels.ContainsKey(pos));
+                    _livingVoxels.Add(pos, voxel);
+                    if (TypeInformation.IsBiomass(voxel.Type)) ++_numLivingBiomass;
+                    else if (TypeInformation.IsParasite(voxel.Type)) ++_numLivingParasites;
                 }
             }
         }
@@ -172,12 +179,12 @@ namespace VoxelSeeds
         /// </summary>
         public void InsertSeed(int x, int y, int z, VoxelType type, Direction from = Direction.DOWN)
         {
-            Int32 pos = _map.EncodePosition(x, y, z);
+            _pendingVoxels.Enqueue( new LivingVoxel(type, x, y, z, 0, 0, 0, from ) );
 
-            InsertVoxel(pos, type, 0, true, 0, 0, from);
+           // InsertVoxel(pos, type, 0, true, 0, 0, from);
 
             // Immediate upload (assuming ~1 seed per frame)
-            Upload();
+           // Upload();
         }
 
 
@@ -193,14 +200,20 @@ namespace VoxelSeeds
         private int[] update(ref ConcurrentDictionary<Int32, VoxelInfo> results)
         {
             int[] numWrittenVoxels = new int[TypeInformation.GetNumTypes()];
+            // Apply results from simulation
             foreach( KeyValuePair<Int32, VoxelInfo> vox in results )
             {
                 var po = _map.DecodePosition(vox.Key);
                 Debug.Assert( _map.IsInside(po.X, po.Y, po.Z) );
-                
-                InsertVoxel(vox.Key, vox.Value.Type, vox.Value.Generation, vox.Value.Living, vox.Value.Resources, vox.Value.Ticks, vox.Value.From);
+
+                InsertVoxel(new LivingVoxel(vox.Value.Type, po.X, po.Y, po.Z, vox.Value.Generation, vox.Value.Resources, vox.Value.Ticks, vox.Value.From), vox.Value.Living);
                 ++numWrittenVoxels[(int)vox.Value.Type];
             }
+            // User actions
+            while (_pendingVoxels.Count > 0)
+                InsertVoxel((LivingVoxel)_pendingVoxels.Dequeue(), true);
+
+            // To GPU
             Upload();
             return numWrittenVoxels;
         }
@@ -215,8 +228,8 @@ namespace VoxelSeeds
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
-            Parallel.ForEach(_livingVoxels, currentVoxel =>
-            //foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
+            //Parallel.ForEach(_livingVoxels, currentVoxel =>
+            foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
             {
                 ++currentVoxel.Value.Ticks;
                 // Create a local window for the rule algorithms
@@ -254,7 +267,7 @@ namespace VoxelSeeds
                         }
                     });
                 }
-            });
+            }//);
 
             return results;
         }
@@ -272,20 +285,27 @@ namespace VoxelSeeds
             /* synchronous
             int[] numWrittenVoxels = null;
             ConcurrentDictionary<Int32, VoxelInfo> results = SimulateAsync();
-            numWrittenVoxels = update(ref results);
-            */
+            numWrittenVoxels = update(ref results);//*/
+            
 
             int[] numWrittenVoxels = null;
             if (_simTask != null)
             {
-                _simTask.Wait();
+                try
+                {
+                    _simTask.Wait();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
                 ConcurrentDictionary<Int32, VoxelInfo> results = _simTask.Result;
                 // Do a synchronus update
                 numWrittenVoxels = update(ref results);
             }
             _simTask = new Task<ConcurrentDictionary<int, VoxelInfo>>(() => SimulateAsync());
             // Start next turn
-            _simTask.Start();
+            _simTask.Start();//*/
             return numWrittenVoxels;
         }
     }

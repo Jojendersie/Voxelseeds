@@ -260,7 +260,7 @@ namespace VoxelSeeds
 
         private void GenerateMountainsLevel(float heightOffset)
         {
-            ValueNoise noise = new ValueNoise(3, 8);
+            ValueNoise noise = new ValueNoise(3, 7);
             int sizeYscaled = SizeY / 3;
             // Fill half to test
             Parallel.For( 0, SizeZ, (z) => {
@@ -275,6 +275,7 @@ namespace VoxelSeeds
                     }
             });
 
+            Smooth();
             Rockyfy();
         }
 

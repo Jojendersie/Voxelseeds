@@ -50,8 +50,8 @@ namespace VoxelSeeds
         {
             Random.InitRandom((uint)System.DateTime.Today.Ticks);
 
-            _audio = new Audio("ergon.wav");
-            _audio.startSound();
+            //_audio = new Audio("ergon.wav");
+            //_audio.startSound();
 
             // Creates a graphics manager. This is mandatory.
             _graphicsDeviceManager = new GraphicsDeviceManager(this);
@@ -108,7 +108,7 @@ namespace VoxelSeeds
             _voxelRenderer = new VoxelRenderer(GraphicsDevice, Content);
             _currentLevel = new Level1(_voxelRenderer);
             _resourcesFromLastLevel = _currentLevel.Resources;
-            
+
             _seedbar = new Seedbar(Window.NativeWindow as System.Windows.Forms.Control);
             _seedbar.LoadContent(GraphicsDevice, Content);
 
@@ -156,18 +156,18 @@ namespace VoxelSeeds
                 {
                     _cumulatedFrameTime -= 0.25;
                     _currentLevel.Tick();
+
+                    // stop game?
+                    if (_currentLevel.IsVictory() || _currentLevel.IsLost())
+                    {
+                        _gamePaused = true;
+                    }
                 }
 
                 _seedbar.Update();
 
                 // the permanent picking
                 Pick();
-
-                // stop game?
-                if (_currentLevel.IsVictory() || _currentLevel.IsLost())
-                {
-                    _gamePaused = true;
-                }
 
                 // next/prev level cheat
                 if (System.Windows.Input.Keyboard.IsKeyDown(System.Windows.Input.Key.OemPlus) && !wasCheatPlusPressed)

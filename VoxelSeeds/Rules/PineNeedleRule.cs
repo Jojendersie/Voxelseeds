@@ -8,7 +8,6 @@ namespace VoxelSeeds.Rules
 {
     class PineNeedleRule : IVoxelRule
     {
-        
         public VoxelInfo[, ,] ApplyRule(VoxelInfo[, ,] neighbourhood)
         {
             // Apply each 18-th turn

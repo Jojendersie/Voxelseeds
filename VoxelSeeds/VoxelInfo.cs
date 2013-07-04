@@ -79,7 +79,7 @@ namespace VoxelSeeds
                                                  new TeakWoodRule(),
                                                  new HouseLonghornBeetleRule(),
                                                  new HesperophanesCinnereusRule(),
-                                                 new TeakWoodRule(),
+                                                 new GrasshopperRule(),
                                                  new TeakLeafRule(),
                                                  new PineNeedleRule(),
                                                  new SpruceNeedleRule(),
@@ -112,13 +112,13 @@ namespace VoxelSeeds
         /// <summary>
         /// The maximum number of voxels of a type which can be simultaneously in the world
         /// </summary>
-        readonly static int[] maxNumberOfVoxels = { 0, 131072, 131072, 65536, 65536, 65536, 65536, 65536, 65536, 131072, 131072, 4096, 4096, 4096, 4096, 65536, 65536, 65536, 65536, 65536, 65536 };
+        readonly static int[] maxNumberOfVoxels = { 0, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 32768, 4096, 4096, 4096, 16384, 32768, 32768, 32768, 32768, 32768, 32768 };
         /// <summary>
         /// A scaling factor for voxels it is used to display bugs and beetles smaller
         /// </summary>
-        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f, 1f, 1f, 1f, 1f, 1f};
+        readonly static float[] scalingFactor = { 1.0f, 1.0f, 1.0f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 0.5f, 0.5f, 0.5f, 0.5f, 1f, 1f, 1f, 1f, 1f, 1f };
 
-        readonly static int[] growingSteps =   { 0, 0, 0, 4, 6, 8, 9, 10, 12, 26, 24, 2, 1, 3, 2, 3, 4, 6, 5, 7, 9 };
+        readonly static int[] growingSteps = { 0, 0, 0, 4, 6, 8, 9, 10, 12, 26, 24, 2, 1, 3, 1, 3, 4, 6, 5, 7, 9 };
 
         readonly static int[] growHeight = { 0, 0, 0, 7, 10, 8, 8, 8, 25, 1, 1, 1, 1, 50, 1, 5, 2, 6, 5, 4, 4 };
 
@@ -286,7 +286,7 @@ namespace VoxelSeeds
                 default: break;
             }
 
-            return new Int3(t,h,b);
+            return new Int3(t, h, b);
         }
 
         public static Direction ToOppositeDirection(Direction direction)
@@ -401,7 +401,7 @@ namespace VoxelSeeds
         /// 128 different types in the enumeration.</param>
         public VoxelInfo(VoxelType type, bool living = false, int generation = 0, int resources = 0, int ticks = 0, Direction from = Direction.DOWN)
         {
-            System.Diagnostics.Debug.Assert( (byte)type < 128 );
+            System.Diagnostics.Debug.Assert((byte)type < 128);
             // First bit == living or dead
             _type = type;
             _living = living;
