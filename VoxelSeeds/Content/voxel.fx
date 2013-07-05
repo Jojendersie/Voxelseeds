@@ -88,7 +88,7 @@ technique basic
 {
 	pass p0
 	{
-		VertexShader = compile vs_5_0 VS();
-		PixelShader = compile ps_5_0 PS();
+		VertexShader = compile vs_4_0 VS();
+		PixelShader = compile ps_4_0 PS();
 	}
 }
