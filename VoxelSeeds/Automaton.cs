@@ -228,8 +228,8 @@ namespace VoxelSeeds
             // There is just one map but nobody should write before all have
             // seen the current state -> collect all results first.
             ConcurrentDictionary<Int32, VoxelInfo> results = new ConcurrentDictionary<Int32, VoxelInfo>();
-            //Parallel.ForEach(_livingVoxels, currentVoxel =>
-            foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
+            Parallel.ForEach(_livingVoxels, currentVoxel =>
+            //foreach( KeyValuePair<Int32, LivingVoxel> currentVoxel in _livingVoxels )
             {
                 ++currentVoxel.Value.Ticks;
                 // Create a local window for the rule algorithms
@@ -267,7 +267,7 @@ namespace VoxelSeeds
                         }
                     });
                 }
-            }//);
+            });
 
             return results;
         }
